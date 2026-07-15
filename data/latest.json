@@ -1,0 +1,25 @@
+{
+  "generated_at_utc": "2026-07-15T02:27:19.654738+00:00",
+  "generated_at_taipei": "2026-07-15 10:27:19",
+  "last_trading_date": "2026-07-14",
+  "datasets": {
+    "price": {
+      "through": "2026-07-14",
+      "status": "ok"
+    },
+    "inst": {
+      "through": "2026-07-14",
+      "status": "ok"
+    },
+    "margin": {
+      "through": "2026-07-14",
+      "status": "ok"
+    }
+  },
+  "tickers": [
+    "6831",
+    "7795",
+    "2330",
+    "2059"
+  ]
+}
