@@ -1,0 +1,46 @@
+name: daily-update
+
+# 每天台北 22:00 = UTC 14:00 自動跑
+# 分點 21:00 出,留 1 小時緩衝
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch:        # 允許在 GitHub 網頁手動觸發(測試用)
+
+# 讓 workflow 有權限 commit 回 repo(預設唯讀,不開會推不回去)
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install requests pandas pyyaml pyarrow
+
+      - name: Run update
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/update.py
+
+      - name: Commit new data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          # 只有真的有變動才 commit,避免無變動時 git 報錯讓 workflow 紅燈
+          if git diff --staged --quiet; then
+            echo "沒有新資料,略過 commit"
+          else
+            git commit -m "auto: daily data update $(date -u +%Y-%m-%d)"
+            git push
+          fi
