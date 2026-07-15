@@ -13,7 +13,7 @@ import glob
 import subprocess
 import pandas as pd
 
-SCRIPTS = ["fetch_calendar.py", "fetch_daily.py"]   # 依序跑;分點 4d 完成後加進來
+SCRIPTS = ["fetch_calendar.py", "fetch_daily.py", "fetch_branch.py"]
 
 
 def run_script(name: str) -> None:

@@ -127,7 +127,7 @@ def main() -> None:
         if len(bad):
             print(f"   ⚠ {sid} 有 {len(bad)} 筆 close 不在 low~high 內,請檢查")
         out = f"data/daily/{sid}.csv"
-        df.to_csv(out, index=False, encoding="utf-8")
+        df.to_csv(out, index=False, encoding="utf-8-sig")
         print(f"   ✅ {out}:{len(df)} 筆,{df.date.iloc[0]}→{df.date.iloc[-1]}")
 
 
