@@ -39,3 +39,7 @@ tickers:
   - id: "6278"
     market: twse
     note: 台表科
+
+  - id: "2327"
+    market: twse
+    note: 國巨
