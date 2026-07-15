@@ -12,6 +12,7 @@ backfill.py — 一次性歷史回填(daily + 分點,近一年)
 import os
 import sys
 import time
+import argparse
 import yaml
 import requests
 import pandas as pd
@@ -156,9 +157,24 @@ def _flush_branch(path: str, batches: list) -> None:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description="歷史回填(daily + 分點)")
+    ap.add_argument("--stock", default=None,
+                    help="只回填這一檔代號(省略則回填整個 watchlist)")
+    ap.add_argument("--days", type=int, default=365,
+                    help="回填近 N 天(預設 365)")
+    args = ap.parse_args()
+
+    global BACKFILL_START
+    BACKFILL_START = (date.today() - timedelta(days=args.days)).isoformat()
+
     token = get_token()
     check_token(token)
     tickers = load_watchlist()
+    if args.stock:
+        tickers = [t for t in tickers if str(t["id"]) == str(args.stock)]
+    if not tickers:
+        sys.exit(f"❌ watchlist 裡找不到 {args.stock}。請先跑 "
+                 f"python scripts/ensure_watchlist.py --stock {args.stock} --market <twse|tpex>。")
     days = trading_days(BACKFILL_START)
     print(f"\n回填範圍:{BACKFILL_START} → 今天,共 {len(days)} 個交易日")
     print(f"預估分點請求:約 {len(tickers) * len(days)} 次(扣除已抓的會更少)\n")

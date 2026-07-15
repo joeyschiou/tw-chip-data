@@ -10,6 +10,7 @@ import os
 import sys
 import json
 import glob
+import argparse
 import subprocess
 import pandas as pd
 
@@ -84,8 +85,14 @@ def write_latest() -> None:
 
 
 def main() -> None:
-    for s in SCRIPTS:
-        run_script(s)
+    ap = argparse.ArgumentParser(description="每日主控 / 清單刷新")
+    ap.add_argument("--manifest-only", action="store_true",
+                    help="只刷新 latest.json,跳過 fetch 腳本(不碰 FinMind)")
+    args = ap.parse_args()
+
+    if not args.manifest_only:
+        for s in SCRIPTS:
+            run_script(s)
     write_latest()
     print("\n✅ 更新完成。data/latest.json 已寫出。")
 

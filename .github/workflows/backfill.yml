@@ -1,0 +1,31 @@
+name: backfill
+on:
+  workflow_dispatch:
+    inputs:
+      stock_id: { description: "股票代號,例:6278", required: true }
+      market:   { description: "twse 或 tpex", required: true, type: choice, options: [twse, tpex], default: twse }
+      days:     { description: "回填近 N 天", required: true, default: "365" }
+      note:     { description: "備註(可留白)", required: false, default: "" }
+permissions:
+  contents: write
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - run: pip install requests pandas pyyaml pyarrow
+      - name: ensure watchlist
+        run: python scripts/ensure_watchlist.py --stock "${{ inputs.stock_id }}" --market "${{ inputs.market }}" --note "${{ inputs.note }}"
+      - name: backfill
+        env: { FINMIND_TOKEN: "${{ secrets.FINMIND_TOKEN }}" }
+        run: python scripts/backfill.py --stock "${{ inputs.stock_id }}" --days "${{ inputs.days }}"
+      - name: refresh manifest
+        run: python scripts/update.py --manifest-only
+      - name: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ config/watchlist.yaml
+          if git diff --staged --quiet; then echo "無變動"; else git commit -m "backfill: ${{ inputs.stock_id }} 近 ${{ inputs.days }} 天"; git push; fi

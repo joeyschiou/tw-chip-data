@@ -35,3 +35,7 @@ tickers:
   - id: "2059"
     market: twse
     note: 川湖 — 善終原型基準
+
+  - id: "6278"
+    market: twse
+    note: 台表科
