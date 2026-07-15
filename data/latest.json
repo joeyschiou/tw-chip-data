@@ -1,20 +1,25 @@
 {
-  "generated_at_utc": "2026-07-15T07:01:09.534199+00:00",
-  "generated_at_taipei": "2026-07-15 15:01:09",
+  "generated_at_utc": "2026-07-15T10:47:19.923329+00:00",
+  "generated_at_taipei": "2026-07-15 18:47:19",
   "last_trading_date": "2026-07-14",
   "datasets": {
     "price": {
-      "through": "2026-07-14",
+      "through": "2026-07-15",
       "status": "ok"
     },
     "inst": {
-      "through": "2026-07-14",
+      "through": "2026-07-15",
       "status": "ok"
     },
     "margin": {
       "through": "2026-07-14",
       "status": "ok"
     }
+  },
+  "universe": {
+    "count": 1208,
+    "daily_files": 1132,
+    "current": 1079
   },
   "tickers": [
     "6831",

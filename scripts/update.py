@@ -59,7 +59,9 @@ def universe_report(latest_day: str) -> dict:
     universe 廣掃概況:
       count       = config/universe.csv 檔數
       daily_files = data/daily/*.csv 實際檔數
-      current     = 有多少 daily 檔的最大日期 == last_trading_date
+      current     = 有多少 daily 檔的最大日期 >= last_trading_date
+                    (用 >= 而非 ==:price 常在 calendar 更新前就有當日資料,
+                     資料領先行事曆時 == 會誤判成 0)
     """
     count = 0
     if os.path.exists("config/universe.csv"):
@@ -71,7 +73,7 @@ def universe_report(latest_day: str) -> dict:
             d = pd.read_csv(f, usecols=["date"], dtype=str)
         except Exception:
             continue
-        if len(d) and str(d["date"].max()) == latest_day:
+        if len(d) and str(d["date"].max()) >= latest_day:
             current += 1
     return {"count": count, "daily_files": len(daily_files), "current": current}
 
