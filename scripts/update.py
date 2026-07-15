@@ -14,7 +14,7 @@ import argparse
 import subprocess
 import pandas as pd
 
-SCRIPTS = ["fetch_calendar.py", "fetch_daily.py", "fetch_branch.py"]
+SCRIPTS = ["fetch_calendar.py", "fetch_universe.py", "fetch_daily.py", "fetch_branch.py"]
 
 
 def run_script(name: str) -> None:
@@ -32,12 +32,13 @@ def last_trading_date() -> str:
     return str(cal["date"].max())
 
 
-def dataset_status(csv_glob: str, col: str, latest_day: str) -> dict:
+def dataset_status(files: list, col: str, latest_day: str) -> dict:
     """
     掃一批 CSV,取每檔 col 欄的最大日期,回 {through, status}。
     through = 這批資料裡最舊的『最後日期』(木桶效應:最落後的那檔決定整體)。
+    files 只傳 watchlist 的 daily 檔當 canary,避免被上千檔冷門股拖累。
     """
-    files = glob.glob(csv_glob)
+    files = [f for f in files if os.path.exists(f)]
     if not files:
         return {"through": None, "status": "missing"}
     last_dates = []
@@ -53,6 +54,28 @@ def dataset_status(csv_glob: str, col: str, latest_day: str) -> dict:
     return {"through": through, "status": status}
 
 
+def universe_report(latest_day: str) -> dict:
+    """
+    universe 廣掃概況:
+      count       = config/universe.csv 檔數
+      daily_files = data/daily/*.csv 實際檔數
+      current     = 有多少 daily 檔的最大日期 == last_trading_date
+    """
+    count = 0
+    if os.path.exists("config/universe.csv"):
+        count = len(pd.read_csv("config/universe.csv", dtype=str))
+    daily_files = glob.glob("data/daily/*.csv")
+    current = 0
+    for f in daily_files:
+        try:
+            d = pd.read_csv(f, usecols=["date"], dtype=str)
+        except Exception:
+            continue
+        if len(d) and str(d["date"].max()) == latest_day:
+            current += 1
+    return {"count": count, "daily_files": len(daily_files), "current": current}
+
+
 def write_latest() -> None:
     latest_day = last_trading_date()
     now_tpe = pd.Timestamp.now(tz="Asia/Taipei")
@@ -62,15 +85,19 @@ def write_latest() -> None:
     with open("config/watchlist.yaml", encoding="utf-8") as f:
         tickers = [t["id"] for t in yaml.safe_load(f)["tickers"]]
 
+    # canary 只掃 watchlist 的 daily 檔(避免被上千檔冷門股的落後日期拖累)
+    wl_files = [f"data/daily/{sid}.csv" for sid in tickers]
+
     manifest = {
         "generated_at_utc": now_tpe.tz_convert("UTC").isoformat(),
         "generated_at_taipei": now_tpe.strftime("%Y-%m-%d %H:%M:%S"),
         "last_trading_date": latest_day,
         "datasets": {
-            "price":  dataset_status("data/daily/*.csv", "close", latest_day),
-            "inst":   dataset_status("data/daily/*.csv", "foreign_net_shares", latest_day),
-            "margin": dataset_status("data/daily/*.csv", "margin_balance_shares", latest_day),
+            "price":  dataset_status(wl_files, "close", latest_day),
+            "inst":   dataset_status(wl_files, "foreign_net_shares", latest_day),
+            "margin": dataset_status(wl_files, "margin_balance_shares", latest_day),
         },
+        "universe": universe_report(latest_day),
         "tickers": tickers,
     }
 
@@ -80,7 +107,9 @@ def write_latest() -> None:
     print("\n=== latest.json ===")
     for name, d in manifest["datasets"].items():
         flag = "✅" if d["status"] == "ok" else "⚠"
-        print(f"  {flag} {name:8s} 截至 {d['through']}  ({d['status']})")
+        print(f"  {flag} {name:8s} 截至 {d['through']}  ({d['status']})  [watchlist canary]")
+    u = manifest["universe"]
+    print(f"  universe:{u['count']} 檔清單 / {u['daily_files']} 個 daily 檔 / {u['current']} 檔已到最新")
     print(f"  最新交易日:{latest_day}")
 
 

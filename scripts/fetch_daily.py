@@ -9,9 +9,12 @@ fetch_daily.py — 追蹤股的日K + 三大法人 + 融資融券
 import os
 import sys
 import io
+import time
+import argparse
 import yaml
 import requests
 import pandas as pd
+from datetime import date, timedelta
 
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 USERINFO_URL = "https://api.web.finmindtrade.com/v2/user_info"
@@ -37,6 +40,15 @@ def load_watchlist() -> list:
     with open("config/watchlist.yaml", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     return cfg["tickers"]
+
+
+def load_universe_ids() -> list:
+    """讀 config/universe.csv 回 id 清單(檔案不存在則回 [])。"""
+    path = "config/universe.csv"
+    if not os.path.exists(path):
+        return []
+    uni = pd.read_csv(path, dtype=str)
+    return uni["id"].astype(str).tolist()
 
 
 def fetch_dataset(token: str, dataset: str, stock_id: str) -> pd.DataFrame:
@@ -110,16 +122,31 @@ def build_daily(token: str, stock_id: str) -> pd.DataFrame:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description="日線廣掃(universe ∪ watchlist)")
+    ap.add_argument("--days", type=int, default=30, help="回抓近 N 天(預設 30)")
+    ap.add_argument("--start", default=None,
+                    help="直接指定起始日期 YYYY-MM-DD(優先於 --days)")
+    args = ap.parse_args()
+
+    global START_DATE
+    START_DATE = args.start if args.start else (date.today() - timedelta(days=args.days)).isoformat()
+
     token = get_token()
     check_token(token)
-    tickers = load_watchlist()
+
+    wl_ids = [str(t["id"]) for t in load_watchlist()]
+    uni_ids = load_universe_ids()
+    # 聯集去重(保留順序):universe 先,watchlist 補上不在 universe 的(如上櫃 6831/7795)
+    target_ids = list(dict.fromkeys(uni_ids + wl_ids))
+    print(f"日線目標:universe {len(uni_ids)} + watchlist {len(wl_ids)} → 聯集去重 {len(target_ids)} 檔")
+    print(f"起始日期 START_DATE = {START_DATE}\n")
 
     os.makedirs("data/daily", exist_ok=True)
-    for t in tickers:
-        sid = t["id"]
-        print(f"→ {sid} {t.get('note','')}")
+    for i, sid in enumerate(target_ids, 1):
+        print(f"→ [{i}/{len(target_ids)}] {sid}")
         df = build_daily(token, sid)
         if df.empty:
+            time.sleep(0.15)
             continue
         # 驗收:OHLC 內部一致、日期唯一遞增
         assert df.date.is_unique, f"{sid} 日期重複"
@@ -127,8 +154,13 @@ def main() -> None:
         if len(bad):
             print(f"   ⚠ {sid} 有 {len(bad)} 筆 close 不在 low~high 內,請檢查")
         out = f"data/daily/{sid}.csv"
+        # append + 去重(取代原本直接覆寫;與 backfill.py 的 backfill_daily 同模式)
+        if os.path.exists(out):
+            old = pd.read_csv(out, dtype=str)
+            df = pd.concat([old, df.astype(str)], ignore_index=True).drop_duplicates("date", keep="last").sort_values("date")
         df.to_csv(out, index=False, encoding="utf-8-sig")
         print(f"   ✅ {out}:{len(df)} 筆,{df.date.iloc[0]}→{df.date.iloc[-1]}")
+        time.sleep(0.15)
 
 
 if __name__ == "__main__":
