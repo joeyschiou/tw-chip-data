@@ -1,0 +1,63 @@
+name: weekly-update
+
+# 週更資料(集保 holders / 流通 float / 月營收 revenue)。
+# 集保 0c 實測:每週快照(週四/五結算),FinMind 端延遲數日釋出。
+# 主排:UTC 週五 23:00 = 台北週六 07:00;保險排:UTC 週一 23:00 = 台北週二 07:00
+# (台北週二那班通常才真的抓到上週五快照)。全 idempotent,重複跑無害。
+# 月營收由 fetch_revenue.py 內建「當月 >=11 日才有上月」月守衛,週跑也安全。
+on:
+  schedule:
+    - cron: "0 23 * * 5"
+    - cron: "0 23 * * 1"
+  workflow_dispatch:        # 允許網頁手動觸發
+
+permissions:
+  contents: write
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install requests pandas pyyaml pyarrow
+
+      - name: Holders (集保,全市場 universe)
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/fetch_holders.py
+
+      - name: Float (流通張數,universe;需 holders 先跑)
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/fetch_float.py
+
+      - name: Revenue (月營收,universe;內建月守衛)
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/fetch_revenue.py
+
+      - name: Refresh manifest (latest.json)
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/update.py --manifest-only
+
+      - name: Commit new data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          # 只有真的有變動才 commit(週更常常 no-op,避免空 commit 讓 workflow 紅燈)
+          if git diff --staged --quiet; then
+            echo "沒有新週更資料,略過 commit"
+          else
+            git commit -m "auto: weekly data update $(date -u +%Y-%m-%d)"
+            git push
+          fi

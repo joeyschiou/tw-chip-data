@@ -17,10 +17,12 @@ import pandas as pd
 # 核心資料(價量/法人/融資/分點)—— 失敗就紅燈中止,不要靜默半套。
 SCRIPTS = ["fetch_calendar.py", "fetch_universe.py", "fetch_daily.py", "fetch_branch.py"]
 
-# 補充資料(基本資料/當沖/集保/流通)—— 各自 idempotent,依 cadence 內部 no-op。
-# 失敗「不」中止核心管線(避免集保打嗝拖垮整晚),改用 latest.json 的 status 誠實反映落後。
-# 順序:info→daytrade(需 daily 算比率)→holders→float(需 holders)。
-EXTRA_SCRIPTS = ["fetch_info.py", "fetch_daytrade.py", "fetch_holders.py", "fetch_float.py"]
+# 補充資料(基本資料/當沖/集保/流通/月營收)—— 各自 idempotent,依 cadence 內部 no-op。
+# holders/float/revenue 走全市場 universe、週更/月更(nightly 大多 no-op);weekly-update.yml 另有主排。
+# 失敗「不」中止核心管線(避免補充打嗝拖垮整晚),改用 latest.json 的 status 誠實反映落後。
+# 順序:info→daytrade(需 daily 算比率)→holders→float(需 holders)→revenue。
+EXTRA_SCRIPTS = ["fetch_info.py", "fetch_daytrade.py", "fetch_holders.py",
+                 "fetch_float.py", "fetch_revenue.py"]
 
 
 def run_script(name: str) -> None:
@@ -119,6 +121,33 @@ def universe_report(latest_day: str) -> dict:
     return {"count": count, "daily_files": len(daily_files), "current": current}
 
 
+def slice_coverage(subdir: str) -> int:
+    """該 universe 資料集實際覆蓋幾檔(data/{subdir}/*.csv 檔數)。"""
+    return len(glob.glob(f"data/{subdir}/*.csv"))
+
+
+def revenue_status(files: list) -> dict:
+    """月營收 through=watchlist 最新 revenue_month;status 對比「當月守衛」的期望月。"""
+    files = [f for f in files if os.path.exists(f)]
+    months = []
+    for f in files:
+        try:
+            d = pd.read_csv(f, usecols=["revenue_month"], dtype=str)
+        except Exception:
+            continue
+        if len(d):
+            months.append(str(d["revenue_month"].max()))
+    if not months:
+        return {"through": None, "status": "missing"}
+    through = max(months)
+    from datetime import date as _date
+    t = _date.today()
+    cur = pd.Period(f"{t.year}-{t.month:02d}", freq="M")
+    exp_p = (cur - 1) if t.day >= 11 else (cur - 2)     # 當月 >=11 日才有上月營收
+    exp = f"{exp_p.year}-{exp_p.month:02d}"
+    return {"through": through, "status": "ok" if through >= exp else "lagging"}
+
+
 def write_latest() -> None:
     latest_day = last_trading_date()
     now_tpe = pd.Timestamp.now(tz="Asia/Taipei")
@@ -145,13 +174,19 @@ def write_latest() -> None:
             "price":  dataset_status(wl_files, "close", latest_day),
             "inst":   dataset_status(wl_files, "foreign_net_shares", latest_day),
             "margin": dataset_status(wl_files, "margin_balance_shares", latest_day),
-            # 補充(watchlist max;週更資料容許 cadence 落後)
+            # 補充(watchlist canary 定 through;coverage=universe 實際覆蓋檔數)
             "daytrade": {**freshness_status(daytrade_files, latest_day, tol_days=0),
-                         "cadence": "daily"},
+                         "cadence": "daily", "scope": "watchlist"},
             "holders":  {**freshness_status(holders_files, latest_day, tol_days=10),
-                         "cadence": "weekly"},
+                         "cadence": "weekly", "scope": "universe",
+                         "coverage": slice_coverage("holders")},
             "float":    {**freshness_status(float_files, latest_day, tol_days=10),
-                         "cadence": "weekly", "note": "locked=千張大戶 proxy(非董監)"},
+                         "cadence": "weekly", "scope": "universe",
+                         "coverage": slice_coverage("float"),
+                         "note": "locked=千張大戶 proxy(非董監)"},
+            "revenue":  {**revenue_status([f"data/revenue/{sid}.csv" for sid in tickers]),
+                         "cadence": "monthly", "scope": "universe",
+                         "coverage": slice_coverage("revenue")},
         },
         "reference": {
             "info": {"count": info_count, "status": "ok" if info_count else "missing"},

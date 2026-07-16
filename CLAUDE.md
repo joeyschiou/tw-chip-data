@@ -1,22 +1,30 @@
 # tw-chip-data — Claude 工作備忘
 
-## 兩層清單(別搞混)
-- config/universe.csv：全市場「上市 twse」普通股,機器產生(fetch_universe.py)。只用於日線廣掃。不要手動編輯、不要當追蹤清單。
-- config/watchlist.yaml：深追清單。用於日線 + 分點 + 當沖 + 集保 + 流通張數。
+## 兩層(概念主軸,別搞混)
+- **廣度層 universe**=全市場普通股。日線、集保(holders)、流通(float)、月營收(revenue)覆蓋 universe。
+  - `finmind_client.load_universe()`=info.csv 普通股 ∩ 有 daily 檔者(≈1,100);普通股過濾規則見 schema.md。
+  - `config/universe.csv`=fetch_universe.py 產的「上市 twse 清單」,只給日線廣掃來源(跟上面是不同物件)。
+- **深度層 watchlist**(config/watchlist.yaml,上限 100)=分點(branch)追蹤,之後由篩選器自動增補。
 
 ## 鐵則
-- 使用者新提到 / 要追蹤 / 要回填的任何個股,一律加進 **watchlist**(日線+分點),**永遠不要**加進 universe。
+- 使用者新提到 / 要追蹤的個股 → 加進 **watchlist**(分點),**永遠不要**手動加進 universe(universe 是機器產生的廣度層)。
 - 加股票前必查證 market(twse/tpex),不要用代號猜(例:6278 是6開頭卻是上市)。用 `python scripts/ensure_watchlist.py --stock <id> --market <twse|tpex>`。
 - 資料一律用 pandas 實算,不要肉眼掃 CSV。CSV 一律 utf-8-sig。分點成本計算排除 price=0 列。
 
 ## 資料流
-- 日線:fetch_daily.py,對 universe ∪ watchlist,append+dedup(--days 控制回填天數,nightly 預設近 30 天)。
-- 分點:fetch_branch.py / backfill.py,只對 watchlist。
-- 當沖:fetch_daytrade.py,全市場一 call/日,存 watchlist 切片(日更)。
-- 集保:fetch_holders.py,週更;流通張數分母:fetch_float.py(發行/鎖倉 proxy/外部流通,週更慢變維度)。
-- 基本資料:fetch_info.py(全市場,偶爾刷新)。
-- 主控:update.py 先跑核心(calendar/universe/daily/branch,失敗紅燈),再跑補充(info/daytrade/holders/float,失敗只警告);cadence 由各腳本內部 no-op。
-- 單檔回填:backfill.py --stock <id> --days N --datasets daily,branch,holders,daytrade,float(預設只 daily,branch)。
+- 日線:fetch_daily.py,對 universe ∪ watchlist,append+dedup(nightly)。
+- 分點:fetch_branch.py / backfill.py,**只對 watchlist**(0d:全市場分點需 storage_objects,未實作)。
+- 集保/流通/月營收:fetch_holders / fetch_float / fetch_revenue,**全市場 universe**,全市場單 call(單日/單月)切片。
+  - holders/float 週更;revenue 月更(當月>=11日守衛)。都 idempotent(write_if_changed,內容沒變不寫)。
+- 當沖:fetch_daytrade.py,全市場一 call/日,存 watchlist 切片(日更)。基本資料:fetch_info.py。
+- 主控:
+  - **daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充;週更/月更資料多半 no-op。
+  - **weekly-update.yml**(台北週六 07:00 + 週二 07:00 保險):holders→float→revenue。
+- 回填:
+  - `backfill.py --datasets daily,branch,holders,daytrade,float`(預設 daily,branch)。
+  - 集保/流通 universe 回填:`fetch_holders.py --days N` / `fetch_float.py --days N`(全市場)。
+  - 月營收回填:`fetch_revenue.py --months 25`。
+  - **定向分點回補(農場能力)**:`backfill.py --tickers "6831,7795" --lookback-days 60 --datasets branch`。
 - 判讀先讀 data/latest.json。
 
 ## 籌碼分母(重要)

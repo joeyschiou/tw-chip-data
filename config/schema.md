@@ -19,9 +19,10 @@ data/
   info.csv                全市場個股基本資料(名稱/產業/上市櫃)
   daily/{id}.csv          追蹤股:日K + 三大法人 + 融資券
   branch/{id}.csv         追蹤股:分點日彙總
-  daytrade/{id}.csv       追蹤股:當沖量 + 當沖比(日更)
-  holders/{id}.csv        追蹤股:集保股權分散級距(週更)
-  float/{id}.csv          追蹤股:流通張數分母 — 發行/鎖倉 proxy/外部流通(週更,慢變維度)
+  daytrade/{id}.csv       追蹤股(watchlist):當沖量 + 當沖比(日更)
+  holders/{id}.csv        廣度層 universe:集保股權分散級距(週更)
+  float/{id}.csv          廣度層 universe:流通張數分母 — 發行/鎖倉 proxy/外部流通(週更)
+  revenue/{id}.csv        廣度層 universe:月營收 + yoy/mom/累計 yoy(月更)
 # 全市場逐價位分點 → 進 GitHub Releases,不進 repo(單日 ~22MB)
 ```
 
@@ -161,6 +162,32 @@ data/
 
 > 冷門股本就沒有每日當沖資料,缺列屬正常(left-join 誠實,不補 0)。
 
+## revenue/{id}.csv — 月營收(Block E,月更)
+
+| 欄位 | 說明 |
+|---|---|
+| `revenue_month` | 營收月 `YYYY-MM`(FinMind revenue_year+revenue_month;公布日=次月)|
+| `revenue` | 當月營收(元)|
+| `yoy` | 對去年同月成長率(分數;×100 = %;基期需 12 個月前)|
+| `mom` | 對上月成長率(分數)|
+| `cumulative_yoy` | 今年 YTD 對去年 YTD 成長率(兩年同月皆齊全且去年 YTD>0 才算)|
+| `source` `fetched_at` | |
+
+> 資料源 `TaiwanStockMonthRevenue`(全市場單月 call)。yoy/mom/累計皆由原始 revenue 自算。
+> cadence 月更:當月 ≥ 11 日且有新月份才抓(上月營收約每月 10 日公布)。
+
+## 廣度層 universe 定義(load_universe)
+
+`holders / float / revenue` 的對象是**廣度層 universe**,由 `finmind_client.load_universe()` 決定:
+**全市場「普通股」∩「已有 data/daily/*.csv 的代號」**。普通股過濾(排 ETF/DR/受益憑證/特別股):
+- `stock_id` 為 4 位、非 0 開頭(排 00xx ETF、字母尾綴特別股如 2881A、6 位權證)
+- 排 91xx TDR
+- 排 `info.csv` industry 含 ETF
+
+> 與 `config/universe.csv`(fetch_universe.py 產的「上市 twse 清單」,只給日線廣掃)是**不同**概念:
+> 前者是「我們有日線、要算籌碼分母」的股集(≈1,100),後者是日線廣掃的來源清單。
+> 分點(branch)維持 **watchlist-only**(深度層,見 0d)。
+
 ## info.csv — 全市場個股基本資料
 
 | 欄位 | 說明 |
@@ -181,6 +208,15 @@ data/
 FinMind **無** 注意股/處置股 dataset(已實測)。本管線保持 **FinMind-only**,
 `latest.json.reference.disposition.status = "unavailable"` 記錄此缺口;
 下游若需此層,須另接 TWSE / 櫃買公告來源(另案,非本管線)。
+
+## 分點 branch 範圍(0d 實測結論)
+
+分點維持 **watchlist-only(深度層)**,不是全市場。實測:
+- `taiwan_stock_trading_daily_report` endpoint **強制要 data_id**(省略回 HTTP 400),
+  無法用「單 call 抓全市場分點」。
+- 全市場分點需 FinMind `storage_objects` 批次下載(S3,另一機制),**現有程式碼完全沒實作**;
+  `watchlist.yaml` 的 `fetch_full_market_branch: true` 旗標目前是 **no-op**(fetch_branch.py 不讀它)。
+- 定向回補用 `backfill.py --tickers "a,b" --lookback-days N`(篩選器讓股進農場後呼叫;自動觸發另案)。
 
 ---
 

@@ -11,6 +11,7 @@ finmind_client.py — 新 fetcher 共用的 FinMind 存取層。
 import os
 import sys
 import time
+import glob
 import yaml
 import requests
 import pandas as pd
@@ -41,6 +42,52 @@ def load_watchlist() -> list:
 
 def watchlist_ids() -> list:
     return [str(t["id"]) for t in load_watchlist()]
+
+
+_UNIVERSE_CACHE = None
+
+
+def load_universe(refresh: bool = False) -> list:
+    """
+    廣度層 universe = 全市場「普通股」∩「已有 daily 檔的代號」。
+    普通股過濾(排除 ETF/DR/受益憑證/特別股):
+      - stock_id 為 4 位、非 0 開頭(排 00xx ETF、字母尾綴的特別股如 2881A、6 位權證)
+      - 排 91xx TDR
+      - 排 industry 含 ETF
+    與 data/daily/*.csv 取交集:只對「我們有日線」的股算集保/流通/月營收(廣度層與日線一致)。
+    可快取;傳 refresh=True 重讀。
+    """
+    global _UNIVERSE_CACHE
+    if _UNIVERSE_CACHE is not None and not refresh:
+        return _UNIVERSE_CACHE
+    daily_ids = {os.path.basename(f)[:-4] for f in glob.glob("data/daily/*.csv")}
+    info_path = "data/info.csv"
+    if os.path.exists(info_path):
+        info = pd.read_csv(info_path, dtype=str)
+        info["stock_id"] = info["stock_id"].astype(str)
+        is_common = info["stock_id"].str.match(r"^[1-9]\d{3}$")
+        not_tdr = ~info["stock_id"].str.match(r"^91\d\d$")
+        not_etf = ~info.get("industry", pd.Series("", index=info.index)).fillna("").str.contains("ETF")
+        common = set(info[is_common & not_tdr & not_etf]["stock_id"])
+    else:
+        # 沒 info.csv:退回用 daily 檔名做普通股過濾
+        import re
+        common = {i for i in daily_ids if re.match(r"^[1-9]\d{3}$", i) and not re.match(r"^91\d\d$", i)}
+    ids = sorted(common & daily_ids) if daily_ids else sorted(common)
+    _UNIVERSE_CACHE = ids
+    return ids
+
+
+def token_usage(token: str) -> tuple:
+    """回 (used, limit);查不到回 (None, None)。給大量抓取監控用量用。"""
+    try:
+        r = requests.get(USERINFO_URL, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        if r.status_code == 200:
+            j = r.json()
+            return j.get("user_count"), j.get("api_request_limit")
+    except Exception:
+        pass
+    return None, None
 
 
 def api_data(token: str, dataset: str, throttle: float = 0.3,
@@ -102,3 +149,30 @@ def append_dedup(path: str, new: pd.DataFrame, keys: list) -> pd.DataFrame:
     combined = combined.drop_duplicates(subset=keys, keep="last").sort_values(keys)
     combined.to_csv(path, index=False, encoding="utf-8-sig")
     return combined
+
+
+def write_if_changed(path: str, new: pd.DataFrame, keys: list, volatile: tuple = ()) -> bool:
+    """
+    append+dedup,但「內容沒變就不寫」(避免 1000+ 檔每週無意義 churn / commit)。
+    volatile:比較時忽略的欄(如 float 的 fetched_at,只有它變不算變)。回傳是否有寫。
+    """
+    if new is None or new.empty:
+        return False
+    new = new.astype(str)
+    if os.path.exists(path):
+        old = pd.read_csv(path, dtype=str)
+        combined = pd.concat([old, new], ignore_index=True)
+    else:
+        old = None
+        combined = new
+    combined = combined.drop_duplicates(subset=keys, keep="last").sort_values(keys).reset_index(drop=True)
+
+    if old is not None:
+        old_cmp = old.sort_values(keys).reset_index(drop=True)
+        a, b = combined, old_cmp
+        if list(a.columns) == list(b.columns) and len(a) == len(b):
+            drop = [c for c in volatile if c in a.columns]
+            if a.drop(columns=drop).equals(b.drop(columns=drop)):
+                return False     # 實質內容相同 → 不寫
+    combined.to_csv(path, index=False, encoding="utf-8-sig")
+    return True
