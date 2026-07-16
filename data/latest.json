@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-15T10:47:19.923329+00:00",
-  "generated_at_taipei": "2026-07-15 18:47:19",
+  "generated_at_utc": "2026-07-16T01:39:01.080839+00:00",
+  "generated_at_taipei": "2026-07-16 09:39:01",
   "last_trading_date": "2026-07-14",
   "datasets": {
     "price": {
@@ -18,8 +18,8 @@
   },
   "universe": {
     "count": 1208,
-    "daily_files": 1132,
-    "current": 1079
+    "daily_files": 1133,
+    "current": 1080
   },
   "tickers": [
     "6831",
@@ -27,6 +27,8 @@
     "2330",
     "2059",
     "6278",
-    "2327"
+    "2327",
+    "6510",
+    "7769"
   ]
 }

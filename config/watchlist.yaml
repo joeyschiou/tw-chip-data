@@ -43,3 +43,11 @@ tickers:
   - id: "2327"
     market: twse
     note: 國巨
+
+  - id: "6510"
+    market: tpex
+    note: 精測
+
+  - id: "7769"
+    market: twse
+    note: 鴻勁
