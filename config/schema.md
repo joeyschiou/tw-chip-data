@@ -19,7 +19,7 @@ data/
   info.csv                全市場個股基本資料(名稱/產業/上市櫃)
   daily/{id}.csv          追蹤股:日K + 三大法人 + 融資券
   branch/{id}.csv         追蹤股:分點日彙總
-  daytrade/{id}.csv       追蹤股(watchlist):當沖量 + 當沖比(日更)
+  daytrade/{id}.csv       廣度層 universe:當沖量 + 當沖比(日更)
   holders/{id}.csv        廣度層 universe:集保股權分散級距(週更)
   float/{id}.csv          廣度層 universe:流通張數分母 — 發行/鎖倉 proxy/外部流通(週更)
   revenue/{id}.csv        廣度層 universe:月營收 + yoy/mom/累計 yoy(月更)
@@ -105,12 +105,15 @@ data/
 
 ## config/universe.csv
 
-全市場「上市 twse」普通股清單,`fetch_universe.py` 機器產生。**只給日線廣掃用,不是追蹤清單。**
+全市場「上市 twse + 上櫃 tpex」普通股清單,`fetch_universe.py` 機器產生。**廣度層來源,不是追蹤清單。**
+過濾(0b 實測 type:twse=上市 / tpex=上櫃 / emerging=興櫃):保留 twse+tpex,**排興櫃**;
+`is_common`(4 位非 0 開頭,排 00xx ETF/特別股/權證)、排 91xx TDR、排 industry 含 ETF。
 
 | 欄位 | 說明 |
 |---|---|
 | `id` | 代號 |
 | `name` | 股名 |
+| `market` | `twse`(上市)/ `tpex`(上櫃)—— 下游判交易所、必要時帶 market 參數 |
 
 > 註:分母(流通張數)已獨立成 `data/float/{id}.csv`(見下),不再塞進 universe.csv。
 
@@ -178,8 +181,8 @@ data/
 
 ## 廣度層 universe 定義(load_universe)
 
-`holders / float / revenue` 的對象是**廣度層 universe**,由 `finmind_client.load_universe()` 決定:
-**全市場「普通股」∩「已有 data/daily/*.csv 的代號」**。普通股過濾(排 ETF/DR/受益憑證/特別股):
+`holders / float / revenue / daytrade` 的對象是**廣度層 universe**,由 `finmind_client.load_universe()` 決定:
+**全市場「普通股(twse+tpex)」∩「已有 data/daily/*.csv 的代號」**(≈2,000)。普通股過濾(排 ETF/DR/受益憑證/特別股/興櫃):
 - `stock_id` 為 4 位、非 0 開頭(排 00xx ETF、字母尾綴特別股如 2881A、6 位權證)
 - 排 91xx TDR
 - 排 `info.csv` industry 含 ETF

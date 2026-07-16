@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-16T10:01:47.066176+00:00",
-  "generated_at_taipei": "2026-07-16 18:01:47",
+  "generated_at_utc": "2026-07-16T12:09:26.711582+00:00",
+  "generated_at_taipei": "2026-07-16 20:09:26",
   "last_trading_date": "2026-07-15",
   "datasets": {
     "price": {
@@ -19,21 +19,22 @@
       "through": "2026-07-15",
       "status": "ok",
       "cadence": "daily",
-      "scope": "watchlist"
+      "scope": "universe",
+      "coverage": 1726
     },
     "holders": {
       "through": "2026-07-09",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1102
+      "coverage": 1993
     },
     "float": {
       "through": "2026-07-09",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1102,
+      "coverage": 1993,
       "note": "locked=千張大戶 proxy(非董監)"
     },
     "revenue": {
@@ -41,7 +42,7 @@
       "status": "ok",
       "cadence": "monthly",
       "scope": "universe",
-      "coverage": 1089
+      "coverage": 1982
     }
   },
   "reference": {
@@ -55,9 +56,9 @@
     }
   },
   "universe": {
-    "count": 1208,
-    "daily_files": 1133,
-    "current": 1080
+    "count": 2131,
+    "daily_files": 2026,
+    "current": 1967
   },
   "tickers": [
     "6831",

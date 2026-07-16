@@ -176,7 +176,8 @@ def write_latest() -> None:
             "margin": dataset_status(wl_files, "margin_balance_shares", latest_day),
             # 補充(watchlist canary 定 through;coverage=universe 實際覆蓋檔數)
             "daytrade": {**freshness_status(daytrade_files, latest_day, tol_days=0),
-                         "cadence": "daily", "scope": "watchlist"},
+                         "cadence": "daily", "scope": "universe",
+                         "coverage": slice_coverage("daytrade")},
             "holders":  {**freshness_status(holders_files, latest_day, tol_days=10),
                          "cadence": "weekly", "scope": "universe",
                          "coverage": slice_coverage("holders")},

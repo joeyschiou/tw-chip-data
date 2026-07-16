@@ -172,7 +172,11 @@ def write_if_changed(path: str, new: pd.DataFrame, keys: list, volatile: tuple =
         a, b = combined, old_cmp
         if list(a.columns) == list(b.columns) and len(a) == len(b):
             drop = [c for c in volatile if c in a.columns]
-            if a.drop(columns=drop).equals(b.drop(columns=drop)):
+            # 讀回的空格是 NaN、新算的是 ""(空字串);fillna 正規化後再比,
+            # 否則「只有空欄」也會被當成有變 → 每次都重寫上千檔(churn)。
+            aa = a.drop(columns=drop).fillna("")
+            bb = b.drop(columns=drop).fillna("")
+            if aa.equals(bb):
                 return False     # 實質內容相同 → 不寫
     combined.to_csv(path, index=False, encoding="utf-8-sig")
     return True

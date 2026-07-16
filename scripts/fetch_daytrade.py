@@ -62,18 +62,23 @@ def existing_dates(stock_id: str) -> set:
     return set(pd.read_csv(path, dtype=str)["date"].astype(str).tolist())
 
 
+CANARY = "2330"      # 覆蓋 marker(流動性最高、每日必有當沖)
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser(description="當沖比(全市場一 call/日)")
+    ap = argparse.ArgumentParser(description="當沖比(全市場一 call/日,universe scope)")
     ap.add_argument("--days", type=int, default=7, help="回補近 N 天(預設 7,nightly 自癒)")
     ap.add_argument("--start", default=None, help="起始日 YYYY-MM-DD(優先於 --days)")
-    ap.add_argument("--stock", default=None, help="只抓這一檔(省略=整個 watchlist)")
+    ap.add_argument("--stock", default=None, help="只抓這一檔(省略=整個 universe)")
+    ap.add_argument("--force", action="store_true", help="忽略 canary 覆蓋,窗內每日都抓(universe 擴充回補用)")
     args = ap.parse_args()
 
     token = fc.get_token()
     fc.check_token(token)
     os.makedirs("data/daytrade", exist_ok=True)
 
-    ids = [str(args.stock)] if args.stock else fc.watchlist_ids()
+    ids = [str(args.stock)] if args.stock else fc.load_universe()
+    idset = set(ids)
     end = last_trading_date()
     start = args.start or (date.today() - timedelta(days=args.days)).isoformat()
     days = trading_days(start, end)
@@ -81,38 +86,30 @@ def main() -> None:
         print(f"⚠ {start}~{end} 無交易日,結束")
         return
 
-    # 一天一次全市場呼叫,只要「任一」watchlist 檔已有該日就算抓過(冷門股本就沒每日當沖,
-    # 用 union 而非逐檔完整度判斷,否則冷門股永遠缺 → 每晚重抓,不 idempotent)。
-    covered = set()
-    for sid in ids:
-        covered |= existing_dates(sid)
+    # 覆蓋判斷:用 canary(2330,每日必有當沖)已抓過的日子;--force 則窗內全抓(填 universe 新增股)。
+    covered = set() if args.force else (existing_dates(CANARY) if not args.stock else existing_dates(str(args.stock)))
     todo = [d for d in days if d not in covered]
     if not todo:
         print(f"⏭ 當沖近 {len(days)} 交易日已抓過,no-op")
         return
-    print(f"當沖待補 {len(todo)} 個交易日({start}~{end})")
+    print(f"當沖 universe {len(ids)} 檔;待補 {len(todo)} 個交易日({start}~{end})")
 
-    # 逐日全市場一 call,收集 watchlist 切片
-    collected = {sid: [] for sid in ids}
-    idset = set(ids)
+    # 逐日全市場一 call,收集 universe 切片
+    collected = {}
     for i, d in enumerate(todo, 1):
         raw = fc.api_data(token, DATASET, start_date=d, end_date=d, throttle=0.3)
         if raw.empty:
             print(f"   ⚠ {d} 無當沖資料,略過")
             continue
         raw["stock_id"] = raw["stock_id"].astype(str)
-        slice_ = raw[raw["stock_id"].isin(idset)]
-        for _, r in slice_.iterrows():
-            collected[str(r["stock_id"])].append({"date": d, "day_trade_volume": r["Volume"]})
-        if i % 20 == 0 or i == len(todo):
+        for _, r in raw[raw["stock_id"].isin(idset)].iterrows():
+            collected.setdefault(str(r["stock_id"]), []).append({"date": d, "day_trade_volume": r["Volume"]})
+        if i % 10 == 0 or i == len(todo):
             print(f"   {i}/{len(todo)} … {d}")
 
-    # 逐檔算比率 + append-dedup
-    written = 0
-    for sid in ids:
-        rows = collected[sid]
-        if not rows:
-            continue
+    # 逐檔算比率 + write_if_changed(免上千檔 churn)
+    changed = 0
+    for sid, rows in collected.items():
         df = pd.DataFrame(rows)
         vol_map = total_volume_map(sid)
         df["day_trade_volume"] = pd.to_numeric(df["day_trade_volume"], errors="coerce")
@@ -125,12 +122,11 @@ def main() -> None:
 
         df["day_trade_ratio"] = df.apply(ratio, axis=1)
         df = df[["date", "day_trade_volume", "day_trade_ratio"]]
-        path = f"data/daytrade/{sid}.csv"
-        merged = fc.append_dedup(path, df, keys=["date"])
-        written += 1
-        print(f"   ✅ {path}:{len(merged)} 筆,{merged['date'].min()}→{merged['date'].max()}")
+        if fc.write_if_changed(f"data/daytrade/{sid}.csv", df, keys=["date"]):
+            changed += 1
 
-    print(f"✅ 當沖完成,更新 {written} 檔")
+    used, lim = fc.token_usage(token)
+    print(f"✅ 當沖完成,更新 {changed} 檔。用量 {used}/{lim}")
 
 
 if __name__ == "__main__":

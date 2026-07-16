@@ -1,9 +1,10 @@
 # tw-chip-data — Claude 工作備忘
 
 ## 兩層(概念主軸,別搞混)
-- **廣度層 universe**=全市場普通股。日線、集保(holders)、流通(float)、月營收(revenue)覆蓋 universe。
-  - `finmind_client.load_universe()`=info.csv 普通股 ∩ 有 daily 檔者(≈1,100);普通股過濾規則見 schema.md。
-  - `config/universe.csv`=fetch_universe.py 產的「上市 twse 清單」,只給日線廣掃來源(跟上面是不同物件)。
+- **廣度層 universe**=全市場普通股(**上市 twse + 上櫃 tpex**,排興櫃/ETF/DR/特別股)。
+  日線、集保(holders)、流通(float)、月營收(revenue)、當沖(daytrade)都覆蓋 universe。
+  - `finmind_client.load_universe()`=info.csv 普通股 ∩ 有 daily 檔者(≈2,000);過濾規則見 schema.md。
+  - `config/universe.csv`=fetch_universe.py 產的清單,欄位 id,name,**market**(twse/tpex);給日線廣掃來源。
 - **深度層 watchlist**(config/watchlist.yaml,上限 100)=分點(branch)追蹤,之後由篩選器自動增補。
 
 ## 鐵則
@@ -16,7 +17,7 @@
 - 分點:fetch_branch.py / backfill.py,**只對 watchlist**(0d:全市場分點需 storage_objects,未實作)。
 - 集保/流通/月營收:fetch_holders / fetch_float / fetch_revenue,**全市場 universe**,全市場單 call(單日/單月)切片。
   - holders/float 週更;revenue 月更(當月>=11日守衛)。都 idempotent(write_if_changed,內容沒變不寫)。
-- 當沖:fetch_daytrade.py,全市場一 call/日,存 watchlist 切片(日更)。基本資料:fetch_info.py。
+- 當沖:fetch_daytrade.py,全市場一 call/日,存 **universe** 切片(日更)。基本資料:fetch_info.py。
 - 主控:
   - **daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充;週更/月更資料多半 no-op。
   - **weekly-update.yml**(台北週六 07:00 + 週二 07:00 保險):holders→float→revenue。

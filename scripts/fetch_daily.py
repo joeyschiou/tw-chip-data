@@ -121,11 +121,24 @@ def build_daily(token: str, stock_id: str) -> pd.DataFrame:
     return df
 
 
+def _usage(token: str) -> tuple:
+    try:
+        r = requests.get(USERINFO_URL, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        if r.status_code == 200:
+            j = r.json()
+            return j.get("user_count"), j.get("api_request_limit")
+    except Exception:
+        pass
+    return None, None
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="日線廣掃(universe ∪ watchlist)")
     ap.add_argument("--days", type=int, default=30, help="回抓近 N 天(預設 30)")
     ap.add_argument("--start", default=None,
                     help="直接指定起始日期 YYYY-MM-DD(優先於 --days)")
+    ap.add_argument("--new-only", action="store_true",
+                    help="只抓還沒有 daily 檔的代號(回補新增 delta 用,既有跳過 0 call)")
     args = ap.parse_args()
 
     global START_DATE
@@ -138,11 +151,21 @@ def main() -> None:
     uni_ids = load_universe_ids()
     # 聯集去重(保留順序):universe 先,watchlist 補上不在 universe 的(如上櫃 6831/7795)
     target_ids = list(dict.fromkeys(uni_ids + wl_ids))
-    print(f"日線目標:universe {len(uni_ids)} + watchlist {len(wl_ids)} → 聯集去重 {len(target_ids)} 檔")
+    if args.new_only:
+        before = len(target_ids)
+        target_ids = [s for s in target_ids if not os.path.exists(f"data/daily/{s}.csv")]
+        print(f"--new-only:{before} 檔中 {len(target_ids)} 檔尚無 daily(既有跳過)")
+    print(f"日線目標:universe {len(uni_ids)} + watchlist {len(wl_ids)} → 目標 {len(target_ids)} 檔")
     print(f"起始日期 START_DATE = {START_DATE}\n")
 
     os.makedirs("data/daily", exist_ok=True)
     for i, sid in enumerate(target_ids, 1):
+        # 用量守衛:逼近上限就停(--new-only 可續傳:已完成的有檔,下輪跳過)
+        if i % 200 == 1 and i > 1:
+            used, lim = _usage(token)
+            if used and lim and used > lim * 0.9:
+                print(f"   ⏸ 用量逼近上限({used}/{lim}),停下續傳(下輪 --new-only 補完)")
+                break
         print(f"→ [{i}/{len(target_ids)}] {sid}")
         df = build_daily(token, sid)
         if df.empty:
