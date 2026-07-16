@@ -9,18 +9,24 @@
 
 ```
 config/
-  watchlist.yaml          你手動維護的追蹤股清單
+  watchlist.yaml          你手動維護的追蹤股清單(深追:日線 + 分點 + 集保/流通/當沖)
+  universe.csv            全市場上市普通股清單(機器產生,只給日線廣掃;非追蹤清單)
+  broker_tags.csv         券商分點分類參考表(手動維護 scaffold)
   schema.md               本檔
 data/
   latest.json             清單檔 — 每次判讀第一個讀這個
   calendar.csv            交易日曆(含 seq 序號,用於營業日計數)
-  universe.csv            股本/流通(算「佔流通%」的分母)
+  info.csv                全市場個股基本資料(名稱/產業/上市櫃)
   daily/{id}.csv          追蹤股:日K + 三大法人 + 融資券
   branch/{id}.csv         追蹤股:分點日彙總
+  daytrade/{id}.csv       追蹤股:當沖量 + 當沖比(日更)
+  holders/{id}.csv        追蹤股:集保股權分散級距(週更)
+  float/{id}.csv          追蹤股:流通張數分母 — 發行/鎖倉 proxy/外部流通(週更,慢變維度)
 # 全市場逐價位分點 → 進 GitHub Releases,不進 repo(單日 ~22MB)
 ```
 
-`daily/`、`branch/`、`latest.json`、`calendar.csv`、`universe.csv` 全部由 fetch 腳本自動生成,**不要手動建**。
+`data/` 下所有檔與 `config/universe.csv` 全部由 fetch 腳本自動生成,**不要手動建**。
+`config/broker_tags.csv` 是手動維護的 scaffold(唯一例外)。
 
 ---
 
@@ -30,20 +36,31 @@ data/
 
 ```json
 {
-  "generated_at_utc": "2026-07-14T11:31:02Z",
-  "generated_at_taipei": "2026-07-14 19:31:02",
-  "last_trading_date": "2026-07-14",
+  "generated_at_utc": "2026-07-16T01:41:58Z",
+  "generated_at_taipei": "2026-07-16 09:41:58",
+  "last_trading_date": "2026-07-15",
   "datasets": {
-    "price":  {"through": "2026-07-14", "status": "ok"},
-    "branch": {"through": "2026-07-14", "status": "ok"},
-    "inst":   {"through": "2026-07-14", "status": "ok"},
-    "margin": {"through": "2026-07-11", "status": "lagging"}
+    "price":    {"through": "2026-07-15", "status": "ok"},
+    "inst":     {"through": "2026-07-15", "status": "ok"},
+    "margin":   {"through": "2026-07-15", "status": "ok"},
+    "daytrade": {"through": "2026-07-15", "status": "ok", "cadence": "daily"},
+    "holders":  {"through": "2026-07-09", "status": "ok", "cadence": "weekly"},
+    "float":    {"through": "2026-07-09", "status": "ok", "cadence": "weekly",
+                 "note": "locked=千張大戶 proxy(非董監)"}
   },
-  "tickers": ["6831", "7795", "2330", "2059"]
+  "reference": {
+    "info":        {"count": 2743, "status": "ok"},
+    "disposition": {"status": "unavailable", "note": "FinMind 無 注意/處置 dataset"}
+  },
+  "universe": {"count": 1208, "daily_files": 1133, "current": 1080},
+  "tickers": ["6831", "7795", "2330", "2059", "6278", "2327", "6510", "7769"]
 }
 ```
 
 `status`: `ok` 截到最新交易日 / `lagging` 落後 / `missing` 該抓沒抓到。
+- 核心(price/inst/margin)用 **watchlist canary**(min:最落後那檔決定整體)。
+- 補充(daytrade/holders/float)用 watchlist **max**(有抓到多新),週更資料容許 `cadence` 落後(tol 10 天)。
+- `reference.disposition` 記錄 **已知缺口**:FinMind 無 注意/處置 dataset(已實測),下游此層需另接 TWSE/櫃買來源。
 
 ---
 
@@ -85,15 +102,85 @@ data/
 | `seq` | 交易日序號 → 「處置 10 營業日後」= seq+10,免心算 |
 | `is_trading_day` | bool |
 
-## universe.csv
+## config/universe.csv
+
+全市場「上市 twse」普通股清單,`fetch_universe.py` 機器產生。**只給日線廣掃用,不是追蹤清單。**
 
 | 欄位 | 說明 |
 |---|---|
 | `id` | 代號 |
-| `name` | |
-| `shares_outstanding` | 發行股數(**股**)|
-| `locked_pct` | 鎖倉%(董監/策略,可空)|
-| `float_shares` | 外部流通 = 發行 ×(1−鎖倉);< 3,000 萬股(3萬張)= 微流通 |
+| `name` | 股名 |
+
+> 註:分母(流通張數)已獨立成 `data/float/{id}.csv`(見下),不再塞進 universe.csv。
+
+## float/{id}.csv — 流通張數分母(整套籌碼判讀的分母)
+
+慢變維度,週更(跟集保同拍)。issued/foreign 用 as-of(<= 該集保日最近一筆 shareholding)。
+下游 join 時取「as-of 最近一筆 float」。**單位一律「股」**(張 = 股 / 1000)。
+
+| 欄位 | 說明 |
+|---|---|
+| `date` | 集保快照日 |
+| `issued_shares` | 發行股數(FinMind `TaiwanStockShareholding.NumberOfSharesIssued`)|
+| `foreign_holding_shares` | 外資持股(`ForeignInvestmentShares`)|
+| `big_holder_over400_shares` | 集保 >400,000 股(>400 張)四級距總和 |
+| `big_holder_over1000_shares` | 集保 `more than 1,000,001`(>1000 張大戶)|
+| `locked_shares` | **鎖倉 proxy = `big_holder_over1000_shares`**(見下誠實註記)|
+| `free_float_shares` | 外部流通 = `issued_shares − locked_shares` |
+| `locked_pct` | `locked_shares / issued_shares` |
+| `source` `fetched_at` | |
+
+**流通張數算式**:`free_float_lots = free_float_shares / 1000`;
+`佔流通% = 分點累積淨買股數 / free_float_shares`(股對股,或張對張,同單位即可)。
+
+**鎖倉 proxy 的誠實註記(重要)**:FinMind **沒有**董監持股 dataset
+(已實測 `TaiwanStockBoardMemberShareholding`/`ManagerInsiders`/`InsiderHolding`/
+`DirectorSupervisorShareholding` 等 6 個候選名稱皆 HTTP 422 不存在)。
+因此 `locked_shares` 用「集保千張大戶持股」當 proxy,**不是真正的董監鎖倉**:
+- 千張大戶會進出,不是全鎖;對 2330 這種官股/ADR 大量持有者會高估鎖倉(→ 低估 free float)。
+- 需要精確董監鎖倉時,`free_float` 只能當近似上界看待,別當精確分母。
+- 想放寬/收緊 proxy:改用 `big_holder_over400_shares` 當 locked 即可(欄位已備)。
+
+## holders/{id}.csv — 集保股權分散(週更)
+
+| 欄位 | 說明 |
+|---|---|
+| `date` | 集保結算日(週更)|
+| `level` | 持股級距(FinMind 原字串,例 `400,001-600,000`、`more than 1,000,001`、`total`)|
+| `people` | 該級距人數 |
+| `holding_shares` | 該級距持股「股數」(`total` 級距 == 發行股數)|
+| `percent` | 該級距佔比 % |
+
+## daytrade/{id}.csv — 當沖(日更)
+
+| 欄位 | 說明 |
+|---|---|
+| `date` | 交易日 |
+| `day_trade_volume` | 當沖成交股數(FinMind `TaiwanStockDayTrading.Volume`,**股**)|
+| `day_trade_ratio` | `day_trade_volume / 當日總成交股數`(近似;總量取自 daily/{id}.csv;缺總量留空)|
+
+> 冷門股本就沒有每日當沖資料,缺列屬正常(left-join 誠實,不補 0)。
+
+## info.csv — 全市場個股基本資料
+
+| 欄位 | 說明 |
+|---|---|
+| `stock_id` | 代號 |
+| `name` | 股名 |
+| `industry` | 產業別(FinMind `industry_category`)|
+| `type` | `twse`=上市 / `tpex`=上櫃 |
+
+## config/broker_tags.csv — 券商分點分類參考表(手動維護 scaffold)
+
+`broker_key` 對得上 `branch/{id}.csv` 的 `broker_id`。欄位:`broker_key, broker_name, tag, note`;
+`tag` 建議值 `隔日沖 / 外資 / 大戶具名 / 其他`。**含 `#` 註解列,讀取用 `pandas.read_csv(comment='#')`。**
+隔日沖名單需人工維護,勿臆造。
+
+## 已知缺口 — 注意/處置
+
+FinMind **無** 注意股/處置股 dataset(已實測)。本管線保持 **FinMind-only**,
+`latest.json.reference.disposition.status = "unavailable"` 記錄此缺口;
+下游若需此層,須另接 TWSE / 櫃買公告來源(另案,非本管線)。
 
 ---
 

@@ -156,16 +156,42 @@ def _flush_branch(path: str, batches: list) -> None:
     new.to_csv(path, index=False, encoding="utf-8-sig")
 
 
+def _run_fetcher(script: str, start: str, stock: str, extra: list = None) -> None:
+    """把新 dataset 的回補委派給對應 fetcher(它們本身 resumable+throttled+dedup)。"""
+    import subprocess
+    cmd = [sys.executable, os.path.join("scripts", script), "--start", start]
+    if stock:
+        cmd += ["--stock", str(stock)]
+    if extra:
+        cmd += extra
+    print(f"\n=== 回補 {script}(start={start}"
+          f"{', stock=' + str(stock) if stock else ''})===")
+    r = subprocess.run(cmd)
+    if r.returncode != 0:
+        print(f"⚠ {script} 回補失敗(exit {r.returncode}),續跑其餘。")
+
+
+# 分點資料起點固定 2021-06-30(早於此無資料);集保/當沖有數年歷史,起點由 --days 決定。
+BRANCH_MIN_START = "2021-06-30"
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser(description="歷史回填(daily + 分點)")
+    ap = argparse.ArgumentParser(description="歷史回填(daily / 分點 / 集保 / 當沖 / 流通)")
     ap.add_argument("--stock", default=None,
                     help="只回填這一檔代號(省略則回填整個 watchlist)")
     ap.add_argument("--days", type=int, default=365,
                     help="回填近 N 天(預設 365)")
+    ap.add_argument("--datasets", default="daily,branch",
+                    help="要回填哪些(逗號分隔):daily,branch,holders,daytrade,float")
     args = ap.parse_args()
 
     global BACKFILL_START
     BACKFILL_START = (date.today() - timedelta(days=args.days)).isoformat()
+    sets = {s.strip() for s in args.datasets.split(",") if s.strip()}
+    valid = {"daily", "branch", "holders", "daytrade", "float"}
+    bad = sets - valid
+    if bad:
+        sys.exit(f"❌ 未知 dataset:{bad}。可選:{sorted(valid)}")
 
     token = get_token()
     check_token(token)
@@ -175,18 +201,33 @@ def main() -> None:
     if not tickers:
         sys.exit(f"❌ watchlist 裡找不到 {args.stock}。請先跑 "
                  f"python scripts/ensure_watchlist.py --stock {args.stock} --market <twse|tpex>。")
-    days = trading_days(BACKFILL_START)
-    print(f"\n回填範圍:{BACKFILL_START} → 今天,共 {len(days)} 個交易日")
-    print(f"預估分點請求:約 {len(tickers) * len(days)} 次(扣除已抓的會更少)\n")
 
-    for t in tickers:
-        sid = str(t["id"])
-        print(f"→ {sid} {t.get('note','')}")
-        backfill_daily(token, sid)
-        backfill_branch(token, sid, days)
+    # --- 核心:daily / 分點(逐檔,沿用既有邏輯)---
+    if {"daily", "branch"} & sets:
+        days = trading_days(BACKFILL_START)
+        print(f"\n回填範圍:{BACKFILL_START} → 今天,共 {len(days)} 個交易日")
+        if "branch" in sets:
+            print(f"預估分點請求:約 {len(tickers) * len(days)} 次(扣除已抓的會更少)")
         print()
+        for t in tickers:
+            sid = str(t["id"])
+            print(f"→ {sid} {t.get('note','')}")
+            if "daily" in sets:
+                backfill_daily(token, sid)
+            if "branch" in sets:
+                backfill_branch(token, sid, days)
+            print()
 
-    print("✅ 全部回填完成。記得 git push,並重跑 update.py 更新 latest.json。")
+    # --- 新 dataset:委派 fetcher(resumable+throttled+dedup)---
+    # 順序:holders 先於 float(float 需 holders 歷史);holders 回補需 --force 蓋過新鮮度守門。
+    if "holders" in sets:
+        _run_fetcher("fetch_holders.py", BACKFILL_START, args.stock, extra=["--force"])
+    if "daytrade" in sets:
+        _run_fetcher("fetch_daytrade.py", BACKFILL_START, args.stock)
+    if "float" in sets:
+        _run_fetcher("fetch_float.py", BACKFILL_START, args.stock)
+
+    print("✅ 全部回填完成。記得 git push,並重跑 update.py --manifest-only 更新 latest.json。")
 
 
 if __name__ == "__main__":

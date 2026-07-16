@@ -1,0 +1,10 @@
+﻿# broker_tags.csv — 券商分點分類參考表(scaffold,使用者手動維護)
+# broker_key 對得上 data/branch/{id}.csv 的 broker_id 欄(主鍵,券商改名代碼不變)。
+# tag 建議值:隔日沖 / 外資 / 大戶具名 / 其他
+# 下面 3 列為「真實分點」範例;外資分點 tag 屬事實,隔日沖等其餘分類請自行確認。
+# TODO: 使用者用手上完整名單自行 seed —— 隔日沖名單尤其需人工維護,勿臆造。
+# 讀取時請用 pandas.read_csv('config/broker_tags.csv', comment='#')。
+broker_key,broker_name,tag,note
+1440,美林,外資,範例:外資分點
+1470,台灣摩根,外資,範例:外資分點
+9200,凱基,其他,範例:請自行分類(此列僅示範格式)
