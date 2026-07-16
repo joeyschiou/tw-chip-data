@@ -1,7 +1,7 @@
 {
-  "generated_at_utc": "2026-07-16T01:39:01.080839+00:00",
-  "generated_at_taipei": "2026-07-16 09:39:01",
-  "last_trading_date": "2026-07-14",
+  "generated_at_utc": "2026-07-16T01:41:58.056078+00:00",
+  "generated_at_taipei": "2026-07-16 09:41:58",
+  "last_trading_date": "2026-07-15",
   "datasets": {
     "price": {
       "through": "2026-07-15",
@@ -12,7 +12,7 @@
       "status": "ok"
     },
     "margin": {
-      "through": "2026-07-14",
+      "through": "2026-07-15",
       "status": "ok"
     }
   },
