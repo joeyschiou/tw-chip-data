@@ -1,25 +1,25 @@
 {
-  "generated_at_utc": "2026-07-17T07:24:56.563839+00:00",
-  "generated_at_taipei": "2026-07-17 15:24:56",
-  "last_trading_date": "2026-07-16",
+  "generated_at_utc": "2026-07-17T15:36:15.614835+00:00",
+  "generated_at_taipei": "2026-07-17 23:36:15",
+  "last_trading_date": "2026-07-17",
   "datasets": {
     "price": {
       "through": "2026-07-16",
-      "status": "ok",
+      "status": "lagging",
       "earliest": "2015-01-05",
       "coverage": 2069,
       "scope": "universe"
     },
     "inst": {
       "through": "2026-07-16",
-      "status": "ok"
+      "status": "lagging"
     },
     "margin": {
       "through": "2026-07-16",
-      "status": "ok"
+      "status": "lagging"
     },
     "daytrade": {
-      "through": "2026-07-16",
+      "through": "2026-07-17",
       "status": "ok",
       "cadence": "daily",
       "scope": "universe",
@@ -62,7 +62,7 @@
   "universe": {
     "count": 2131,
     "daily_files": 2069,
-    "current": 1967,
+    "current": 1317,
     "earliest": "2015-01-05"
   },
   "tickers": [
