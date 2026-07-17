@@ -1,0 +1,25 @@
+{
+  "events": 1000,
+  "events_2022": 500,
+  "events_other": 500,
+  "stocks": 731,
+  "date_range": [
+    "2021-06-30",
+    "2026-07-17"
+  ],
+  "stock_day_pairs_total": 67741,
+  "stocks_done": 731,
+  "pairs_done": 67741,
+  "status": "complete",
+  "seed": 42,
+  "definition": {
+    "high_window": 60,
+    "yoy_min": 0.15,
+    "min_gap_trading_days": 20,
+    "window": [
+      -45,
+      25
+    ],
+    "revenue_asof": "月營收 M 於次月 11 日才視為已公布(無 lookahead)"
+  }
+}
