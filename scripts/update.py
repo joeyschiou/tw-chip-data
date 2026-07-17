@@ -111,14 +111,21 @@ def universe_report(latest_day: str) -> dict:
         count = len(pd.read_csv("config/universe.csv", dtype=str))
     daily_files = glob.glob("data/daily/*.csv")
     current = 0
+    earliest = None
     for f in daily_files:
         try:
             d = pd.read_csv(f, usecols=["date"], dtype=str)
         except Exception:
             continue
-        if len(d) and str(d["date"].max()) >= latest_day:
+        if not len(d):
+            continue
+        if str(d["date"].max()) >= latest_day:
             current += 1
-    return {"count": count, "daily_files": len(daily_files), "current": current}
+        mn = str(d["date"].min())
+        if earliest is None or mn < earliest:
+            earliest = mn      # 全 universe 最早日期(= 回補深度下限;個股仍以上市日為準)
+    return {"count": count, "daily_files": len(daily_files), "current": current,
+            "earliest": earliest}
 
 
 def slice_coverage(subdir: str) -> int:
@@ -129,7 +136,7 @@ def slice_coverage(subdir: str) -> int:
 def revenue_status(files: list) -> dict:
     """月營收 through=watchlist 最新 revenue_month;status 對比「當月守衛」的期望月。"""
     files = [f for f in files if os.path.exists(f)]
-    months = []
+    months, earliest = [], None
     for f in files:
         try:
             d = pd.read_csv(f, usecols=["revenue_month"], dtype=str)
@@ -137,6 +144,9 @@ def revenue_status(files: list) -> dict:
             continue
         if len(d):
             months.append(str(d["revenue_month"].max()))
+            mn = str(d["revenue_month"].min())
+            if earliest is None or mn < earliest:
+                earliest = mn
     if not months:
         return {"through": None, "status": "missing"}
     through = max(months)
@@ -145,7 +155,8 @@ def revenue_status(files: list) -> dict:
     cur = pd.Period(f"{t.year}-{t.month:02d}", freq="M")
     exp_p = (cur - 1) if t.day >= 11 else (cur - 2)     # 當月 >=11 日才有上月營收
     exp = f"{exp_p.year}-{exp_p.month:02d}"
-    return {"through": through, "status": "ok" if through >= exp else "lagging"}
+    return {"through": through, "earliest": earliest,
+            "status": "ok" if through >= exp else "lagging"}
 
 
 def write_latest() -> None:
@@ -164,6 +175,7 @@ def write_latest() -> None:
     float_files = [f"data/float/{sid}.csv" for sid in tickers]
 
     info_count = len(pd.read_csv("data/info.csv", dtype=str)) if os.path.exists("data/info.csv") else 0
+    uni = universe_report(latest_day)      # 內含 daily 的 earliest / coverage
 
     manifest = {
         "generated_at_utc": now_tpe.tz_convert("UTC").isoformat(),
@@ -171,7 +183,10 @@ def write_latest() -> None:
         "last_trading_date": latest_day,
         "datasets": {
             # 核心(watchlist canary:min = 最落後的那檔)
-            "price":  dataset_status(wl_files, "close", latest_day),
+            # price 另附 earliest/coverage:回補深度(全 universe 最早日期)與覆蓋檔數
+            "price":  {**dataset_status(wl_files, "close", latest_day),
+                       "earliest": uni["earliest"], "coverage": uni["daily_files"],
+                       "scope": "universe"},
             "inst":   dataset_status(wl_files, "foreign_net_shares", latest_day),
             "margin": dataset_status(wl_files, "margin_balance_shares", latest_day),
             # 補充(watchlist canary 定 through;coverage=universe 實際覆蓋檔數)
@@ -195,7 +210,7 @@ def write_latest() -> None:
             "disposition": {"status": "unavailable",
                             "note": "FinMind 無 注意/處置 dataset;下游需另接 TWSE/櫃買來源,本管線保持 FinMind-only"},
         },
-        "universe": universe_report(latest_day),
+        "universe": uni,
         "tickers": tickers,
     }
 

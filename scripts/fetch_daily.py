@@ -139,6 +139,8 @@ def main() -> None:
                     help="直接指定起始日期 YYYY-MM-DD(優先於 --days)")
     ap.add_argument("--new-only", action="store_true",
                     help="只抓還沒有 daily 檔的代號(回補新增 delta 用,既有跳過 0 call)")
+    ap.add_argument("--checkpoint", default=None,
+                    help="續傳 checkpoint 檔:記錄已完成代號,重跑自動跳過(大回補用)")
     args = ap.parse_args()
 
     global START_DATE
@@ -155,20 +157,39 @@ def main() -> None:
         before = len(target_ids)
         target_ids = [s for s in target_ids if not os.path.exists(f"data/daily/{s}.csv")]
         print(f"--new-only:{before} 檔中 {len(target_ids)} 檔尚無 daily(既有跳過)")
+    # checkpoint 續傳:跳過已完成的代號(大回補中途被用量守衛停下時不用從頭再抓)
+    if args.checkpoint:
+        done = set()
+        if os.path.exists(args.checkpoint):
+            with open(args.checkpoint, encoding="utf-8") as f:
+                done = {line.strip() for line in f if line.strip()}
+        before = len(target_ids)
+        target_ids = [s for s in target_ids if s not in done]
+        print(f"checkpoint({args.checkpoint}):已完成 {len(done)} 檔,{before} → 剩 {len(target_ids)} 檔待抓")
     print(f"日線目標:universe {len(uni_ids)} + watchlist {len(wl_ids)} → 目標 {len(target_ids)} 檔")
     print(f"起始日期 START_DATE = {START_DATE}\n")
 
     os.makedirs("data/daily", exist_ok=True)
+
+    def _mark_done(sid: str) -> None:
+        """記進 checkpoint(含『無資料』的股,否則下輪會一直重試)。"""
+        if args.checkpoint:
+            with open(args.checkpoint, "a", encoding="utf-8") as f:
+                f.write(sid + "\n")
+
     for i, sid in enumerate(target_ids, 1):
-        # 用量守衛:逼近上限就停(--new-only 可續傳:已完成的有檔,下輪跳過)
-        if i % 200 == 1 and i > 1:
+        # 用量守衛:逼近上限就停(續傳靠 --checkpoint / --new-only)
+        # 每 50 檔查一次:一檔 3 個 call,兩次檢查間最多 150 call,留足餘裕不會衝破 6000。
+        if i % 50 == 1 and i > 1:
             used, lim = _usage(token)
             if used and lim and used > lim * 0.9:
-                print(f"   ⏸ 用量逼近上限({used}/{lim}),停下續傳(下輪 --new-only 補完)")
+                print(f"   ⏸ 用量逼近上限({used}/{lim}),停下續傳"
+                      f"(重跑同一道指令即可從 checkpoint 接續)")
                 break
         print(f"→ [{i}/{len(target_ids)}] {sid}")
         df = build_daily(token, sid)
         if df.empty:
+            _mark_done(sid)
             time.sleep(0.15)
             continue
         # 驗收:OHLC 內部一致、日期唯一遞增
@@ -183,6 +204,7 @@ def main() -> None:
             df = pd.concat([old, df.astype(str)], ignore_index=True).drop_duplicates("date", keep="last").sort_values("date")
         df.to_csv(out, index=False, encoding="utf-8-sig")
         print(f"   ✅ {out}:{len(df)} 筆,{df.date.iloc[0]}→{df.date.iloc[-1]}")
+        _mark_done(sid)
         time.sleep(0.15)
 
 
