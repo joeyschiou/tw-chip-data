@@ -1,0 +1,15 @@
+﻿date,market,MarginPreviousDayBalance,MarginBuy,MarginSell,MarginCashRedemption,MarginCurrentDayBalance,MarginNextDayQuota,SecuritiesFirmLoanPreviousDayBalance,SecuritiesFirmLoanBuy,SecuritiesFirmLoanSell,SecuritiesFirmLoanCashRedemption,SecuritiesFirmLoanReplacement,SecuritiesFirmLoanCurrentDayBalance,SecuritiesFirmLoanNextDayQuota,UnrestrictedLoanPreviousDayBalance,UnrestrictedLoanBuy,UnrestrictedLoanSell,UnrestrictedLoanCashRedemption,UnrestrictedLoanReplacement,UnrestrictedLoanCurrentDayBalance,UnrestrictedLoanNextDayQuota,SecuritiesFinanceSecuredLoanPreviousDayBalance,SecuritiesFinanceSecuredLoanBuy,SecuritiesFinanceSecuredLoanSell,SecuritiesFinanceSecuredLoanCashRedemption,SecuritiesFinanceSecuredLoanReplacement,SecuritiesFinanceSecuredLoanCurrentDayBalance,SecuritiesFinanceSecuredLoanNextDayQuota,SettlementMarginPreviousDayBalance,SettlementMarginBuy,SettlementMarginSell,SettlementMarginCashRedemption,SettlementMarginReplacement,SettlementMarginCurrentDayBalance,SettlementMarginNextDayQuota
+2026-06-29,櫃檯買賣中心,0,0,0,0,0,8281,0,0,0,0,0,0,1656,35,0,0,0,0,35,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-06-30,櫃檯買賣中心,0,3,0,0,3,8281,0,0,0,0,0,0,1656,35,2,0,0,0,37,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-01,櫃檯買賣中心,3,8,0,0,11,8281,0,0,0,0,0,0,1656,37,0,0,0,0,37,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-02,櫃檯買賣中心,11,3,2,0,12,8281,0,1,0,0,0,1,1656,37,0,0,1,0,36,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-03,櫃檯買賣中心,12,5,0,0,17,8281,1,0,1,0,0,0,1656,36,8,0,0,0,44,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-06,櫃檯買賣中心,17,12,3,0,26,8281,0,0,0,0,0,0,1656,44,0,0,0,0,44,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-07,櫃檯買賣中心,26,2,0,0,28,8281,0,0,0,0,0,0,1656,44,2,0,0,0,46,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-08,櫃檯買賣中心,28,8,1,0,35,8281,0,0,0,0,0,0,1656,46,0,8,0,0,38,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-09,櫃檯買賣中心,35,0,4,0,31,8281,0,0,0,0,0,0,1656,38,0,0,0,0,38,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-13,櫃檯買賣中心,31,1,5,0,27,8281,0,0,0,0,0,0,1656,38,0,0,0,0,38,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-14,櫃檯買賣中心,27,0,2,0,25,8281,0,0,0,0,0,0,1656,38,0,0,0,0,38,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-15,櫃檯買賣中心,25,0,0,0,25,8281,0,0,0,0,0,0,1656,38,25,0,0,0,63,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-16,櫃檯買賣中心,25,1,0,0,26,8281,0,2,0,0,0,2,1656,63,0,0,0,0,63,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656
+2026-07-17,櫃檯買賣中心,26,0,2,0,24,8281,2,0,0,0,0,2,1656,63,31,0,0,0,94,3313,0,0,0,0,0,0,0,0,0,0,0,0,0,1656

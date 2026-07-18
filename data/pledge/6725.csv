@@ -1,0 +1,11 @@
+﻿date,market,MarginPreviousDayBalance,MarginBuy,MarginSell,MarginCashRedemption,MarginCurrentDayBalance,MarginNextDayQuota,SecuritiesFirmLoanPreviousDayBalance,SecuritiesFirmLoanBuy,SecuritiesFirmLoanSell,SecuritiesFirmLoanCashRedemption,SecuritiesFirmLoanReplacement,SecuritiesFirmLoanCurrentDayBalance,SecuritiesFirmLoanNextDayQuota,UnrestrictedLoanPreviousDayBalance,UnrestrictedLoanBuy,UnrestrictedLoanSell,UnrestrictedLoanCashRedemption,UnrestrictedLoanReplacement,UnrestrictedLoanCurrentDayBalance,UnrestrictedLoanNextDayQuota,SecuritiesFinanceSecuredLoanPreviousDayBalance,SecuritiesFinanceSecuredLoanBuy,SecuritiesFinanceSecuredLoanSell,SecuritiesFinanceSecuredLoanCashRedemption,SecuritiesFinanceSecuredLoanReplacement,SecuritiesFinanceSecuredLoanCurrentDayBalance,SecuritiesFinanceSecuredLoanNextDayQuota,SettlementMarginPreviousDayBalance,SettlementMarginBuy,SettlementMarginSell,SettlementMarginCashRedemption,SettlementMarginReplacement,SettlementMarginCurrentDayBalance,SettlementMarginNextDayQuota
+2026-07-03,櫃檯買賣中心,0,0,0,0,0,9282,0,0,0,0,0,0,1856,11,0,0,0,0,11,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-06,櫃檯買賣中心,0,8,0,0,8,9282,0,0,0,0,0,0,1856,11,1,0,0,0,12,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-07,櫃檯買賣中心,8,8,0,0,16,9282,0,0,0,0,0,0,1856,12,2,0,0,0,14,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-08,櫃檯買賣中心,16,0,0,0,16,9282,0,0,0,0,0,0,1856,14,0,0,0,0,14,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-09,櫃檯買賣中心,16,6,0,0,22,9282,0,0,0,0,0,0,1856,14,0,0,0,1,13,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-13,櫃檯買賣中心,22,67,4,0,85,9282,0,0,0,0,0,0,1856,13,0,0,0,0,13,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-14,櫃檯買賣中心,85,56,3,0,138,9282,0,0,0,0,0,0,1856,13,1,0,0,0,14,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-15,櫃檯買賣中心,138,28,1,0,165,9282,0,0,0,0,0,0,1856,14,0,0,0,0,14,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-16,櫃檯買賣中心,165,21,4,0,182,9282,0,0,0,0,0,0,1856,14,0,0,0,0,14,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856
+2026-07-17,櫃檯買賣中心,182,45,16,0,211,9282,0,0,0,0,0,0,1856,14,0,0,0,0,14,3713,0,0,0,0,0,0,0,0,0,0,0,0,0,1856

@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-18T10:20:41.995115+00:00",
-  "generated_at_taipei": "2026-07-18 18:20:41",
+  "generated_at_utc": "2026-07-18T14:27:57.834026+00:00",
+  "generated_at_taipei": "2026-07-18 22:27:57",
   "last_trading_date": "2026-07-17",
   "datasets": {
     "price": {
@@ -83,14 +83,14 @@
     "pledge": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1,
+      "coverage": 1953,
       "through": "2026-07-17",
       "note": "借貸擔保品 2015+"
     },
     "short_suspension": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1,
+      "coverage": 1903,
       "note": "停券/回補日 2015+"
     },
     "business_indicator": {
@@ -136,16 +136,16 @@
     },
     "cb_daily": {
       "cadence": "weekly",
-      "coverage": 0
+      "coverage": 1374
     },
     "cb_institutional": {
       "cadence": "weekly",
-      "coverage": 0
+      "coverage": 1339
     },
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 0,
+      "coverage": 8,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }

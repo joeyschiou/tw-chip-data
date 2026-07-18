@@ -1,0 +1,9 @@
+﻿date,Foreign_Investor_Buy,Foreign_Investor_Sell,Foreign_Investor_Overbuy,Investment_Trust_Buy,Investment_Trust_Sell,Investment_Trust_Overbuy,Dealer_self_Buy,Dealer_self_Sell,Dealer_self_Overbuy,Total_Overbuy,cb_id,cb_name
+2015-01-12,0,0,0,0,0,0,9,9,0,0,32842,太普二
+2015-01-13,0,0,0,0,0,0,10,10,0,0,32842,太普二
+2015-01-16,0,0,0,0,0,0,10,10,0,0,32842,太普二
+2015-01-21,0,0,0,0,0,0,14,14,0,0,32842,太普二
+2015-01-22,0,0,0,0,0,0,0,5,-5,-5,32842,太普二
+2015-02-02,0,0,0,0,0,0,5,0,5,5,32842,太普二
+2015-02-12,0,0,0,0,0,0,0,10,-10,-10,32842,太普二
+2015-04-13,0,0,0,0,0,0,40,24,16,16,32842,太普二

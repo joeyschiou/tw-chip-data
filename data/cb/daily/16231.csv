@@ -1,0 +1,3 @@
+﻿date,cb_id,cb_name,transaction_type,close,change,open,max,min,no_of_transactions,unit,trading_value,avg_price,next_ref_price,next_max_limit,next_min_limit
+2026-07-16,16231,大東電一,等價,110.55,10.05,110.55,110.55,110.55,57,240,26532000,110.55,110.55,121.6,99.5
+2026-07-17,16231,大東電一,等價,107.65,-2.9,105.5,108.1,105.5,262,2817,300208000,106.57,107.65,118.4,96.9

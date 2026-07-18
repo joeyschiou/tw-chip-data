@@ -1,0 +1,9 @@
+﻿date,Foreign_Investor_Buy,Foreign_Investor_Sell,Foreign_Investor_Overbuy,Investment_Trust_Buy,Investment_Trust_Sell,Investment_Trust_Overbuy,Dealer_self_Buy,Dealer_self_Sell,Dealer_self_Overbuy,Total_Overbuy,cb_id,cb_name
+2015-05-18,0,0,0,0,0,0,19,19,0,0,20224,聚亨四
+2015-06-02,0,0,0,0,0,0,1,1,0,0,20224,聚亨四
+2015-07-27,0,0,0,0,0,0,0,1,-1,-1,20224,聚亨四
+2015-07-29,0,0,0,0,0,0,0,10,-10,-10,20224,聚亨四
+2015-08-31,0,0,0,0,0,0,1,0,1,1,20224,聚亨四
+2015-09-15,0,0,0,0,0,0,1,0,1,1,20224,聚亨四
+2015-09-16,0,0,0,0,0,0,7,0,7,7,20224,聚亨四
+2015-11-02,0,0,0,0,0,0,0,10,-10,-10,20224,聚亨四
