@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 .backfill_checkpoint*
+.baseline_stratlayer.json
