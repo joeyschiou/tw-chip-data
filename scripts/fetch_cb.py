@@ -15,6 +15,7 @@ checkpoint 續傳(daily/institutional 各一)+ 用量守衛。utf-8-sig、append
 需要:FINMIND_TOKEN
 """
 import os
+import time
 import argparse
 import pandas as pd
 import finmind_client as fc
@@ -56,7 +57,7 @@ def do_overview(token):
                                keys=["cb_id", "date"])
 
 
-def do_per_cb(token, dataset, subdir, key):
+def do_per_cb(token, dataset, subdir, key, wait_quota=False):
     d0 = os.path.join(OUT, subdir)
     os.makedirs(d0, exist_ok=True)
     ckpt = f".backfill_checkpoint_cb_{subdir}.txt"
@@ -72,7 +73,12 @@ def do_per_cb(token, dataset, subdir, key):
         if i % GUARD_EVERY == 1 and i > 1:
             u, lim = fc.token_usage(token)
             if u and lim and u > lim * STOP_RATIO:
-                print(f"   ⏸ 用量 {u}/{lim},停下續傳"); break
+                if wait_quota:
+                    while u and lim and u > lim * 0.6:
+                        print(f"   ⏳ 用量 {u}/{lim},等額度… sleep 5m", flush=True)
+                        time.sleep(300); u, lim = fc.token_usage(token)
+                else:
+                    print(f"   ⏸ 用量 {u}/{lim},停下續傳"); break
         d = fc.api_data(token, dataset, data_id=cid, start_date=START)
         calls += 1
         if not d.empty:
@@ -91,6 +97,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tables", default="info,overview",
                     help="info,overview,daily,institutional")
+    ap.add_argument("--wait-quota", action="store_true", help="逼近上限 sleep 等額度續跑(workflow 用)")
     args = ap.parse_args()
     token = fc.get_token()
     fc.check_token(token)
@@ -100,10 +107,10 @@ def main():
     if "overview" in tabs:
         print("  overview:", do_overview(token))
     if "daily" in tabs:
-        do_per_cb(token, "TaiwanStockConvertibleBondDaily", "daily", ["date"])
+        do_per_cb(token, "TaiwanStockConvertibleBondDaily", "daily", ["date"], args.wait_quota)
     if "institutional" in tabs:
         do_per_cb(token, "TaiwanStockConvertibleBondInstitutionalInvestors",
-                  "institutional", ["date"])
+                  "institutional", ["date"], args.wait_quota)
     u, lim = fc.token_usage(token)
     print(f"✅ cb 完成。用量 {u}/{lim}")
 

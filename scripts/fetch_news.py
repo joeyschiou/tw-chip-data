@@ -25,16 +25,30 @@ def trading_days(start: str) -> list:
     return sorted(x for x in d["date"].astype(str).unique() if x >= start)
 
 
+def latest_news_date() -> str:
+    """已存新聞的最新日期(nightly 從這裡續,不靠 gitignored checkpoint;Actions 才會增量)。"""
+    best = ""
+    if os.path.isdir(OUT):
+        for f in os.listdir(OUT):
+            if f.endswith(".csv"):
+                d = pd.read_csv(f"{OUT}/{f}", usecols=["date"], dtype=str)
+                if len(d):
+                    best = max(best, str(d["date"].max())[:10])
+    return best
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--start", default="2024-01-01", help="0b:2021 無資料,約 2024+ 才有")
+    ap.add_argument("--start", default=None,
+                    help="起始日;省略=從已存最新日期續(首次落到 2024-01-01)。0b:2021 無資料")
     args = ap.parse_args()
     token = fc.get_token()
     fc.check_token(token)
     os.makedirs(OUT, exist_ok=True)
 
     ids = fc.watchlist_ids()          # **只 watchlist 8 檔**
-    days = trading_days(args.start)
+    start = args.start or (latest_news_date() or "2024-01-01")
+    days = trading_days(start)
     done = set()
     if os.path.exists(CKPT):
         with open(CKPT, encoding="utf-8") as f:

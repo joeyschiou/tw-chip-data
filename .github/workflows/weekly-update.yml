@@ -44,6 +44,24 @@ jobs:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/fetch_revenue.py
 
+      # 策略資料層:重 per-id(每檔 ~2000 call);--wait-quota 讓單一 job 內等額度跑完
+      # (Actions job 上限 6hr,足夠)。放 weekly 而非 nightly 以免撐爆每晚額度。
+      - name: Adj price (還原股價,universe)
+        env: { FINMIND_TOKEN: "${{ secrets.FINMIND_TOKEN }}" }
+        run: python scripts/fetch_stockseries.py --dataset adj --wait-quota
+      - name: Short balances (融券/借券餘額,universe)
+        env: { FINMIND_TOKEN: "${{ secrets.FINMIND_TOKEN }}" }
+        run: python scripts/fetch_stockseries.py --dataset short --wait-quota
+      - name: Pledge (借貸擔保品,universe)
+        env: { FINMIND_TOKEN: "${{ secrets.FINMIND_TOKEN }}" }
+        run: python scripts/fetch_stockseries.py --dataset pledge --wait-quota
+      - name: Short suspension (停券/回補日,universe)
+        env: { FINMIND_TOKEN: "${{ secrets.FINMIND_TOKEN }}" }
+        run: python scripts/fetch_stockseries.py --dataset shortsusp --wait-quota
+      - name: CB daily + institutional (per-cb)
+        env: { FINMIND_TOKEN: "${{ secrets.FINMIND_TOKEN }}" }
+        run: python scripts/fetch_cb.py --tables daily,institutional --wait-quota
+
       - name: Refresh manifest (latest.json)
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}

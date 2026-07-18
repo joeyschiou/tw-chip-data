@@ -28,6 +28,13 @@
   - **定向分點回補(農場能力)**:`backfill.py --tickers "6831,7795" --lookback-days 60 --datasets branch`。
 - 判讀先讀 data/latest.json。
 
+## 策略資料層(13 dataset,見 schema.md 表)
+- 還原價/借券/質押/停券(per-id universe)+ CB daily/institutional(per-cb)→ **weekly**(每檔 ~2000 call,進 nightly 會爆 6000/hr;fetcher 有 `--wait-quota`)。
+- 總經小表(vix/維持率/期貨法人)、慢變全表(處置/下市/產業鏈)、CB info/overview、news(watchlist-8 自增量)→ nightly(便宜)。
+- fetcher:fetch_macro / fetch_regulatory / fetch_stockseries(通用逐檔 adj,short,pledge,shortsusp)/ fetch_cb / fetch_news。
+- 深度限制(Step 0 實測):VIX 僅 2026-03 起、news 約 2024+;已標 latest.json.strategy_layer.status=shallow。
+- 倖存者偏誤:下市股用 TaiwanStockPrice 仍可補歷史(delisting 表當清單);本層未建,已記可行。
+
 ## 籌碼分母(重要)
 - 「佔流通%」的分母在 data/float/{id}.csv 的 free_float_shares(單位:股;張=股/1000)。
 - 鎖倉是 proxy(千張大戶,非董監;FinMind 無董監 dataset)。精確董監鎖倉須另接來源。

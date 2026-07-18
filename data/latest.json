@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-17T23:56:10.518737+00:00",
-  "generated_at_taipei": "2026-07-18 07:56:10",
+  "generated_at_utc": "2026-07-18T10:20:41.995115+00:00",
+  "generated_at_taipei": "2026-07-18 18:20:41",
   "last_trading_date": "2026-07-17",
   "datasets": {
     "price": {
@@ -64,6 +64,91 @@
     "daily_files": 2069,
     "current": 1317,
     "earliest": "2015-01-05"
+  },
+  "strategy_layer": {
+    "daily_adj": {
+      "cadence": "weekly",
+      "scope": "universe",
+      "coverage": 2069,
+      "through": "2026-07-17",
+      "note": "還原股價 2015+"
+    },
+    "short": {
+      "cadence": "weekly",
+      "scope": "universe",
+      "coverage": 1976,
+      "through": "2026-07-17",
+      "note": "融券+借券餘額 2015+"
+    },
+    "pledge": {
+      "cadence": "weekly",
+      "scope": "universe",
+      "coverage": 1,
+      "through": "2026-07-17",
+      "note": "借貸擔保品 2015+"
+    },
+    "short_suspension": {
+      "cadence": "weekly",
+      "scope": "universe",
+      "coverage": 1,
+      "note": "停券/回補日 2015+"
+    },
+    "business_indicator": {
+      "cadence": "monthly",
+      "through": "2026-05-01",
+      "note": "景氣對策信號 2010+"
+    },
+    "margin_maintenance": {
+      "cadence": "daily",
+      "through": "2026-07-17",
+      "note": "大盤融資維持率 2015+"
+    },
+    "futures_institutional": {
+      "cadence": "daily",
+      "through": "2026-07-17",
+      "note": "期貨三大法人 TX/MTX 2018+"
+    },
+    "vix": {
+      "cadence": "daily",
+      "through": "2026-07-17",
+      "status": "shallow",
+      "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
+    },
+    "disposition": {
+      "cadence": "daily",
+      "through": "2026-07-16",
+      "note": "處置股 2005+"
+    },
+    "delisting": {
+      "cadence": "daily",
+      "through": "2026-06-23",
+      "note": "下市櫃 2001+;實測 TaiwanStockPrice 仍可抓下市股歷史→倖存者偏誤可修"
+    },
+    "industry_chain": {
+      "cadence": "daily",
+      "coverage": 6834,
+      "note": "產業鏈快照"
+    },
+    "cb_info": {
+      "cadence": "weekly",
+      "coverage": 1800,
+      "note": "1800 CB;stock_id=cb_id[:4]"
+    },
+    "cb_daily": {
+      "cadence": "weekly",
+      "coverage": 0
+    },
+    "cb_institutional": {
+      "cadence": "weekly",
+      "coverage": 0
+    },
+    "news": {
+      "cadence": "daily",
+      "scope": "watchlist",
+      "coverage": 0,
+      "status": "shallow",
+      "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
+    }
   },
   "tickers": [
     "6831",

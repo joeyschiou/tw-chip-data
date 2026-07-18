@@ -22,7 +22,13 @@ SCRIPTS = ["fetch_calendar.py", "fetch_universe.py", "fetch_daily.py", "fetch_br
 # 失敗「不」中止核心管線(避免補充打嗝拖垮整晚),改用 latest.json 的 status 誠實反映落後。
 # 順序:info→daytrade(需 daily 算比率)→holders→float(需 holders)→revenue。
 EXTRA_SCRIPTS = ["fetch_info.py", "fetch_daytrade.py", "fetch_holders.py",
-                 "fetch_float.py", "fetch_revenue.py"]
+                 "fetch_float.py", "fetch_revenue.py",
+                 # 策略資料層(便宜/增量的進 nightly;重 per-id 的 adj/short/pledge/shortsusp +
+                 # CB daily/institutional 走 weekly-update.yml,不進這裡):
+                 "fetch_macro.py",        # vix/維持率/期貨法人(日);景氣(月 no-op)
+                 "fetch_regulatory.py",   # 處置/下市/產業鏈(全表 idempotent no-op)
+                 "fetch_cb.py",           # 預設 info,overview(便宜)
+                 "fetch_news.py"]         # watchlist-8,自增量(從已存最新日續)
 
 
 def run_script(name: str) -> None:
@@ -159,6 +165,55 @@ def revenue_status(files: list) -> dict:
             "status": "ok" if through >= exp else "lagging"}
 
 
+def _through(path, col="date"):
+    if not os.path.exists(path):
+        return None
+    try:
+        d = pd.read_csv(path, usecols=[col], dtype=str)
+        return str(d[col].max()) if len(d) else None
+    except Exception:
+        return None
+
+
+def strategy_layer_status() -> dict:
+    """策略資料層各 dataset 的 coverage/through/availability(0b 實測限制一併記錄)。"""
+    def cov(sub):
+        return len(glob.glob(f"data/{sub}/*.csv"))
+    return {
+        # per-id universe(還原價/借券/質押/停券)
+        "daily_adj":        {"cadence": "weekly", "scope": "universe", "coverage": cov("daily_adj"),
+                             "through": _through("data/daily_adj/2330.csv"), "note": "還原股價 2015+"},
+        "short":            {"cadence": "weekly", "scope": "universe", "coverage": cov("short"),
+                             "through": _through("data/short/2330.csv"), "note": "融券+借券餘額 2015+"},
+        "pledge":           {"cadence": "weekly", "scope": "universe", "coverage": cov("pledge"),
+                             "through": _through("data/pledge/2330.csv"), "note": "借貸擔保品 2015+"},
+        "short_suspension": {"cadence": "weekly", "scope": "universe", "coverage": cov("short_suspension"),
+                             "note": "停券/回補日 2015+"},
+        # 市場級小表
+        "business_indicator": {"cadence": "monthly", "through": _through("data/macro/business_indicator.csv"),
+                               "note": "景氣對策信號 2010+"},
+        "margin_maintenance": {"cadence": "daily", "through": _through("data/macro/margin_maintenance.csv"),
+                               "note": "大盤融資維持率 2015+"},
+        "futures_institutional": {"cadence": "daily", "through": _through("data/macro/futures_institutional.csv"),
+                                  "note": "期貨三大法人 TX/MTX 2018+"},
+        "vix":              {"cadence": "daily", "through": _through("data/macro/vix.csv"),
+                             "status": "shallow", "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"},
+        "disposition":      {"cadence": "daily", "through": _through("data/regulatory/disposition.csv"),
+                             "note": "處置股 2005+"},
+        "delisting":        {"cadence": "daily", "through": _through("data/delisting.csv"),
+                             "note": "下市櫃 2001+;實測 TaiwanStockPrice 仍可抓下市股歷史→倖存者偏誤可修"},
+        "industry_chain":   {"cadence": "daily", "coverage": len(pd.read_csv("data/industry_chain.csv", dtype=str))
+                             if os.path.exists("data/industry_chain.csv") else 0, "note": "產業鏈快照"},
+        # CB
+        "cb_info":          {"cadence": "weekly", "coverage": len(pd.read_csv("data/cb/info.csv", dtype=str))
+                             if os.path.exists("data/cb/info.csv") else 0, "note": "1800 CB;stock_id=cb_id[:4]"},
+        "cb_daily":         {"cadence": "weekly", "coverage": cov("cb/daily")},
+        "cb_institutional": {"cadence": "weekly", "coverage": cov("cb/institutional")},
+        "news":             {"cadence": "daily", "scope": "watchlist", "coverage": cov("news"),
+                             "status": "shallow", "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"},
+    }
+
+
 def write_latest() -> None:
     latest_day = last_trading_date()
     now_tpe = pd.Timestamp.now(tz="Asia/Taipei")
@@ -211,6 +266,7 @@ def write_latest() -> None:
                             "note": "FinMind 無 注意/處置 dataset;下游需另接 TWSE/櫃買來源,本管線保持 FinMind-only"},
         },
         "universe": uni,
+        "strategy_layer": strategy_layer_status(),
         "tickers": tickers,
     }
 

@@ -1,0 +1,14 @@
+﻿date,MarginShortSalesPreviousDayBalance,MarginShortSalesShortSales,MarginShortSalesShortCovering,MarginShortSalesStockRedemption,MarginShortSalesCurrentDayBalance,MarginShortSalesQuota,SBLShortSalesPreviousDayBalance,SBLShortSalesShortSales,SBLShortSalesReturns,SBLShortSalesAdjustments,SBLShortSalesCurrentDayBalance,SBLShortSalesQuota,SBLShortSalesShortCovering
+2026-06-30,0,0,0,0,0,0,0,0,0,0,0,16406,0
+2026-07-01,0,0,0,0,0,0,0,0,0,0,0,16569,0
+2026-07-02,0,0,0,0,0,0,0,1000,0,0,1000,16328,0
+2026-07-03,0,0,0,0,0,0,1000,0,0,0,1000,16808,0
+2026-07-06,0,0,0,0,0,0,1000,1000,0,0,2000,17944,0
+2026-07-07,0,0,0,0,0,0,2000,0,0,0,2000,17304,0
+2026-07-08,0,0,0,0,0,0,2000,0,1000,0,1000,16812,0
+2026-07-09,0,0,0,0,0,0,1000,0,0,0,1000,15680,0
+2026-07-13,0,0,0,0,0,0,1000,1000,0,0,2000,14897,0
+2026-07-14,0,0,0,0,0,0,2000,0,0,0,2000,14002,0
+2026-07-15,0,0,0,0,0,0,2000,0,0,0,2000,12899,0
+2026-07-16,0,0,0,0,0,0,2000,0,0,0,2000,12299,0
+2026-07-17,0,0,0,0,0,0,2000,0,0,0,2000,11632,0

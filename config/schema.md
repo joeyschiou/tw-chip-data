@@ -206,6 +206,33 @@ data/
 `tag` 建議值 `隔日沖 / 外資 / 大戶具名 / 其他`。**含 `#` 註解列,讀取用 `pandas.read_csv(comment='#')`。**
 隔日沖名單需人工維護,勿臆造。
 
+## 策略資料層(13 dataset,Step 0 實測落地)
+
+| 檔 | 內容 | 深度(實測)| 更新 | scope |
+|---|---|---|---|---|
+| `daily_adj/{id}.csv` | 還原股價(TaiwanStockPriceAdj;max=high,min=low)| 2015 | weekly | universe |
+| `short/{id}.csv` | 融券+借券(SBL)賣出餘額 | 2015 | weekly | universe |
+| `pledge/{id}.csv` | 借貸擔保品/融資券餘額(LoanCollateral)| 2015 | weekly | universe |
+| `short_suspension/{id}.csv` | 停券/融券回補日(event)| 2015 | weekly | universe |
+| `macro/business_indicator.csv` | 景氣對策信號(月)| 2010 | monthly | 市場 |
+| `macro/margin_maintenance.csv` | 大盤融資維持率 | 2015 | daily | 市場 |
+| `macro/futures_institutional.csv` | 期貨三大法人(TX/MTX)| **2018** | daily | 市場 |
+| `macro/vix.csv` | 台指VIX(intraday→日 OHLC)| ⚠️ **僅 2026-03**(FinMind 限制)| daily | 市場 |
+| `regulatory/disposition.csv` | 處置股歷史(起訖/分盤/種類)| 2005 | daily(no-op)| 全市場 |
+| `delisting.csv` | 下市櫃表 | 2001 | daily(no-op)| 全市場 |
+| `industry_chain.csv` | 產業鏈(快照)| 2025 snapshot | daily(no-op)| 全市場 |
+| `cb/info.csv` | CB 基本(轉換價/到期/賣回)+ `stock_id=cb_id[:4]` join 鍵 | 全表 | weekly | — |
+| `cb/overview.csv` | CB 每日全市場快照(ConversionPrice/put)| 快照 append | daily | — |
+| `cb/daily/{cb_id}.csv` | CB 日行情 | per-CB 上市起 | weekly | per-cb |
+| `cb/institutional/{cb_id}.csv` | CB 三大法人 | per-CB | weekly | per-cb |
+| `news/{id}.csv` | 新聞 date/title/source/link(不存全文)| ⚠️ **約 2024+**(2021 無)| daily 自增量 | **watchlist-8** |
+
+**Step 0 兩個實測結論**:
+- **倖存者偏誤可修**:已下市股(6806/3426/4987)用 `TaiwanStockPrice` **仍抓得到下市前完整歷史** → 之後可用 delisting 表 + price 補死股。
+- **VIX / News 深度受限**:VIX 只有 2026-03 起(intraday)、News 只有約 2024+(且 1 call=1 日),已落到實際深度並在 latest.json 標 `status:shallow`。
+
+**cadence 決策**:重 per-id(adj/short/pledge/shortsusp、CB daily/institutional)放 **weekly**(每檔 ~2000 call,若進 nightly 會撐爆 6000/hr;`--wait-quota` 讓單一 weekly job 內等額度跑完)。市場級小表 + 慢變全表 + news 進 nightly(便宜/增量)。
+
 ## 已知缺口 — 注意/處置
 
 FinMind **無** 注意股/處置股 dataset(已實測)。本管線保持 **FinMind-only**,
