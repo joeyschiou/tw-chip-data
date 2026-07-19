@@ -146,19 +146,18 @@ def churn_flag(sid: str) -> str:
 # ---------- state ----------
 
 def load_state():
-    """允許檔頭 // 註解(使用者可手動編輯)。"""
+    """state.json 為純合法 JSON(格式見 data/screener/README.md)。容錯舊檔的 // 表頭。"""
     if not os.path.exists(STATE):
         return {"last_run_date": None, "positions": [], "pending": [], "farm_queue": []}
-    lines = [l for l in open(STATE, encoding="utf-8") if not l.lstrip().startswith("//")]
-    return json.loads("".join(lines))
+    txt = open(STATE, encoding="utf-8-sig").read()
+    lines = [l for l in txt.splitlines() if not l.lstrip().startswith("//")]
+    return json.loads("\n".join(lines))
 
 
 def save_state(s):
+    """純合法 JSON(無註解),utf-8-sig。格式說明放 data/screener/README.md,不放 JSON 檔內。"""
     os.makedirs(DIR, exist_ok=True)
-    hdr = ("// state.json — 模型組合狀態(可手動編輯)\n"
-           "// positions: 持倉;pending: 明日開盤待買;farm_queue: 待回補分點的農場代號\n")
-    with open(STATE, "w", encoding="utf-8") as f:
-        f.write(hdr)
+    with open(STATE, "w", encoding="utf-8-sig") as f:
         json.dump(s, f, ensure_ascii=False, indent=2)
 
 
@@ -207,12 +206,14 @@ def daily_val(sid, col, date):
 
 # ---------- 衛星 V4 / V5 ----------
 
-def satellite_v4(today, cal, cal_idx, cfg, names):
+def satellite_v4(today, cal, cal_idx, cfg, names, uni):
     """停券起日在未來 window_tdays 交易日內,且現在券資比>=min_ratio、融券>=min_short_lots 張。"""
     out = []
     import glob
     for f in glob.glob("data/short_suspension/*.csv"):
         sid = os.path.basename(f)[:-4]
+        if sid not in uni:            # 只留 universe 普通股(排權證/ETF)
+            continue
         d = pd.read_csv(f, dtype=str)
         if "date" not in d.columns:
             continue
@@ -232,21 +233,23 @@ def satellite_v4(today, cal, cal_idx, cfg, names):
     return out
 
 
-def satellite_v5(today, cal, cal_idx, cfg, names):
-    """處置迄日在未來 within_tdays 交易日內。"""
+def satellite_v5(today, cal, cal_idx, cfg, names, uni):
+    """處置迄日在未來 within_tdays 交易日內(只留 universe 普通股)。"""
     out = []
     p = "data/regulatory/disposition.csv"
     if not os.path.exists(p):
         return out
     d = pd.read_csv(p, dtype=str)
     for _, r in d.iterrows():
+        sid = str(r["stock_id"])
+        if sid not in uni:            # 排權證/ETF(disposition 表含非普通股)
+            continue
         end = str(r.get("period_end", ""))[:10]
         if not end or end < today:
             continue
         td = weekday_tdays_until(today, end)
         if td is None or td > cfg["within_tdays"]:
             continue
-        sid = str(r["stock_id"])
         out.append(f"{sid} {names.get(sid,('',''))[0]}:處置迄 {end}(約 {td} 交易日後)")
     return out
 
@@ -479,8 +482,9 @@ def main():
                 continue
             pending.append({"id": c["id"], "name": c["name"], "rank_score": c["score"], "signal_date": today})
 
-    v4 = satellite_v4(today, cal, cal_idx, sat["v4_short_cover"], names)
-    v5 = satellite_v5(today, cal, cal_idx, sat["v5_disposition_release"], names)
+    uni_set = set(sc.universe_ids())
+    v4 = satellite_v4(today, cal, cal_idx, sat["v4_short_cover"], names, uni_set)
+    v5 = satellite_v5(today, cal, cal_idx, sat["v5_disposition_release"], names, uni_set)
 
     write_report(today, regime_row, positions, exits, fills, pending, cands, floored,
                  v1, v4, v5, stale_list, latest_json, cal, cal_idx)
