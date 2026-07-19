@@ -1,22 +1,22 @@
 {
-  "generated_at_utc": "2026-07-18T15:51:20.840029+00:00",
-  "generated_at_taipei": "2026-07-18 23:51:20",
+  "generated_at_utc": "2026-07-19T15:56:50.480955+00:00",
+  "generated_at_taipei": "2026-07-19 23:56:50",
   "last_trading_date": "2026-07-17",
   "datasets": {
     "price": {
       "through": "2026-07-17",
       "status": "ok",
       "earliest": "2015-01-05",
-      "coverage": 2069,
+      "coverage": 2070,
       "scope": "universe"
     },
     "inst": {
-      "through": "2026-07-17",
-      "status": "ok"
+      "through": "2026-07-16",
+      "status": "lagging"
     },
     "margin": {
-      "through": "2026-07-17",
-      "status": "ok"
+      "through": "2026-07-16",
+      "status": "lagging"
     },
     "daytrade": {
       "through": "2026-07-17",
@@ -51,7 +51,7 @@
   },
   "reference": {
     "info": {
-      "count": 2743,
+      "count": 2744,
       "status": "ok"
     },
     "disposition": {
@@ -60,9 +60,9 @@
     }
   },
   "universe": {
-    "count": 2131,
-    "daily_files": 2069,
-    "current": 1967,
+    "count": 2132,
+    "daily_files": 2070,
+    "current": 1968,
     "earliest": "2015-01-05"
   },
   "strategy_layer": {
@@ -145,7 +145,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 8,
+      "coverage": 9,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
@@ -158,6 +158,8 @@
     "6278",
     "2327",
     "6510",
-    "7769"
+    "7769",
+    "8928",
+    "5450"
   ]
 }

@@ -2,8 +2,8 @@
 
 ## 資料新鮮度
 - price: 截至 2026-07-17 (ok)
-- inst: 截至 2026-07-17 (ok)
-- margin: 截至 2026-07-17 (ok)
+- inst: 截至 2026-07-16 (lagging)
+- margin: 截至 2026-07-16 (lagging)
 - daytrade: 截至 2026-07-17 (ok)
 - holders: 截至 2026-07-17 (ok)
 - float: 截至 2026-07-17 (ok)
