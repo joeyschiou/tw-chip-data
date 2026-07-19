@@ -51,3 +51,11 @@ tickers:
   - id: "7769"
     market: twse
     note: 鴻勁
+
+  - id: "8928"
+    market: tpex
+    note: farm 鉅明
+
+  - id: "5450"
+    market: tpex
+    note: farm 寶聯通

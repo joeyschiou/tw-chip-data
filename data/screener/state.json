@@ -1,0 +1,8 @@
+// state.json — 模型組合狀態(可手動編輯)
+// positions: 持倉;pending: 明日開盤待買;farm_queue: 待回補分點的農場代號
+{
+  "last_run_date": "2026-07-17",
+  "positions": [],
+  "pending": [],
+  "farm_queue": []
+}

@@ -1,0 +1,39 @@
+# ============================================================
+# screener.yaml — 生產版籌碼篩選機參數(定案值,出處=11年預註冊回測)
+# 忠實實作,不是優化:不要調任何門檻/不要加訊號/不要「改良」。
+# ============================================================
+
+main_engine:
+  breakout_lookback: 60        # 收盤 >= 前60交易日最高收盤(還原價)
+  yoy_min: 0.15                # as-of 最新已公布月營收 YoY >= 15%
+  spacing_days: 20             # 同股兩次「成立訊號」至少隔20交易日
+  regime_ma: 120               # 等權市場指數 > 120日MA 才開機
+  n_slots: 5
+  hold_days: 20                # 進場日後第20個交易日收盤出場
+  entry: next_open
+  hard_stop: null              # 可選 0.15;預設關(與回測 B 配置一致)
+  production_floors:           # 生產衛生層(回測未含,標註為 deviation)
+    min_price: 10
+    min_liquidity_20d_median_value: 30000000
+ranking:
+  surprise_pp: 0.20            # 驚喜 = 當月yoy - 前3月yoy中位 >= +20pp 且 yoy>0
+  surprise_fresh_days: 30      # 公布日(次月10日)在訊號日前30日曆天內 → +2分
+  young_max_days: 549          # 上市月齡<=18月 且 首個bar>2015-07-01 → +1分
+  tiebreak: yoy_desc
+satellites:
+  v1_margin_flush:             # 只出警示,不進模型組合
+    drop_pct: 0.08
+    drop_abs_lots: 300
+    min_balance_lots: 1000
+    drawdown_20d: -0.15
+    require_up_close: true
+    maintenance_below: 155     # 大盤融資維持率<155才啟動警示
+  v4_short_cover:
+    min_ratio: 0.10            # 券資比
+    min_short_lots: 1000
+    window_tdays: 10           # 停券起日前10交易日內
+  v5_disposition_release:
+    within_tdays: 3            # 處置迄日在未來3交易日內
+watchlist_farm:
+  cap: 100
+  backfill_lookback_days: 60

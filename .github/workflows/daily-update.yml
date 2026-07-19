@@ -32,6 +32,15 @@ jobs:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/update.py
 
+      # 資料步驟之後跑篩選機:產出報告/模型組合狀態/農場擴充。
+      # 農場會改 config/watchlist.yaml → 先 git add 進暫存,讓下方既有的條件式 commit 一併帶走。
+      - name: Screener (訊號報告 + 模型組合 + 農場)
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: |
+          python scripts/screener.py
+          git add config/watchlist.yaml
+
       - name: Commit new data
         run: |
           git config user.name "github-actions[bot]"
