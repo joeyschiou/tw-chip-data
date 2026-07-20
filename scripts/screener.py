@@ -222,13 +222,14 @@ def satellite_v4(today, cal, cal_idx, cfg, names, uni):
             td = weekday_tdays_until(today, start)
             if td is None or td > cfg["window_tdays"]:
                 continue
-            margin = daily_val(sid, "margin_balance_shares", today)
-            short = daily_val(sid, "short_balance_shares", today)
+            margin = daily_val(sid, "margin_balance_shares", today)   # 股(已遷移)
+            short = daily_val(sid, "short_balance_shares", today)     # 股(已遷移)
             if margin and short and margin > 0:
-                ratio = short / margin
-                if ratio >= cfg["min_ratio"] and short >= cfg["min_short_lots"]:
+                ratio = short / margin                                # 券資比(股/股,單位互消)
+                short_lots = short / 1000.0                           # yaml min_short_lots 是「張」
+                if ratio >= cfg["min_ratio"] and short_lots >= cfg["min_short_lots"]:
                     out.append(f"{sid} {names.get(sid,('',''))[0]}:停券起 {start}(約 {td} 交易日後)"
-                               f"、券資比 {ratio:.2f}、融券 {int(short)} 張")
+                               f"、券資比 {ratio:.2f}、融券 {int(short_lots)} 張")
             break
     return out
 

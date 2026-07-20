@@ -103,10 +103,13 @@ def build_daily(token: str, stock_id: str) -> pd.DataFrame:
     # --- 3. 融資融券(取今日餘額,存量)---
     margin = fetch_dataset(token, "TaiwanStockMarginPurchaseShortSale", stock_id)
     if not margin.empty:
+        # FinMind 這兩欄單位是「張」;schema 鐵則存「股」→ ×1000。Int64 避免 .0。
         m_out = pd.DataFrame({
             "date": margin["date"],
-            "margin_balance_shares": margin["MarginPurchaseTodayBalance"],
-            "short_balance_shares": margin["ShortSaleTodayBalance"],
+            "margin_balance_shares": (pd.to_numeric(margin["MarginPurchaseTodayBalance"],
+                                                    errors="coerce") * 1000).astype("Int64"),
+            "short_balance_shares": (pd.to_numeric(margin["ShortSaleTodayBalance"],
+                                                   errors="coerce") * 1000).astype("Int64"),
         })
         df = df.merge(m_out, on="date", how="left")
     else:

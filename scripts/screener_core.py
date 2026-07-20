@@ -100,10 +100,9 @@ def v1_events(d: pd.DataFrame, margin: pd.Series, cfg: dict,
     n = len(c)
     if n <= i_lo + i_hi_off:
         return []
-    m = pd.to_numeric(margin, errors="coerce").to_numpy(dtype=float)
+    # margin_balance_shares 已遷移為「股」(schema 鐵則);yaml 閾值是「張」→ 換算成張再比(股/1000)。
+    m = pd.to_numeric(margin, errors="coerce").to_numpy(dtype=float) / 1000.0
     roll20 = pd.Series(c).rolling(20).max().to_numpy()                 # 含當日 max(i-19..i)
-    # data/daily 的 margin_balance_shares 實際單位是「張」(FinMind 原樣;名稱雖帶 _shares)。
-    # yaml 的 drop_abs_lots / min_balance_lots 也是「張」→ 直接張對張比,不 ×1000。
     drop_pct = cfg["drop_pct"]; drop_abs = cfg["drop_abs_lots"]
     min_bal = cfg["min_balance_lots"]; dd20 = cfg["drawdown_20d"]
     out, last = [], -10**9
