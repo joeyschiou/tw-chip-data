@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-20T17:16:45.028088+00:00",
-  "generated_at_taipei": "2026-07-21 01:16:45",
+  "generated_at_utc": "2026-07-20T21:52:18.950984+00:00",
+  "generated_at_taipei": "2026-07-21 05:52:18",
   "last_trading_date": "2026-07-20",
   "datasets": {
     "price": {
@@ -17,6 +17,13 @@
     "margin": {
       "through": "2026-07-20",
       "status": "ok"
+    },
+    "branch": {
+      "through": "2026-07-20",
+      "status": "ok",
+      "gap_tdays": 0,
+      "cadence": "daily",
+      "scope": "watchlist"
     },
     "daytrade": {
       "through": "2026-07-20",
@@ -60,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2132,
+    "count": 2131,
     "daily_files": 2070,
     "current": 1968,
     "earliest": "2015-01-05"
@@ -160,6 +167,8 @@
     "6510",
     "7769",
     "8928",
-    "5450"
+    "5450",
+    "1442",
+    "1268"
   ]
 }

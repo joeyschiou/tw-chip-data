@@ -32,6 +32,14 @@ jobs:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/update.py
 
+      # 分點落後 >= 2 個交易日 → GitHub Actions ::warning(gap-fill 未追上,值得注意)
+      - name: Warn if branch lagging
+        run: |
+          gap=$(python -c "import json; print(json.load(open('data/latest.json',encoding='utf-8'))['datasets']['branch'].get('gap_tdays',0))")
+          if [ "$gap" -ge 2 ]; then
+            echo "::warning title=branch lagging::分點落後 $gap 個交易日(gap-fill 未追上)"
+          fi
+
       # 資料步驟之後跑篩選機:產出報告/模型組合狀態/農場擴充。
       # 農場會改 config/watchlist.yaml → 先 git add 進暫存,讓下方既有的條件式 commit 一併帶走。
       - name: Screener (訊號報告 + 模型組合 + 農場)

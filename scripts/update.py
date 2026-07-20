@@ -214,6 +214,34 @@ def strategy_layer_status() -> dict:
     }
 
 
+def branch_status(tickers, latest_day) -> dict:
+    """
+    分點 branch through = watchlist 各檔 max(date) 取 min(木桶)。
+    status:through==最新交易日→ok;落後 1~3 個交易日→lagging;更久或無檔→missing。
+    """
+    maxes = []
+    for sid in tickers:
+        p = f"data/branch/{sid}.csv"
+        if not os.path.exists(p):
+            return {"through": None, "status": "missing", "gap_tdays": 999,
+                    "cadence": "daily", "scope": "watchlist"}
+        d = pd.read_csv(p, usecols=["date"], dtype=str)
+        if not len(d):
+            return {"through": None, "status": "missing", "gap_tdays": 999,
+                    "cadence": "daily", "scope": "watchlist"}
+        maxes.append(str(d["date"].max()))
+    through = min(maxes)
+    if through >= latest_day:
+        status, gap = "ok", 0
+    else:
+        cal = pd.read_csv("data/calendar.csv", dtype=str)
+        gap = len(cal[(cal["is_trading_day"].str.lower() == "true")
+                      & (cal["date"] > through) & (cal["date"] <= latest_day)])
+        status = "lagging" if 1 <= gap <= 3 else "missing"
+    return {"through": through, "status": status, "gap_tdays": gap,
+            "cadence": "daily", "scope": "watchlist"}
+
+
 def write_latest() -> None:
     latest_day = last_trading_date()
     now_tpe = pd.Timestamp.now(tz="Asia/Taipei")
@@ -244,6 +272,7 @@ def write_latest() -> None:
                        "scope": "universe"},
             "inst":   dataset_status(wl_files, "foreign_net_shares", latest_day),
             "margin": dataset_status(wl_files, "margin_balance_shares", latest_day),
+            "branch": branch_status(tickers, latest_day),
             # 補充(watchlist canary 定 through;coverage=universe 實際覆蓋檔數)
             "daytrade": {**freshness_status(daytrade_files, latest_day, tol_days=0),
                          "cadence": "daily", "scope": "universe",

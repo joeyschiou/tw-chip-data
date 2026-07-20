@@ -44,9 +44,30 @@ def check_token(token: str) -> None:
 
 
 def target_date() -> str:
-    """從 latest.json 拿最新交易日(先跑過 update.py / fetch_calendar)。"""
-    with open("data/latest.json", encoding="utf-8") as f:
-        return json.load(f)["last_trading_date"]
+    """
+    目標交易日 = calendar 中 is_trading_day 且 <= 今天(Asia/Taipei)的最大日期。
+    改讀 calendar.csv(同一輪 fetch_calendar 剛更新過),不讀 latest.json——
+    latest.json 是 update.py「跑完所有 fetch 才寫」,fetch_branch 執行當下讀到的是上一晚的,
+    會導致每晚都慢一個交易日。
+    """
+    cal = pd.read_csv("data/calendar.csv", dtype=str)
+    today = pd.Timestamp.now(tz="Asia/Taipei").strftime("%Y-%m-%d")
+    td = cal[(cal["is_trading_day"].str.lower() == "true") & (cal["date"] <= today)]["date"]
+    if td.empty:
+        sys.exit("❌ calendar 無 <= 今天的交易日。")
+    return str(td.max())
+
+
+def _trading_days(cal, after: str, upto: str) -> list:
+    m = (cal["is_trading_day"].str.lower() == "true") & (cal["date"] > after) & (cal["date"] <= upto)
+    return sorted(cal[m]["date"].astype(str).tolist())
+
+
+def _branch_max(path: str) -> str:
+    if not os.path.exists(path):
+        return ""      # 沒檔 → 從最早算,靠下面 cap 5 限制
+    d = pd.read_csv(path, dtype=str)
+    return str(d["date"].max()) if len(d) else ""
 
 
 def load_watchlist() -> list:
@@ -123,35 +144,41 @@ def append_dedup(path: str, new: pd.DataFrame) -> int:
 def main() -> None:
     token = get_token()
     check_token(token)
-    date = target_date()
+    target = target_date()
+    if target < DATA_START:
+        sys.exit(f"❌ {target} 早於分點資料起點 {DATA_START}。")
 
-    if date < DATA_START:
-        sys.exit(f"❌ {date} 早於分點資料起點 {DATA_START}。")
-
+    cal = pd.read_csv("data/calendar.csv", dtype=str)
     os.makedirs("data/branch", exist_ok=True)
     tickers = load_watchlist()
+    total = 0
 
+    # gap-fill:每檔補「CSV 最大日期」到「目標日」之間所有缺的交易日(上限 5,跳 KNOWN_GAPS),
+    # 逐日抓、逐日 append_dedup → 缺一天會自動自癒,不用手動回補。
     for t in tickers:
         sid = str(t["id"])
-        print(f"→ {sid} {t.get('note','')} @ {date}")
-        raw = fetch_raw_branch(token, sid, date)
-
-        if raw.empty:
-            if date in KNOWN_GAPS:
-                print(f"   ℹ {date} 為官方已知缺漏日,非錯誤")
-            else:
-                print(f"   ⚠ 空資料(可能今日分點未出,晚點重跑)")
-            continue
-
-        agg = aggregate(raw)
         path = f"data/branch/{sid}.csv"
-        added = append_dedup(path, agg)
-        if added == 0:
-            print(f"   ⏭ {date} 已存在,跳過")
-        else:
-            top = agg.nlargest(1, "net_shares").iloc[0]
-            print(f"   ✅ {path}:+{added} 分點。當日最大買超 {top['broker_name']} "
-                  f"淨 {top['net_shares']:,} 股 @ 均價 {top['avg_buy_price']}")
+        cmax = _branch_max(path)
+        days = [d for d in _trading_days(cal, cmax, target)
+                if d >= DATA_START and d not in KNOWN_GAPS][-5:]
+        if not days:
+            print(f"→ {sid} {t.get('note','')} 已最新(至 {cmax or '無檔'})")
+            continue
+        print(f"→ {sid} {t.get('note','')}:待補 {days}")
+        for d in days:
+            raw = fetch_raw_branch(token, sid, d)
+            if raw.empty:
+                if d == target:
+                    # 目標日分點批次偶爾延到隔日早上:警告、不 append、不紅燈(落後由 latest.json status 反映)
+                    print(f"   ⚠ 目標日 {d} 空(分點批次可能延到隔日早上),不 append")
+                else:
+                    print(f"   ⚠ {d} 空資料(非 KNOWN_GAPS),略過")
+                continue
+            added = append_dedup(path, aggregate(raw))
+            total += added
+            print(f"   ✅ {d}:+{added} 分點" if added else f"   ⏭ {d} 已存在")
+
+    print(f"✅ 分點 gap-fill 完成,共補 {total} 分點列(目標日 {target})。")
 
 
 if __name__ == "__main__":
