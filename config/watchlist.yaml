@@ -59,3 +59,11 @@ tickers:
   - id: "5450"
     market: tpex
     note: farm 寶聯通
+
+  - id: "1442"
+    market: twse
+    note: farm 名軒
+
+  - id: "1268"
+    market: tpex
+    note: farm 漢來美食
