@@ -7,3 +7,4 @@ __pycache__/
 docs/research/
 scripts/research/
 config/score_v1_5_draft.yaml
+data/branch_research/_*
