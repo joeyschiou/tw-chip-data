@@ -67,3 +67,43 @@ tickers:
   - id: "1268"
     market: tpex
     note: farm 漢來美食
+
+  - id: "5288"
+    market: twse
+    note: farm 豐祥-KY
+
+  - id: "4939"
+    market: tpex
+    note: farm 亞電
+
+  - id: "4119"
+    market: twse
+    note: farm 旭富
+
+  - id: "6277"
+    market: twse
+    note: farm 宏正
+
+  - id: "2607"
+    market: twse
+    note: farm 榮運
+
+  - id: "2615"
+    market: twse
+    note: farm 萬海
+
+  - id: "4120"
+    market: tpex
+    note: farm 友華
+
+  - id: "1467"
+    market: twse
+    note: farm 南緯
+
+  - id: "9944"
+    market: twse
+    note: farm 新麗
+
+  - id: "2704"
+    market: twse
+    note: farm 國賓

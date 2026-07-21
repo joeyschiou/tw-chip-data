@@ -1,6 +1,19 @@
 ﻿{
-  "last_run_date": "2026-07-20",
+  "last_run_date": "2026-07-21",
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "id": "4939",
+      "name": "亞電",
+      "rank_score": 2,
+      "signal_date": "2026-07-21"
+    },
+    {
+      "id": "2615",
+      "name": "萬海",
+      "rank_score": 0,
+      "signal_date": "2026-07-21"
+    }
+  ],
   "farm_queue": []
 }

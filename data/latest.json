@@ -1,32 +1,32 @@
 {
-  "generated_at_utc": "2026-07-21T03:38:21.661016+00:00",
-  "generated_at_taipei": "2026-07-21 11:38:21",
-  "last_trading_date": "2026-07-20",
+  "generated_at_utc": "2026-07-21T17:09:47.389959+00:00",
+  "generated_at_taipei": "2026-07-22 01:09:47",
+  "last_trading_date": "2026-07-21",
   "datasets": {
     "price": {
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "status": "ok",
       "earliest": "2015-01-05",
       "coverage": 2070,
       "scope": "universe"
     },
     "inst": {
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "status": "ok"
     },
     "margin": {
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "status": "ok"
     },
     "branch": {
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "status": "ok",
       "gap_tdays": 0,
       "cadence": "daily",
       "scope": "watchlist"
     },
     "daytrade": {
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "status": "ok",
       "cadence": "daily",
       "scope": "universe",
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2131,
+    "count": 2132,
     "daily_files": 2070,
     "current": 1968,
     "earliest": "2015-01-05"
@@ -107,23 +107,23 @@
     },
     "margin_maintenance": {
       "cadence": "daily",
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "note": "大盤融資維持率 2015+"
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
       "cadence": "daily",
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "status": "shallow",
       "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
     },
     "disposition": {
       "cadence": "daily",
-      "through": "2026-07-20",
+      "through": "2026-07-21",
       "note": "處置股 2005+"
     },
     "delisting": {
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 9,
+      "coverage": 10,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
