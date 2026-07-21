@@ -1,3 +1,4 @@
 ﻿date,Foreign_Investor_Buy,Foreign_Investor_Sell,Foreign_Investor_Overbuy,Investment_Trust_Buy,Investment_Trust_Sell,Investment_Trust_Overbuy,Dealer_self_Buy,Dealer_self_Sell,Dealer_self_Overbuy,Total_Overbuy,cb_id,cb_name
 2026-07-16,0,0,0,0,0,0,1,0,1,1,16231,大東電一        
 2026-07-17,0,20,-20,0,0,0,0,100,-100,-120,16231,大東電一        
+2026-07-20,0,0,0,0,0,0,0,50,-50,-50,16231,大東電一        
