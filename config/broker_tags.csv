@@ -1,10 +1,98 @@
-﻿# broker_tags.csv — 券商分點分類參考表(scaffold,使用者手動維護)
-# broker_key 對得上 data/branch/{id}.csv 的 broker_id 欄(主鍵,券商改名代碼不變)。
-# tag 建議值:隔日沖 / 外資 / 大戶具名 / 其他
-# 下面 3 列為「真實分點」範例;外資分點 tag 屬事實,隔日沖等其餘分類請自行確認。
-# TODO: 使用者用手上完整名單自行 seed —— 隔日沖名單尤其需人工維護,勿臆造。
-# 讀取時請用 pandas.read_csv('config/broker_tags.csv', comment='#')。
-broker_key,broker_name,tag,note
-1440,美林,外資,範例:外資分點
-1470,台灣摩根,外資,範例:外資分點
-9200,凱基,其他,範例:請自行分類(此列僅示範格式)
+﻿# 分點桶凍結名單(prereg score_v1 §S6)。比對:broker_name 同時含 brand+branch_token;
+# branch_token=總公司 → broker_name==brand 或含「總公司」。桶互斥;foreign_diag 僅診斷。讀取用 comment='#'。
+brand,branch_token,bucket,note
+凱基,中山,daytrade,
+凱基,台北,daytrade,
+凱基,松山,daytrade,
+凱基,信義,daytrade,
+凱基,板橋,daytrade,
+凱基,城中,daytrade,
+凱基,市政,daytrade,
+凱基,三重,daytrade,
+凱基,永和,daytrade,
+凱基,林口,daytrade,
+凱基,市府,daytrade,
+凱基,虎尾,daytrade,
+富邦,南屯,daytrade,
+富邦,建國,daytrade,
+富邦,台北,daytrade,
+富邦,仁愛,daytrade,
+富邦,嘉義,daytrade,
+富邦,總公司,daytrade,
+富邦,北港,daytrade,
+富邦,虎尾,daytrade,
+富邦,陽明,daytrade,
+富邦,新竹,daytrade,
+富邦,左營,daytrade,
+富邦,新莊,daytrade,
+元大,總公司,daytrade,
+元大,竹科,daytrade,
+元大,台中,daytrade,
+元大,鼎富,daytrade,
+元大,林森,daytrade,
+元大,經國,daytrade,
+元大,士林,daytrade,
+元大,敦化,daytrade,
+元大,桃園,daytrade,
+元大,和平,daytrade,
+元富,總公司,daytrade,
+元富,大昌,daytrade,
+元富,信義,daytrade,
+元富,台中,daytrade,
+元富,松德,daytrade,
+群益,總公司,daytrade,
+群益,大安,daytrade,
+群益,新竹,daytrade,
+群益,台北,daytrade,
+群益,竹南,daytrade,
+群益,嘉義,daytrade,
+群益,民權,daytrade,
+群益,中港,daytrade,
+群益,三重,daytrade,
+國票,敦北,daytrade,
+國票,安和,daytrade,
+國票,中和,daytrade,
+國票,長城,daytrade,
+國票,北高雄,daytrade,
+統一,總公司,daytrade,
+統一,城中,daytrade,
+統一,基隆,daytrade,
+統一,新竹,daytrade,
+統一,仁愛,daytrade,
+國泰,總公司,daytrade,
+國泰,敦南,daytrade,
+國泰,敦北,daytrade,"國泰敦北=2024前活躍,保留供歷史窗"
+國泰,台中,daytrade,
+國泰,高雄,daytrade,
+兆豐,埔墘,daytrade,
+兆豐,忠孝,daytrade,
+兆豐,永和,daytrade,
+兆豐,台中港,daytrade,
+兆豐,中壢,daytrade,
+永豐,桃園,daytrade,
+永豐,竹科,daytrade,
+永豐,台南,daytrade,
+永豐,內湖,daytrade,
+康和,總公司,daytrade,
+康和,台北,daytrade,
+華南,總公司,daytrade,
+華南,世貿,daytrade,
+宏遠,總公司,daytrade,
+新光,總公司,daytrade,
+新光,台中,daytrade,
+第一金,中壢,daytrade,
+台新,總公司,daytrade,
+台新,屏東,daytrade,
+元大,永寧,swing,Dcard 隔日沖清單同列;依具名操作者公開profile(波段型)改判swing
+康和,永和,swing,Dcard 隔日沖清單同列;依具名操作者公開profile(波段型)改判swing
+美林,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+摩根大通,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+匯立,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+麥格理,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+犇亞,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+法興,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+花旗,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+野村,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+瑞銀,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+摩根士丹利,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
+高盛,,foreign_diag,"診斷:broker_name 包含即命中,不進分數/否決"
