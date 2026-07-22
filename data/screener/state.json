@@ -1,18 +1,43 @@
 ﻿{
-  "last_run_date": "2026-07-21",
-  "positions": [],
-  "pending": [
+  "last_run_date": "2026-07-22",
+  "positions": [
     {
       "id": "4939",
       "name": "亞電",
+      "entry_date": "2026-07-22",
+      "entry_price": 76.9,
+      "exit_due": null,
       "rank_score": 2,
       "signal_date": "2026-07-21"
     },
     {
       "id": "2615",
       "name": "萬海",
+      "entry_date": "2026-07-22",
+      "entry_price": 85.2,
+      "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-07-21"
+    }
+  ],
+  "pending": [
+    {
+      "id": "2425",
+      "name": "承啟",
+      "rank_score": 2,
+      "signal_date": "2026-07-22"
+    },
+    {
+      "id": "3374",
+      "name": "精材",
+      "rank_score": 2,
+      "signal_date": "2026-07-22"
+    },
+    {
+      "id": "3088",
+      "name": "艾訊",
+      "rank_score": 0,
+      "signal_date": "2026-07-22"
     }
   ],
   "farm_queue": []

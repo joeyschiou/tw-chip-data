@@ -107,3 +107,31 @@ tickers:
   - id: "2704"
     market: twse
     note: farm 國賓
+
+  - id: "6887"
+    market: twse
+    note: farm 寶綠特-KY
+
+  - id: "8093"
+    market: tpex
+    note: farm 保銳
+
+  - id: "2425"
+    market: twse
+    note: farm 承啟
+
+  - id: "3374"
+    market: tpex
+    note: farm 精材
+
+  - id: "6219"
+    market: tpex
+    note: farm 富旺
+
+  - id: "3088"
+    market: tpex
+    note: farm 艾訊
+
+  - id: "2027"
+    market: twse
+    note: farm 大成鋼
