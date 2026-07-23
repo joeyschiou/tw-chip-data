@@ -1,5 +1,5 @@
 ﻿{
-  "last_run_date": "2026-07-22",
+  "last_run_date": "2026-07-23",
   "positions": [
     {
       "id": "4939",
@@ -18,27 +18,35 @@
       "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-07-21"
-    }
-  ],
-  "pending": [
+    },
     {
       "id": "2425",
       "name": "承啟",
+      "entry_date": "2026-07-23",
+      "entry_price": 44.8,
+      "exit_due": null,
       "rank_score": 2,
       "signal_date": "2026-07-22"
     },
     {
       "id": "3374",
       "name": "精材",
+      "entry_date": "2026-07-23",
+      "entry_price": 411.0,
+      "exit_due": null,
       "rank_score": 2,
       "signal_date": "2026-07-22"
     },
     {
       "id": "3088",
       "name": "艾訊",
+      "entry_date": "2026-07-23",
+      "entry_price": 146.0,
+      "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-07-22"
     }
   ],
+  "pending": [],
   "farm_queue": []
 }

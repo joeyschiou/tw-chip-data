@@ -135,3 +135,31 @@ tickers:
   - id: "2027"
     market: twse
     note: farm 大成鋼
+
+  - id: "2073"
+    market: tpex
+    note: farm 雄順
+
+  - id: "3373"
+    market: tpex
+    note: farm 熱映
+
+  - id: "4995"
+    market: tpex
+    note: farm 晶達
+
+  - id: "4442"
+    market: tpex
+    note: farm 竣邦-KY
+
+  - id: "3577"
+    market: tpex
+    note: farm 泓格
+
+  - id: "6166"
+    market: twse
+    note: farm 凌華
+
+  - id: "1233"
+    market: twse
+    note: farm 天仁
