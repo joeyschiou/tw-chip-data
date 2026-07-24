@@ -163,3 +163,15 @@ tickers:
   - id: "1233"
     market: twse
     note: farm 天仁
+
+  - id: "3018"
+    market: twse
+    note: farm 隆銘綠能
+
+  - id: "2207"
+    market: twse
+    note: farm 和泰車
+
+  - id: "6669"
+    market: twse
+    note: farm 緯穎

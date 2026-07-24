@@ -1,32 +1,32 @@
 {
-  "generated_at_utc": "2026-07-23T16:56:26.473209+00:00",
-  "generated_at_taipei": "2026-07-24 00:56:26",
-  "last_trading_date": "2026-07-23",
+  "generated_at_utc": "2026-07-24T16:49:07.028426+00:00",
+  "generated_at_taipei": "2026-07-25 00:49:07",
+  "last_trading_date": "2026-07-24",
   "datasets": {
     "price": {
-      "through": "2026-07-22",
-      "status": "lagging",
+      "through": "2026-07-24",
+      "status": "ok",
       "earliest": "2010-02-22",
-      "coverage": 2073,
+      "coverage": 2074,
       "scope": "universe"
     },
     "inst": {
-      "through": "2026-07-20",
+      "through": "2025-11-24",
       "status": "lagging"
     },
     "margin": {
-      "through": "2026-07-22",
-      "status": "lagging"
+      "through": "2026-07-24",
+      "status": "ok"
     },
     "branch": {
-      "through": "2026-07-22",
-      "status": "lagging",
-      "gap_tdays": 1,
+      "through": "2026-07-24",
+      "status": "ok",
+      "gap_tdays": 0,
       "cadence": "daily",
       "scope": "watchlist"
     },
     "daytrade": {
-      "through": "2026-07-23",
+      "through": "2026-07-24",
       "status": "ok",
       "cadence": "daily",
       "scope": "universe",
@@ -58,7 +58,7 @@
   },
   "reference": {
     "info": {
-      "count": 2746,
+      "count": 2747,
       "status": "ok"
     },
     "disposition": {
@@ -67,9 +67,9 @@
     }
   },
   "universe": {
-    "count": 2133,
-    "daily_files": 2073,
-    "current": 1748,
+    "count": 2134,
+    "daily_files": 2074,
+    "current": 1969,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
@@ -107,17 +107,17 @@
     },
     "margin_maintenance": {
       "cadence": "daily",
-      "through": "2026-07-23",
+      "through": "2026-07-24",
       "note": "大盤融資維持率 2015+"
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-07-23",
+      "through": "2026-07-24",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
       "cadence": "daily",
-      "through": "2026-07-23",
+      "through": "2026-07-24",
       "status": "shallow",
       "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
     },
@@ -133,12 +133,12 @@
     },
     "industry_chain": {
       "cadence": "daily",
-      "coverage": 6837,
+      "coverage": 6840,
       "note": "產業鏈快照"
     },
     "cb_info": {
       "cadence": "weekly",
-      "coverage": 1803,
+      "coverage": 1808,
       "note": "1800 CB;stock_id=cb_id[:4]"
     },
     "cb_daily": {
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 14,
+      "coverage": 24,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
@@ -186,6 +186,13 @@
     "3374",
     "6219",
     "3088",
-    "2027"
+    "2027",
+    "2073",
+    "3373",
+    "4995",
+    "4442",
+    "3577",
+    "6166",
+    "1233"
   ]
 }

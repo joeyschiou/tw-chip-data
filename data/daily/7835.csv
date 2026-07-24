@@ -1,0 +1,2 @@
+﻿date,open,high,low,close,volume_shares,value_twd,transactions,limit_up,limit_down,foreign_net_shares,trust_net_shares,dealer_net_shares,margin_balance_shares,short_balance_shares,daytrade_ratio,source,fetched_at
+2026-07-24,49.1,50.0,37.9,39.95,1010424,47229001,277,,,1000,0,434000,,,,finmind,2026-07-25T00:31:28.970186+08:00
