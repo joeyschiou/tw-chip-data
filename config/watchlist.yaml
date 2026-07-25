@@ -175,3 +175,7 @@ tickers:
   - id: "6669"
     market: twse
     note: farm 緯穎
+
+  - id: "6863"
+    market: twse
+    note: farm 永道-KY
