@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-24T16:49:07.028426+00:00",
-  "generated_at_taipei": "2026-07-25 00:49:07",
+  "generated_at_utc": "2026-07-25T03:50:23.150949+00:00",
+  "generated_at_taipei": "2026-07-25 11:50:23",
   "last_trading_date": "2026-07-24",
   "datasets": {
     "price": {
@@ -33,18 +33,18 @@
       "coverage": 1946
     },
     "holders": {
-      "through": "2026-07-17",
+      "through": "2026-07-24",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2071
+      "coverage": 2073
     },
     "float": {
-      "through": "2026-07-17",
+      "through": "2026-07-24",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2071,
+      "coverage": 2073,
       "note": "locked=千張大戶 proxy(非董監)"
     },
     "revenue": {
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2134,
+    "count": 2131,
     "daily_files": 2074,
     "current": 1969,
     "earliest": "2010-02-22"
@@ -76,28 +76,28 @@
     "daily_adj": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2070,
-      "through": "2026-07-20",
+      "coverage": 2071,
+      "through": "2026-07-24",
       "note": "還原股價 2015+"
     },
     "short": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1976,
-      "through": "2026-07-20",
+      "coverage": 1978,
+      "through": "2026-07-24",
       "note": "融券+借券餘額 2015+"
     },
     "pledge": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1953,
-      "through": "2026-07-20",
+      "coverage": 1957,
+      "through": "2026-07-24",
       "note": "借貸擔保品 2015+"
     },
     "short_suspension": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1904,
+      "coverage": 1905,
       "note": "停券/回補日 2015+"
     },
     "business_indicator": {
@@ -143,11 +143,11 @@
     },
     "cb_daily": {
       "cadence": "weekly",
-      "coverage": 1375
+      "coverage": 1382
     },
     "cb_institutional": {
       "cadence": "weekly",
-      "coverage": 1340
+      "coverage": 1347
     },
     "news": {
       "cadence": "daily",
@@ -193,6 +193,9 @@
     "4442",
     "3577",
     "6166",
-    "1233"
+    "1233",
+    "3018",
+    "2207",
+    "6669"
   ]
 }
