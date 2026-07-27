@@ -179,3 +179,15 @@ tickers:
   - id: "6863"
     market: twse
     note: farm 永道-KY
+
+  - id: "1799"
+    market: tpex
+    note: farm 易威
+
+  - id: "1419"
+    market: twse
+    note: farm 新紡
+
+  - id: "2812"
+    market: twse
+    note: farm 台中銀
