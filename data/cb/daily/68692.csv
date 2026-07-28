@@ -1,2 +1,3 @@
 ﻿date,cb_id,cb_name,transaction_type,close,change,open,max,min,no_of_transactions,unit,trading_value,avg_price,next_ref_price,next_max_limit,next_min_limit
 2026-07-24,68692,雲豹能源二,等價,108.8,4.5,108.0,110.0,106.1,280,2508,271321100,108.18,108.8,119.65,97.95
+2026-07-27,68692,雲豹能源二,等價,108.75,-0.05,108.5,108.9,108.4,26,239,25978100,108.69,108.75,119.6,97.9

@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-27T16:59:45.213696+00:00",
-  "generated_at_taipei": "2026-07-28 00:59:45",
+  "generated_at_utc": "2026-07-28T03:37:28.803879+00:00",
+  "generated_at_taipei": "2026-07-28 11:37:28",
   "last_trading_date": "2026-07-27",
   "datasets": {
     "price": {
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2134,
+    "count": 2131,
     "daily_files": 2074,
     "current": 811,
     "earliest": "2010-02-22"
@@ -76,22 +76,22 @@
     "daily_adj": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2071,
-      "through": "2026-07-24",
+      "coverage": 2072,
+      "through": "2026-07-27",
       "note": "還原股價 2015+"
     },
     "short": {
       "cadence": "weekly",
       "scope": "universe",
       "coverage": 1978,
-      "through": "2026-07-24",
+      "through": "2026-07-27",
       "note": "融券+借券餘額 2015+"
     },
     "pledge": {
       "cadence": "weekly",
       "scope": "universe",
       "coverage": 1957,
-      "through": "2026-07-24",
+      "through": "2026-07-27",
       "note": "借貸擔保品 2015+"
     },
     "short_suspension": {
@@ -197,6 +197,9 @@
     "3018",
     "2207",
     "6669",
-    "6863"
+    "6863",
+    "1799",
+    "1419",
+    "2812"
   ]
 }

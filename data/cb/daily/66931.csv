@@ -1,2 +1,3 @@
 ﻿date,cb_id,cb_name,transaction_type,close,change,open,max,min,no_of_transactions,unit,trading_value,avg_price,next_ref_price,next_max_limit,next_min_limit
 2026-07-24,66931,廣閎科一,等價,112.2,10.2,112.2,112.2,112.2,24,247,27713400,112.2,112.2,123.4,101.0
+2026-07-27,66931,廣閎科一,等價,110.0,-2.2,113.1,114.5,109.05,55,209,23553800,112.69,110.0,121.0,99.0
