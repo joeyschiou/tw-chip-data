@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-07-28T03:37:28.803879+00:00",
-  "generated_at_taipei": "2026-07-28 11:37:28",
-  "last_trading_date": "2026-07-27",
+  "generated_at_utc": "2026-07-28T17:28:53.903504+00:00",
+  "generated_at_taipei": "2026-07-29 01:28:53",
+  "last_trading_date": "2026-07-28",
   "datasets": {
     "price": {
-      "through": "2026-07-24",
-      "status": "lagging",
+      "through": "2026-07-28",
+      "status": "ok",
       "earliest": "2010-02-22",
-      "coverage": 2074,
+      "coverage": 2075,
       "scope": "universe"
     },
     "inst": {
@@ -15,18 +15,18 @@
       "status": "lagging"
     },
     "margin": {
-      "through": "2026-07-24",
-      "status": "lagging"
+      "through": "2026-07-28",
+      "status": "ok"
     },
     "branch": {
-      "through": "2026-07-24",
-      "status": "lagging",
-      "gap_tdays": 1,
+      "through": "2026-07-28",
+      "status": "ok",
+      "gap_tdays": 0,
       "cadence": "daily",
       "scope": "watchlist"
     },
     "daytrade": {
-      "through": "2026-07-27",
+      "through": "2026-07-28",
       "status": "ok",
       "cadence": "daily",
       "scope": "universe",
@@ -58,7 +58,7 @@
   },
   "reference": {
     "info": {
-      "count": 2747,
+      "count": 2748,
       "status": "ok"
     },
     "disposition": {
@@ -67,9 +67,9 @@
     }
   },
   "universe": {
-    "count": 2131,
-    "daily_files": 2074,
-    "current": 811,
+    "count": 2135,
+    "daily_files": 2075,
+    "current": 1970,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
@@ -102,33 +102,33 @@
     },
     "business_indicator": {
       "cadence": "monthly",
-      "through": "2026-05-01",
+      "through": "2026-06-01",
       "note": "景氣對策信號 2010+"
     },
     "margin_maintenance": {
       "cadence": "daily",
-      "through": "2026-07-27",
+      "through": "2026-07-28",
       "note": "大盤融資維持率 2015+"
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-07-27",
+      "through": "2026-07-28",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
       "cadence": "daily",
-      "through": "2026-07-27",
+      "through": "2026-07-28",
       "status": "shallow",
       "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
     },
     "disposition": {
       "cadence": "daily",
-      "through": "2026-07-27",
+      "through": "2026-07-28",
       "note": "處置股 2005+"
     },
     "delisting": {
       "cadence": "daily",
-      "through": "2026-07-16",
+      "through": "2026-07-28",
       "note": "下市櫃 2001+;實測 TaiwanStockPrice 仍可抓下市股歷史→倖存者偏誤可修"
     },
     "industry_chain": {
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 28,
+      "coverage": 31,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
