@@ -10,6 +10,11 @@ ADJ_DIR = "data/daily_adj"
 DAILY_DIR = "data/daily"
 REV_DIR = "data/revenue"
 
+# 延伸日的最低參與檔數。universe ≈ 2,100,成分(≥130 列)≈ 1,930;
+# 1500 ≈ universe 七成。日線夜更若被配額守衛早停(如 2026-07-27 只覆蓋 811 檔),
+# 等權平均會建在半個市場上 → 該日寧可棄算,讓 regime 停在前一有效日(過期但誠實)。
+EXT_MIN_N = 1500
+
 
 def universe_ids() -> list:
     return pd.read_csv("config/universe.csv", dtype=str)["id"].astype(str).tolist()
@@ -154,3 +159,122 @@ def build_market_index(min_rows=130, winsor=0.14, ma=120, min_periods=60) -> pd.
     df["regime"] = df["index"] > df["ma120"]         # NaN(未滿min_periods)→ False
     df.loc[df["ma120"].isna(), "regime"] = False
     return df
+
+
+def extend_market_index(idx_df, min_rows=130, winsor=0.14, ma=120, min_periods=60):
+    """
+    market_index 的 raw 尾端延伸(唯讀,嚴禁寫回 market_index.csv)。
+    基底 index 建在 daily_adj 上(週更),尾端會落後日線;此函式把 adj_last 之後的交易日
+    用 data/daily 的 raw close 補上,供當晚 regime 判讀。
+
+      成分 = 與 build_market_index 完全相同(universe ∩ daily_adj 存在 ∩ 清洗後 >=130 列)。
+      逐日 mkt_logret = 成分股 ln(close_t/close_{t-1}) 等權平均;
+        t 或 t-1 缺 close(檔案缺列 / close<=0 / open<=0 / 量=0)該檔當日剔除,分母跟著減;
+        |log報酬| >= winsor 亦剔除(同 build_market_index)。
+      index_t = index_{t-1} + mkt_logret_t(加性;基底 index 就是日均 log 報酬累加)
+      ma120 以「adj 歷史 + raw 延伸」合併序列滾動重算;regime_t = index_t > ma120_t。
+      延伸列 provisional=True(基底列 False)。
+
+    回 (ext_df, n_ext, adj_last)。逐日參與檔數放在 ext_df.attrs["ext_counts"]。
+    """
+    base = idx_df.copy()
+    if "provisional" not in base.columns:
+        base["provisional"] = False
+    if base.empty:
+        base.attrs["ext_counts"] = {}
+        return base, 0, None
+    base["date"] = base["date"].astype(str)
+    base["index"] = pd.to_numeric(base["index"], errors="coerce")
+    adj_last = base["date"].iloc[-1]
+
+    closes = {}   # sid -> Series(date -> raw close),只留 >= adj_last
+    for sid in universe_ids():
+        d = clean_adj(sid)
+        if d is None or len(d) < min_rows:
+            continue                                  # 成分判定與 build_market_index 一致
+        p = f"{DAILY_DIR}/{sid}.csv"
+        if not os.path.exists(p):
+            continue
+        r = pd.read_csv(p, dtype=str)
+        vcol = "volume_shares" if "volume_shares" in r.columns else "Trading_Volume"  # daily 與 daily_adj 欄名不同
+        if not {"open", "close", vcol}.issubset(r.columns):
+            continue
+        for c in ("open", "close", vcol):
+            r[c] = pd.to_numeric(r[c], errors="coerce")
+        r = r[(r["close"] > 0) & (r["open"] > 0) & (r[vcol] > 0)]
+        r = r[r["date"].astype(str) >= adj_last]
+        if r.empty:
+            continue
+        closes[sid] = r.drop_duplicates("date").set_index("date")["close"]
+
+    ext_dates = sorted({dt for s in closes.values() for dt in s.index if dt > adj_last})
+    if not ext_dates:
+        base.attrs["ext_counts"] = {}
+        return base, 0, adj_last
+
+    days = [adj_last] + ext_dates
+    rets, counts, skipped, used = [], {}, [], []
+    for i in range(1, len(days)):
+        t, prev = days[i], days[i - 1]
+        tot, n = 0.0, 0
+        for s in closes.values():
+            ct = s.get(t); cp = s.get(prev)
+            if ct is None or cp is None or not (np.isfinite(ct) and np.isfinite(cp)):
+                continue
+            lr = float(np.log(ct / cp))
+            if abs(lr) >= winsor:
+                continue
+            tot += lr; n += 1
+        counts[t] = n
+        if n < EXT_MIN_N:                             # 日線覆蓋不足 → 棄算,延伸停在前一有效日
+            skipped.append((t, n))
+            break
+        used.append(t)
+        rets.append(tot / n)
+
+    if not used:
+        base.attrs["ext_counts"] = counts
+        base.attrs["ext_skipped"] = skipped
+        return base, 0, adj_last
+    ext_dates = used
+
+    lvl = float(base["index"].iloc[-1])
+    idx_vals = []
+    for r in rets:
+        lvl = lvl + r                                 # 定案:加性遞推(基底是 log 報酬 cumsum,量綱一致)
+        idx_vals.append(lvl)
+
+    ext = pd.DataFrame({"date": ext_dates, "mkt_logret": rets, "index": idx_vals,
+                        "ma120": np.nan, "regime": False, "provisional": True})
+    out = pd.concat([base, ext], ignore_index=True)
+    out["ma120"] = pd.to_numeric(out["index"], errors="coerce").rolling(ma, min_periods=min_periods).mean()
+    out["regime"] = out["index"] > out["ma120"]
+    out.loc[out["ma120"].isna(), "regime"] = False
+    out.attrs["ext_counts"] = counts
+    out.attrs["ext_skipped"] = skipped
+    return out, len(ext_dates), adj_last
+
+
+def adj_last_date():
+    """daily_adj 目錄的最新資料日(只讀各檔尾端 4KB 取 max,不載入整檔)。無檔案回 None。"""
+    if not os.path.isdir(ADJ_DIR):
+        return None
+    latest = None
+    with os.scandir(ADJ_DIR) as it:
+        for e in it:
+            if not e.name.endswith(".csv"):
+                continue
+            try:
+                with open(e.path, "rb") as f:
+                    f.seek(0, os.SEEK_END)
+                    size = f.tell()
+                    f.seek(max(0, size - 4096))
+                    lines = f.read().decode("utf-8-sig", "ignore").strip().splitlines()
+            except OSError:
+                continue
+            if not lines:
+                continue
+            d = lines[-1].split(",")[0].strip()        # 尾端切片可能截半行,故只取最後一行
+            if len(d) == 10 and d[4] == "-" and (latest is None or d > latest):
+                latest = d
+    return latest

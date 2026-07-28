@@ -26,13 +26,32 @@ STALE_MOVE = 0.11    # adj-stale 延伸窗內 raw 單日 |漲跌|>11% → 需人
 
 # ---------- market index / regime ----------
 
-def load_or_build_index(rebuild: bool) -> pd.DataFrame:
-    if rebuild or not os.path.exists(MKT):
+def load_or_build_index(rebuild: bool, path: str = MKT) -> pd.DataFrame:
+    """
+    三擇一觸發全量重建並落地:檔案不存在 / 基底最後日 < daily_adj 最後日 / --rebuild-index。
+    (adj 週更;沒有第二條,CSV 會像 2026-07-17 那樣一直凍在舊日。)
+    落地 CSV 永遠只含 adj 基底列 —— raw 延伸列由 extend_market_index() 在記憶體裡加,不落地。
+    """
+    cur, why = None, None
+    if rebuild:
+        why = "--rebuild-index"
+    elif not os.path.exists(path):
+        why = "檔案不存在"
+    else:
+        cur = pd.read_csv(path, dtype={"date": str})
+        if "provisional" in cur.columns:               # 防呆:延伸列不該落地過
+            cur = cur[~cur["provisional"].fillna(False).astype(bool)].drop(columns=["provisional"])
+        base_last = cur["date"].iloc[-1] if len(cur) else None
+        a_last = sc.adj_last_date()
+        if a_last and (base_last is None or base_last < a_last):
+            why = f"基底 {base_last} 落後 daily_adj {a_last}"
+    if why:
+        print(f"↻ 全量重建 market_index({why})")
         df = sc.build_market_index()
-        os.makedirs(DIR, exist_ok=True)
-        df.to_csv(MKT, index=False, encoding="utf-8-sig")
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        df.to_csv(path, index=False, encoding="utf-8-sig")
         return df
-    return pd.read_csv(MKT, dtype={"date": str})
+    return cur
 
 
 # ---------- 延伸(adj-stale)價格序列 ----------
@@ -298,22 +317,45 @@ def fmt_pct(x):
     return "—" if x is None or (isinstance(x, float) and not np.isfinite(x)) else f"{x*100:+.1f}%"
 
 
+def regime_block(regime_row, ext_info=None) -> list:
+    """
+    Regime 區塊(純顯示,不影響任何交易行為)。
+    原則:任何 regime 數字旁必附資料日;取不到就明說,不印無日期的燈號。
+    """
+    if regime_row is None:
+        return ["## Regime:⚠️ 無指數資料", ""]
+    ei = ext_info or {}
+    on = bool(regime_row["regime"])
+    d = str(regime_row["date"])
+    prov = bool(regime_row.get("provisional", False))
+    iv = float(regime_row["index"])
+    mv = float(regime_row["ma120"]) if pd.notna(regime_row.get("ma120")) else np.nan
+    L = [f"## Regime:{'🟢 開機' if on else '🔴 關機(不進新倉)'} — 資料日 {d}"
+         f"{'(raw 延伸暫定值)' if prov else ''}"]
+    if np.isfinite(mv):
+        buf = (iv - mv) * 100                          # 對數百分點
+        L.append(f"- {d}:等權指數 {iv:.4f} vs 120MA {mv:.4f},buffer {buf:+.2f} 對數百分點")
+    else:
+        buf = np.nan
+        L.append(f"- {d}:120MA 未滿 60 日 → 關機")
+    L.append(f"- index 基底至 {ei.get('adj_last', '—')},raw 延伸 {ei.get('n_ext', 0)} 日至 {ei.get('last', '—')}")
+    if prov and np.isfinite(buf) and abs(buf) < 0.25:
+        L.append("- ⚠️ 刀口區:延伸值含除息下偏(~0.03pp/日),此判讀為擲幣等級")
+    for sd, sn in ei.get("skipped", []):
+        L.append(f"- ⚠️ {sd} 日線僅 {sn} 檔,該日棄算,regime 停在 {d}")
+    L.append("")
+    return L
+
+
 def write_report(date, regime_row, positions, exits, fills, pending, cands,
-                 floored, v1, v4, v5, stale_list, latest_json, cal, cal_idx):
+                 floored, v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=None):
     L = [f"# 籌碼篩選機報告 — {date}\n"]
     L.append("## 資料新鮮度")
     if latest_json:
         for k, v in latest_json.get("datasets", {}).items():
             L.append(f"- {k}: 截至 {v.get('through')} ({v.get('status')})")
     L.append("")
-    if regime_row is not None:
-        on = bool(regime_row["regime"])
-        L.append(f"## Regime:{'🟢 開機' if on else '🔴 關機(不進新倉)'}")
-        L.append(f"- 等權指數 {float(regime_row['index']):.4f} vs 120MA "
-                 f"{float(regime_row['ma120']):.4f}\n" if np.isfinite(float(regime_row.get('ma120') or np.nan))
-                 else "- 120MA 未滿 60 日 → 關機\n")
-    else:
-        L.append("## Regime:⚠️ 無指數資料\n")
+    L += regime_block(regime_row, ext_info)
     L.append("## 模型組合持倉")
     if positions:
         L.append("| 代號 | 名稱 | 進場日 | 進場價 | 持有交易日 | exit_due | 最新收盤 | 浮動損益 |")
@@ -384,7 +426,13 @@ def main():
     it = cal_idx[today]
 
     idx = load_or_build_index(args.rebuild_index)
+    idx, _n_ext, adj_last = sc.extend_market_index(idx)   # raw 尾端延伸(唯讀,不落地)
+    ext_skipped = idx.attrs.get("ext_skipped", [])
     idx = idx[idx["date"] <= today]
+    ext_info = {"adj_last": adj_last,
+                "n_ext": int(idx["provisional"].fillna(False).astype(bool).sum()) if len(idx) else 0,
+                "last": idx["date"].iloc[-1] if len(idx) else None,
+                "skipped": ext_skipped}
     regime_row = idx.iloc[-1] if len(idx) else None
     regime_on = bool(regime_row["regime"]) if regime_row is not None else False
 
@@ -488,7 +536,7 @@ def main():
     v5 = satellite_v5(today, cal, cal_idx, sat["v5_disposition_release"], names, uni_set)
 
     write_report(today, regime_row, positions, exits, fills, pending, cands, floored,
-                 v1, v4, v5, stale_list, latest_json, cal, cal_idx)
+                 v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=ext_info)
 
     state["last_run_date"] = today
     state["positions"] = positions
