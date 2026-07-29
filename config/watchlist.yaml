@@ -195,3 +195,7 @@ tickers:
   - id: "1101"
     market: twse
     note: farm 台泥
+
+  - id: "2539"
+    market: twse
+    note: farm 櫻花建
