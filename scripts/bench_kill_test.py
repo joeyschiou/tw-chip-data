@@ -40,8 +40,11 @@ OUT_MD = "data/screener/bench_kill_report.md"
 FRICTION = scr.FEES                   # 0.004425(repo 既有回測常數)
 BRANCH_ERA = "2021-06-30"
 T1_ARITH_BAR = 0.005                  # +0.5pp
-INV_SIGNALS, INV_SIGNALS_TOL = 25003, 0.01     # 凍結回測 invariant(±1%)
-INV_TRADES, INV_TRADES_TOL = 480, 0.02         # 凍結回測 invariant(±2%)
+# 凍結回測 invariant。原始凍結值 25,003 / 480 出自 2026-07-22 快照;2026-07-30 使用者裁決
+# 重新凍結為下列值 —— 因 daily_adj 深補改寫 + delisted 入 universe + market_index 重建
+# 使 2015→今整條時間軸的事件集前移(原始 harness 交叉驗證同樣吐 25,578 / 494,非程式差異)。
+INV_SIGNALS, INV_SIGNALS_TOL = 25578, 0.01     # 凍結回測 invariant(±1%)
+INV_TRADES, INV_TRADES_TOL = 494, 0.02         # 凍結回測 invariant(±2%)
 
 
 # ─────────────────── 事件集(與 research_backtest.py 同參數重建)───────────────────
