@@ -1,5 +1,8 @@
 {
-  "param_hash": "638fb228f319e9a1",
+  "version": 2,
+  "tick_mode": "floor",
+  "corrected_on": "2026-07-30",
+  "param_hash": "45861640dcc19d93",
   "files_scanned": 2075,
   "stocks_analyzed": 2071,
   "skipped": {
@@ -7,9 +10,9 @@
     "short": 4,
     "nofile": 0
   },
-  "events_frozen_round": 3316,
-  "events_alt_floor": 7365,
-  "events_branch_era": 1729,
+  "events_main_floor": 7365,
+  "events_alt_round_v1": 3316,
+  "events_branch_era": 3957,
   "tick_diag": {
     "round_days": 35220,
     "floor_days": 62396,
@@ -17,41 +20,101 @@
     "floor_illegal": 0,
     "round_only": 74
   },
+  "events_BE_all": 2269,
+  "events_BE_branch_era": 1544,
   "cost": {
-    "30": {
+    "A(<30M)|30": {
+      "group": "A(<30M)",
       "window": "D-30 ~ D+20",
-      "stock_days_total": 86447,
-      "already_have": 9379,
-      "todo_calls": 77068,
-      "hours_at_quota": 12.844666666666667,
-      "distinct_stocks": 942
+      "events": 2413,
+      "distinct_stocks": 944,
+      "stock_days_total": 120208,
+      "already_have": 2494,
+      "todo_calls": 117714,
+      "hours_at_quota": 19.619
     },
-    "60": {
+    "A(<30M)|60": {
+      "group": "A(<30M)",
       "window": "D-60 ~ D+20",
-      "stock_days_total": 133188,
-      "already_have": 11950,
-      "todo_calls": 121238,
-      "hours_at_quota": 20.206333333333333,
-      "distinct_stocks": 942
+      "events": 2413,
+      "distinct_stocks": 944,
+      "stock_days_total": 182932,
+      "already_have": 2837,
+      "todo_calls": 180095,
+      "hours_at_quota": 30.015833333333333
     },
-    "120": {
+    "A(<30M)|120": {
+      "group": "A(<30M)",
       "window": "D-120 ~ D+20",
-      "stock_days_total": 220454,
-      "already_have": 14529,
-      "todo_calls": 205925,
-      "hours_at_quota": 34.32083333333333,
-      "distinct_stocks": 942
+      "events": 2413,
+      "distinct_stocks": 944,
+      "stock_days_total": 295211,
+      "already_have": 3301,
+      "todo_calls": 291910,
+      "hours_at_quota": 48.651666666666664
     },
-    "240": {
-      "window": "D-240 ~ D+20",
-      "stock_days_total": 379038,
-      "already_have": 16892,
-      "todo_calls": 362146,
-      "hours_at_quota": 60.35766666666667,
-      "distinct_stocks": 942
+    "B-E(>=30M)|30": {
+      "group": "B-E(>=30M)",
+      "window": "D-30 ~ D+20",
+      "events": 1544,
+      "distinct_stocks": 786,
+      "stock_days_total": 75960,
+      "already_have": 18069,
+      "todo_calls": 57891,
+      "hours_at_quota": 9.6485
+    },
+    "B-E(>=30M)|60": {
+      "group": "B-E(>=30M)",
+      "window": "D-60 ~ D+20",
+      "events": 1544,
+      "distinct_stocks": 786,
+      "stock_days_total": 114542,
+      "already_have": 22474,
+      "todo_calls": 92068,
+      "hours_at_quota": 15.344666666666667
+    },
+    "B-E(>=30M)|120": {
+      "group": "B-E(>=30M)",
+      "window": "D-120 ~ D+20",
+      "events": 1544,
+      "distinct_stocks": 786,
+      "stock_days_total": 184294,
+      "already_have": 26947,
+      "todo_calls": 157347,
+      "hours_at_quota": 26.2245
+    },
+    "ALL|30": {
+      "group": "ALL",
+      "window": "D-30 ~ D+20",
+      "events": 3957,
+      "distinct_stocks": 1345,
+      "stock_days_total": 194161,
+      "already_have": 20228,
+      "todo_calls": 173933,
+      "hours_at_quota": 28.988833333333332
+    },
+    "ALL|60": {
+      "group": "ALL",
+      "window": "D-60 ~ D+20",
+      "events": 3957,
+      "distinct_stocks": 1345,
+      "stock_days_total": 289889,
+      "already_have": 24636,
+      "todo_calls": 265253,
+      "hours_at_quota": 44.20883333333333
+    },
+    "ALL|120": {
+      "group": "ALL",
+      "window": "D-120 ~ D+20",
+      "events": 3957,
+      "distinct_stocks": 1345,
+      "stock_days_total": 456332,
+      "already_have": 29234,
+      "todo_calls": 427098,
+      "hours_at_quota": 71.183
     }
   },
-  "already_watchlist": 29,
-  "already_research": 974,
-  "already_any": 987
+  "already_watchlist": 66,
+  "already_research": 2307,
+  "already_any": 2341
 }
