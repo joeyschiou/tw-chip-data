@@ -199,3 +199,15 @@ tickers:
   - id: "2539"
     market: twse
     note: farm 櫻花建
+
+  - id: "2546"
+    market: twse
+    note: farm 根基
+
+  - id: "8462"
+    market: twse
+    note: farm 柏文
+
+  - id: "2727"
+    market: twse
+    note: farm 王品
