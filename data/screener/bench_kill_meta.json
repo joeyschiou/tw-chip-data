@@ -1,0 +1,12 @@
+{
+  "param_hash": "b0403f1a8ca3ce64",
+  "signals": 25578,
+  "events": 494,
+  "analyzed": 492,
+  "dropped": 2,
+  "halt": true,
+  "alpha_mean": 0.002425478631428055,
+  "geo_r": -0.0010175490024083578,
+  "geo_b": 0.009560426103771835,
+  "verdict": null
+}
