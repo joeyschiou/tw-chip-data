@@ -211,3 +211,35 @@ tickers:
   - id: "2727"
     market: twse
     note: farm 王品
+
+  - id: "1808"
+    market: twse
+    note: farm 潤隆
+
+  - id: "2887"
+    market: twse
+    note: farm 台新新光金
+
+  - id: "2347"
+    market: twse
+    note: farm 聯強
+
+  - id: "6214"
+    market: twse
+    note: farm 精誠
+
+  - id: "1437"
+    market: twse
+    note: farm 勤益控
+
+  - id: "9912"
+    market: twse
+    note: farm 偉聯
+
+  - id: "2618"
+    market: twse
+    note: farm 長榮航
+
+  - id: "9935"
+    market: twse
+    note: farm 慶豐富

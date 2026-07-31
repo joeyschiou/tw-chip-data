@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-07-30T17:23:17.008162+00:00",
-  "generated_at_taipei": "2026-07-31 01:23:17",
-  "last_trading_date": "2026-07-30",
+  "generated_at_utc": "2026-07-31T17:31:09.309838+00:00",
+  "generated_at_taipei": "2026-08-01 01:31:09",
+  "last_trading_date": "2026-07-31",
   "datasets": {
     "price": {
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "status": "ok",
       "earliest": "2010-02-22",
       "coverage": 2075,
@@ -15,18 +15,18 @@
       "status": "lagging"
     },
     "margin": {
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "status": "ok"
     },
     "branch": {
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "status": "ok",
       "gap_tdays": 0,
       "cadence": "daily",
       "scope": "watchlist"
     },
     "daytrade": {
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "status": "ok",
       "cadence": "daily",
       "scope": "universe",
@@ -107,17 +107,17 @@
     },
     "margin_maintenance": {
       "cadence": "daily",
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "note": "大盤融資維持率 2015+"
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
       "cadence": "daily",
-      "through": "2026-07-30",
+      "through": "2026-07-31",
       "status": "shallow",
       "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
     },
@@ -133,7 +133,7 @@
     },
     "industry_chain": {
       "cadence": "daily",
-      "coverage": 6852,
+      "coverage": 6853,
       "note": "產業鏈快照"
     },
     "cb_info": {
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 34,
+      "coverage": 36,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
@@ -202,6 +202,9 @@
     "1419",
     "2812",
     "1101",
-    "2539"
+    "2539",
+    "2546",
+    "8462",
+    "2727"
   ]
 }
