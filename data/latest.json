@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-07-31T17:31:09.309838+00:00",
-  "generated_at_taipei": "2026-08-01 01:31:09",
+  "generated_at_utc": "2026-08-01T04:10:39.810536+00:00",
+  "generated_at_taipei": "2026-08-01 12:10:39",
   "last_trading_date": "2026-07-31",
   "datasets": {
     "price": {
@@ -33,18 +33,18 @@
       "coverage": 1947
     },
     "holders": {
-      "through": "2026-07-24",
+      "through": "2026-07-31",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2073
+      "coverage": 2074
     },
     "float": {
-      "through": "2026-07-24",
+      "through": "2026-07-31",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2073,
+      "coverage": 2074,
       "note": "locked=千張大戶 proxy(非董監)"
     },
     "revenue": {
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2135,
+    "count": 2131,
     "daily_files": 2075,
     "current": 1969,
     "earliest": "2010-02-22"
@@ -76,22 +76,22 @@
     "daily_adj": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 2073,
-      "through": "2026-07-27",
+      "coverage": 2074,
+      "through": "2026-07-31",
       "note": "還原股價 2015+"
     },
     "short": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1978,
-      "through": "2026-07-27",
+      "coverage": 1979,
+      "through": "2026-07-31",
       "note": "融券+借券餘額 2015+"
     },
     "pledge": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1957,
-      "through": "2026-07-27",
+      "coverage": 1960,
+      "through": "2026-07-31",
       "note": "借貸擔保品 2015+"
     },
     "short_suspension": {
@@ -143,11 +143,11 @@
     },
     "cb_daily": {
       "cadence": "weekly",
-      "coverage": 1382
+      "coverage": 1384
     },
     "cb_institutional": {
       "cadence": "weekly",
-      "coverage": 1347
+      "coverage": 1349
     },
     "news": {
       "cadence": "daily",
@@ -205,6 +205,14 @@
     "2539",
     "2546",
     "8462",
-    "2727"
+    "2727",
+    "1808",
+    "2887",
+    "2347",
+    "6214",
+    "1437",
+    "9912",
+    "2618",
+    "9935"
   ]
 }
