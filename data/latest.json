@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-08-01T04:10:39.810536+00:00",
-  "generated_at_taipei": "2026-08-01 12:10:39",
+  "generated_at_utc": "2026-08-01T17:16:14.400754+00:00",
+  "generated_at_taipei": "2026-08-02 01:16:14",
   "last_trading_date": "2026-07-31",
   "datasets": {
     "price": {
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2131,
+    "count": 2135,
     "daily_files": 2075,
     "current": 1969,
     "earliest": "2010-02-22"
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 36,
+      "coverage": 39,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
