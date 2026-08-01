@@ -348,7 +348,8 @@ def regime_block(regime_row, ext_info=None) -> list:
 
 
 def write_report(date, regime_row, positions, exits, fills, pending, cands,
-                 floored, v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=None):
+                 floored, v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=None,
+                 shadow_lines=None):
     L = [f"# 籌碼篩選機報告 — {date}\n"]
     L.append("## 資料新鮮度")
     if latest_json:
@@ -374,6 +375,9 @@ def write_report(date, regime_row, positions, exits, fills, pending, cands,
     L.append("\n## 明日開盤進場 pending")
     L += ([f"- {p['id']} {p.get('name','')}(分 {p['rank_score']})" for p in pending]
           or ["*(無 — 關機/無合格候選/已滿倉)*"])
+    if shadow_lines:
+        L.append("")
+        L += shadow_lines
     L.append("\n## 今日成立訊號候選(依分數/yoy 排序)")
     if cands:
         L.append("| 代號 | 名稱 | 市場 | 收盤 | yoy | 驚喜 | 新上市 | 分數 | churn | 流動性 |")
@@ -535,8 +539,20 @@ def main():
     v4 = satellite_v4(today, cal, cal_idx, sat["v4_short_cover"], names, uni_set)
     v5 = satellite_v5(today, cal, cal_idx, sat["v5_disposition_release"], names, uni_set)
 
+    # 影子倉(第二本紙上帳):訊號層與生產帳完全相同,只換收割器(20 槽 / 40 交易日)。
+    # **fail-safe**:任何異常都只記一行警告,絕不影響 nightly 的既有輸出與生產帳。
+    shadow_lines = []
+    try:
+        import shadow_book
+        shadow_lines, _ = shadow_book.run(today, cal, cal_idx, cands, regime_on,
+                                          extended_series, names)
+    except Exception as e:                                    # noqa: BLE001
+        shadow_lines = [f"## 影子倉:⚠ 本次計算失敗({type(e).__name__}: {e}),"
+                        f"生產帳不受影響", ""]
+
     write_report(today, regime_row, positions, exits, fills, pending, cands, floored,
-                 v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=ext_info)
+                 v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=ext_info,
+                 shadow_lines=shadow_lines)
 
     state["last_run_date"] = today
     state["positions"] = positions
