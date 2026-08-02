@@ -61,6 +61,47 @@ def check_p0(st, trades, cal_idx=None):
     return out
 
 
+def _num(mo, col):
+    if not len(mo) or col not in mo.columns:
+        return pd.Series(dtype=float)
+    return pd.to_numeric(mo[col], errors="coerce").dropna()
+
+
+def _env_line(mo):
+    """命中包絡比例。對紙上帳恆為 100% —— 照實標,不假裝是檢定。"""
+    a = _num(mo, "actual_slip_bps")
+    e = _num(mo, "envelope_hi_bps")
+    n = min(len(a), len(e))
+    if n == 0:
+        return "尚無資料(本月無平倉,或平倉筆早於 wave 7 基建)"
+    hit = (a.iloc[:n].to_numpy() <= e.iloc[:n].to_numpy()).mean()
+    return f"{hit*100:.0f}%({n} 筆)—— 恆真,無資訊量"
+
+
+def _ops_line(mo):
+    if not len(mo) or "ops_ok" not in mo.columns:
+        return "尚無資料"
+    v = mo["ops_ok"].astype(str).str.lower()
+    ok, bad = (v == "true").sum(), (v == "false").sum()
+    if ok + bad == 0:
+        return "尚無資料"
+    return (f"{ok}/{ok+bad} = {ok/(ok+bad)*100:.0f}% 通過"
+            + ("" if bad == 0 else f" — **{bad} 筆異常,須查(P0-4 候選)**"))
+
+
+def _lot_line(mo):
+    if not len(mo) or "affordable" not in mo.columns:
+        return "尚無資料"
+    v = mo["affordable"].astype(str).str.lower()
+    aff, un = (v == "true").sum(), (v == "false").sum()
+    if aff + un == 0:
+        return "尚無資料"
+    s = _num(mo, "model_slip_bps")
+    return (f"NT$100K/槽 下買得起整張 {aff}/{aff+un} 筆"
+            + (f";買不起 **{un}** 筆" if un else "")
+            + (f";模型預估滑價中位 {s.median():.1f}bps" if len(s) else ""))
+
+
 def build(ym=None, cal_idx=None):
     ym = ym or date.today().strftime("%Y-%m")
     st = None
@@ -89,9 +130,11 @@ def build(ym=None, cal_idx=None):
          f"勝率 {((nr>0).mean()*100 if len(nr) else float('nan')):.1f}%",
          f"- **P0 異常:{len(p0)} 件**"
          + ("" if not p0 else "(" + "、".join(f"{c}" for c, _ in p0) + ")"),
-         f"- 命中包絡比例(模型滑價 + {ENVELOPE_EXTRA_BPS}bps):**尚無法計算** —— "
-         f"需要逐筆實際成交價 vs 模型預估,影子帳目前只記開盤價成交,"
-         f"待 wave 7 補上模型預估欄位後才可比對",
+         f"- 命中包絡比例:**{_env_line(mo)}**",
+         f"  (⚠ 紙上帳固定開盤成交、實際滑價恆為 0 → 這個比例對紙上帳**恆為 100%**,"
+         f"是空檢定。真正有驗證力的是下一行的作業誠實。)",
+         f"- **作業誠實包絡**(成交價確實在當日 [low, high] 內且當日有量):**{_ops_line(mo)}**",
+         f"- 整張顆粒度:{_lot_line(mo)}",
          f"- matched α 初讀:**尚無法計算** —— 需累積足夠樣本(建議 ≥30 筆)"
          f"且以研究端的匹配 null 口徑重算",
          f"- 目前持倉 {len((st or {}).get('positions', []))}/20;"

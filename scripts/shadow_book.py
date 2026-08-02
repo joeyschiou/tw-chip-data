@@ -58,6 +58,62 @@ def limit_up_price(prev_close):
     return round(np.floor(prev_close * 1.10 / t) * t, 4)
 
 
+# ---------------------------------------------------------------- 包絡基建
+# 解鎖條件② 要求「>=90% 成交紀錄落在『模型滑價 + 10bps』包絡內」。
+#
+# ⚠ **誠實範圍聲明(wave 7 凍結,務必連同任何包絡數字一起引用)**
+#   影子倉是**紙上帳**,固定以當日開盤價成交,實際滑價恆為 0。
+#   因此「實際滑價 <= 模型滑價 + 10bps」對紙上帳**恆真**,是空檢定,不具驗證力。
+#   → 紙上成交能驗證的是**作業誠實**:訊號正確、時點正確、用到的價格真的存在且可成交。
+#   → **衝擊係數 c 無法由紙上帳驗證**,只能由試點(docs/pilot_protocol.md)或真實下單驗證。
+#   本模組因此把兩件事分開記:
+#     (a) ops_ok  作業誠實包絡 —— 成交價確實落在當日 [low, high] 且當日有量、未觸漲停
+#     (b) model_slip_bps  模型**預估**滑價 —— 只記錄不比對,備妥欄位供未來真實成交回填
+C_IMPACT = 0.75       # wave 5 預先聲明的 fallback;wave 6 實測區間 [0.58, 3.105]
+AUCTION_FRAC = 0.03   # 開盤集合競價量佔全日量的比例(粗估;研究端實測中位約 3%)
+ENVELOPE_EXTRA_BPS = 10.0
+
+
+def envelope_record(sid, fill_px, series_fn, today):
+    """回一組欄位:整張股數、參與率、模型預估滑價、作業誠實包絡。失敗一律回 None 不拋。"""
+    rec = {"shares": None, "lots": None, "affordable": None, "est_part": None,
+           "model_slip_bps": None, "envelope_hi_bps": None, "ops_ok": None}
+    try:
+        e, _stale = series_fn(sid)                 # series_fn 回 (DataFrame, stale)
+        if e is None or not len(e) or "date" not in e:
+            return rec
+        cur = e[e["date"] == today]
+        if not len(cur):
+            return rec
+        row = cur.iloc[0]
+        e = e[e["date"] <= today]                  # 波動只用到當日為止(PIT)
+        # 整張顆粒度:每槽 NT$100K(NT$2M / 20 槽)
+        per_slot = 2_000_000 / N_SLOTS
+        lots = int(per_slot // (fill_px * 1000)) if fill_px > 0 else 0
+        rec["lots"], rec["shares"] = lots, lots * 1000
+        rec["affordable"] = lots >= 1
+        vol = float(row.get("Trading_Volume") or row.get("volume") or 0)
+        if vol > 0 and rec["shares"]:
+            auction = vol * AUCTION_FRAC
+            part = rec["shares"] / auction if auction > 0 else None
+            if part and np.isfinite(part):
+                r = e["close"].pct_change().tail(60)
+                sig = float(r.std()) if r.notna().sum() > 10 else 0.03
+                # 一律轉原生 float:positions 會被 json.dump 存進 shadow_state.json,
+                # np.float64 會直接讓存檔炸掉。
+                rec["est_part"] = float(round(part, 5))
+                rec["model_slip_bps"] = float(round(C_IMPACT * sig * np.sqrt(part)
+                                                    * 1e4, 2))
+                rec["envelope_hi_bps"] = float(round(rec["model_slip_bps"]
+                                                     + ENVELOPE_EXTRA_BPS, 2))
+        lo, hi = float(row.get("low") or 0), float(row.get("high") or 0)
+        if lo > 0 and hi > 0:
+            rec["ops_ok"] = bool(lo - 1e-9 <= fill_px <= hi + 1e-9 and vol > 0)
+    except Exception:  # noqa: BLE001
+        pass
+    return rec
+
+
 def _load():
     if os.path.exists(STATE):
         try:
@@ -128,9 +184,10 @@ def run(today, cal, cal_idx, cands, regime_on, series_fn, names=None):
             skipped_lu.append(sid)          # 撮合誠實度:開盤即漲停不追
             continue
         exit_due = cal[it + HOLD_DAYS] if it + HOLD_DAYS < len(cal) else None
+        env = envelope_record(sid, o, series_fn, today)
         positions.append({"id": sid, "name": pend.get("name", ""), "entry_date": today,
                           "entry_price": o, "exit_due": exit_due,
-                          "signal_date": pend.get("signal_date")})
+                          "signal_date": pend.get("signal_date"), **env})
         held.add(sid)
         fills.append(sid)
 
@@ -152,7 +209,16 @@ def run(today, cal, cal_idx, cands, regime_on, series_fn, names=None):
                            "entry_price": f"{p['entry_price']:.4f}", "exit_date": today,
                            "exit_price": f"{c:.4f}", "reason": f"hold_{HOLD_DAYS}",
                            "gross_return": f"{gross:.6f}",
-                           "net_return": f"{gross - FEES:.6f}"})
+                           "net_return": f"{gross - FEES:.6f}",
+                           # 包絡基建(進場時記錄,平倉時一併落帳)
+                           "lots": p.get("lots"), "shares": p.get("shares"),
+                           "affordable": p.get("affordable"),
+                           "est_part": p.get("est_part"),
+                           "model_slip_bps": p.get("model_slip_bps"),
+                           "envelope_hi_bps": p.get("envelope_hi_bps"),
+                           "ops_ok": p.get("ops_ok"),
+                           # 紙上帳的實際滑價恆為 0(固定開盤成交)——留欄位供未來真實成交回填
+                           "actual_slip_bps": 0.0, "fill_source": "paper_open"})
             exits.append(p["id"])
         else:
             keep.append(p)
@@ -196,6 +262,20 @@ def run(today, cal, cal_idx, cands, regime_on, series_fn, names=None):
          f";到期出場 {len(exits)}{('(' + ','.join(exits) + ')') if exits else ''}"]
     if skipped_lu:
         L.append(f"- ⚠ 開盤即漲停跳過 {len(skipped_lu)} 檔:{','.join(skipped_lu)}(誠實度規則)")
+    # 包絡基建:整張顆粒度與作業誠實(**不是**衝擊係數驗證,見模組頂端聲明)
+    newp = [p for p in positions if p.get("entry_date") == today]
+    if newp:
+        unaff = [p["id"] for p in newp if p.get("affordable") is False]
+        bad = [p["id"] for p in newp if p.get("ops_ok") is False]
+        slips = [p["model_slip_bps"] for p in newp if p.get("model_slip_bps") is not None]
+        L.append(f"- 執行基建:整張買不起 {len(unaff)} 檔"
+                 f"{('(' + ','.join(unaff) + ')') if unaff else ''}"
+                 f";模型預估滑價中位 "
+                 f"{(f'{float(np.median(slips)):.1f}bps' if slips else 'n/a')}"
+                 f";作業誠實包絡異常 {len(bad)} 檔"
+                 f"{('(' + ','.join(bad) + ')') if bad else ''}")
+        L.append("  (⚠ 紙上帳固定開盤成交,實際滑價恆為 0 → **『落在模型滑價包絡內』對紙上帳恆真,"
+                 "不具驗證力**;c 只能由試點或真實下單驗證)")
     L.append(f"- 累計運行 {dr} 日,平均每日訊號 {stats['avg_signals_per_day']} 檔,"
              f"已平倉 {closed} 筆;log:`{TRADES}`")
     if closed:
