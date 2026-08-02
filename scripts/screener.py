@@ -549,6 +549,12 @@ def main():
     except Exception as e:                                    # noqa: BLE001
         shadow_lines = [f"## 影子倉:⚠ 本次計算失敗({type(e).__name__}: {e}),"
                         f"生產帳不受影響", ""]
+    # 每月 1 日產上月影子月報(同樣 fail-safe)
+    try:
+        import shadow_digest
+        shadow_lines += shadow_digest.maybe_run(today, cal_idx)
+    except Exception as e:                                    # noqa: BLE001
+        shadow_lines += [f"## 影子月報:⚠ 產生失敗({type(e).__name__}: {e})", ""]
 
     write_report(today, regime_row, positions, exits, fills, pending, cands, floored,
                  v1, v4, v5, stale_list, latest_json, cal, cal_idx, ext_info=ext_info,
