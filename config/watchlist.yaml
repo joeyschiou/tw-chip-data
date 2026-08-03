@@ -243,3 +243,15 @@ tickers:
   - id: "9935"
     market: twse
     note: farm 慶豐富
+
+  - id: "2596"
+    market: tpex
+    note: farm 綠意
+
+  - id: "5490"
+    market: tpex
+    note: farm 同亨
+
+  - id: "5516"
+    market: tpex
+    note: farm 雙喜
