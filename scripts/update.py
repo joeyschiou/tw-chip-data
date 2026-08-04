@@ -28,7 +28,11 @@ EXTRA_SCRIPTS = ["fetch_info.py", "fetch_daytrade.py", "fetch_holders.py",
                  "fetch_macro.py",        # vix/維持率/期貨法人(日);景氣(月 no-op)
                  "fetch_regulatory.py",   # 處置/下市/產業鏈(全表 idempotent no-op)
                  "fetch_cb.py",           # 預設 info,overview(便宜)
-                 "fetch_news.py"]         # watchlist-8,自增量(從已存最新日續)
+                 "fetch_news.py",         # watchlist-8,自增量(從已存最新日續)
+                 # 借券/放空法規快照:**前瞻累積**。歷史標借費率買不到
+                 # (TWSE 各路徑 404、OpenAPI 僅當日股數、FinMind 無 dataset),
+                 # 所以從今天開始自己長。單日 2 個 call,極便宜,idempotent。
+                 "fetch_sbl_snapshot.py"]
 
 
 def run_script(name: str) -> None:
