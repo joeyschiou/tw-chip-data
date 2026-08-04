@@ -255,3 +255,39 @@ tickers:
   - id: "5516"
     market: tpex
     note: farm 雙喜
+
+  - id: "5324"
+    market: tpex
+    note: farm 士開
+
+  - id: "6516"
+    market: tpex
+    note: farm 勤崴國際
+
+  - id: "3653"
+    market: twse
+    note: farm 健策
+
+  - id: "3489"
+    market: tpex
+    note: farm 森寶
+
+  - id: "3231"
+    market: twse
+    note: farm 緯創
+
+  - id: "2301"
+    market: twse
+    note: farm 光寶科
+
+  - id: "6578"
+    market: tpex
+    note: farm 達邦蛋白
+
+  - id: "6206"
+    market: twse
+    note: farm 飛捷
+
+  - id: "5487"
+    market: tpex
+    note: farm 通泰
