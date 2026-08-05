@@ -291,3 +291,39 @@ tickers:
   - id: "5487"
     market: tpex
     note: farm 通泰
+
+  - id: "3702"
+    market: twse
+    note: farm 大聯大
+
+  - id: "3022"
+    market: twse
+    note: farm 威強電
+
+  - id: "1525"
+    market: twse
+    note: farm 江申
+
+  - id: "4127"
+    market: tpex
+    note: farm 天良
+
+  - id: "6491"
+    market: twse
+    note: farm 晶碩
+
+  - id: "3617"
+    market: twse
+    note: farm 碩天
+
+  - id: "2880"
+    market: twse
+    note: farm 華南金
+
+  - id: "3034"
+    market: twse
+    note: farm 聯詠
+
+  - id: "8905"
+    market: tpex
+    note: farm 裕國
