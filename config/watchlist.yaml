@@ -327,3 +327,43 @@ tickers:
   - id: "8905"
     market: tpex
     note: farm 裕國
+
+  - id: "6533"
+    market: twse
+    note: farm 晶心科
+
+  - id: "2395"
+    market: twse
+    note: farm 研華
+
+  - id: "2605"
+    market: twse
+    note: farm 新興
+
+  - id: "6279"
+    market: tpex
+    note: farm 胡連
+
+  - id: "7743"
+    market: tpex
+    note: farm 金利食安
+
+  - id: "3594"
+    market: tpex
+    note: farm 磐儀
+
+  - id: "2397"
+    market: twse
+    note: farm 友通
+
+  - id: "6952"
+    market: twse
+    note: farm 大武山
+
+  - id: "3416"
+    market: twse
+    note: farm 融程電
+
+  - id: "6968"
+    market: tpex
+    note: farm 萬達寵物

@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-08-05T17:30:39.397721+00:00",
-  "generated_at_taipei": "2026-08-06 01:30:39",
-  "last_trading_date": "2026-08-05",
+  "generated_at_utc": "2026-08-07T16:36:47.177828+00:00",
+  "generated_at_taipei": "2026-08-08 00:36:47",
+  "last_trading_date": "2026-08-07",
   "datasets": {
     "price": {
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "status": "ok",
       "earliest": "2010-02-22",
       "coverage": 2075,
@@ -15,22 +15,22 @@
       "status": "lagging"
     },
     "margin": {
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "status": "ok"
     },
     "branch": {
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "status": "ok",
       "gap_tdays": 0,
       "cadence": "daily",
       "scope": "watchlist"
     },
     "daytrade": {
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "status": "ok",
       "cadence": "daily",
       "scope": "universe",
-      "coverage": 1947
+      "coverage": 1948
     },
     "holders": {
       "through": "2026-07-31",
@@ -107,23 +107,23 @@
     },
     "margin_maintenance": {
       "cadence": "daily",
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "note": "大盤融資維持率 2015+"
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
       "cadence": "daily",
-      "through": "2026-08-05",
+      "through": "2026-08-07",
       "status": "shallow",
       "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
     },
     "disposition": {
       "cadence": "daily",
-      "through": "2026-08-04",
+      "through": "2026-08-06",
       "note": "處置股 2005+"
     },
     "delisting": {
@@ -138,7 +138,7 @@
     },
     "cb_info": {
       "cadence": "weekly",
-      "coverage": 1814,
+      "coverage": 1817,
       "note": "1800 CB;stock_id=cb_id[:4]"
     },
     "cb_daily": {
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 54,
+      "coverage": 67,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
@@ -225,6 +225,15 @@
     "2301",
     "6578",
     "6206",
-    "5487"
+    "5487",
+    "3702",
+    "3022",
+    "1525",
+    "4127",
+    "6491",
+    "3617",
+    "2880",
+    "3034",
+    "8905"
   ]
 }
