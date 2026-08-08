@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-08-08T03:24:37.518402+00:00",
-  "generated_at_taipei": "2026-08-08 11:24:37",
+  "generated_at_utc": "2026-08-08T16:05:52.464522+00:00",
+  "generated_at_taipei": "2026-08-09 00:05:52",
   "last_trading_date": "2026-08-07",
   "datasets": {
     "price": {
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2131,
+    "count": 2135,
     "daily_files": 2075,
     "current": 1970,
     "earliest": "2010-02-22"
@@ -133,7 +133,7 @@
     },
     "industry_chain": {
       "cadence": "daily",
-      "coverage": 6861,
+      "coverage": 6864,
       "note": "產業鏈快照"
     },
     "cb_info": {
@@ -152,7 +152,7 @@
     "news": {
       "cadence": "daily",
       "scope": "watchlist",
-      "coverage": 67,
+      "coverage": 80,
       "status": "shallow",
       "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"
     }
