@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-08-07T16:36:47.177828+00:00",
-  "generated_at_taipei": "2026-08-08 00:36:47",
+  "generated_at_utc": "2026-08-08T03:24:37.518402+00:00",
+  "generated_at_taipei": "2026-08-08 11:24:37",
   "last_trading_date": "2026-08-07",
   "datasets": {
     "price": {
@@ -33,14 +33,14 @@
       "coverage": 1948
     },
     "holders": {
-      "through": "2026-07-31",
+      "through": "2026-08-07",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
       "coverage": 2074
     },
     "float": {
-      "through": "2026-07-31",
+      "through": "2026-08-07",
       "status": "ok",
       "cadence": "weekly",
       "scope": "universe",
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2135,
+    "count": 2131,
     "daily_files": 2075,
     "current": 1970,
     "earliest": "2010-02-22"
@@ -77,27 +77,27 @@
       "cadence": "weekly",
       "scope": "universe",
       "coverage": 2074,
-      "through": "2026-08-03",
+      "through": "2026-08-07",
       "note": "還原股價 2015+"
     },
     "short": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1979,
-      "through": "2026-08-03",
+      "coverage": 1980,
+      "through": "2026-08-07",
       "note": "融券+借券餘額 2015+"
     },
     "pledge": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1961,
-      "through": "2026-08-03",
+      "coverage": 1962,
+      "through": "2026-08-07",
       "note": "借貸擔保品 2015+"
     },
     "short_suspension": {
       "cadence": "weekly",
       "scope": "universe",
-      "coverage": 1905,
+      "coverage": 1906,
       "note": "停券/回補日 2015+"
     },
     "business_indicator": {
@@ -143,11 +143,11 @@
     },
     "cb_daily": {
       "cadence": "weekly",
-      "coverage": 1385
+      "coverage": 1391
     },
     "cb_institutional": {
       "cadence": "weekly",
-      "coverage": 1350
+      "coverage": 1355
     },
     "news": {
       "cadence": "daily",
@@ -234,6 +234,16 @@
     "3617",
     "2880",
     "3034",
-    "8905"
+    "8905",
+    "6533",
+    "2395",
+    "2605",
+    "6279",
+    "7743",
+    "3594",
+    "2397",
+    "6952",
+    "3416",
+    "6968"
   ]
 }
