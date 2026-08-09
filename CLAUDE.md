@@ -41,5 +41,11 @@
 - 注意/處置 FinMind 沒有 → latest.json.reference.disposition 記為 unavailable,別自建爬蟲(另案)。
 - 單位鐵則見 config/schema.md:一律存「股」,永不存「張」。
 
-## Windows 本機
-跑腳本前先 set PYTHONUTF8=1(否則 emoji 在 cp950 會 UnicodeEncodeError)。
+## Windows 本機(編碼鐵則,ACP=950)
+本機 ANSI codepage 是 950(Big5),UTF-8 檔在預設路徑會被讀成亂碼。四條:
+1. **Python**:跑腳本前先 `set PYTHONUTF8=1`;pipe 到別處時再加 `sys.stdout.reconfigure(encoding='utf-8')`,否則 print 中文會被編成 Big5 或 UnicodeEncodeError。
+2. **PowerShell 讀檔**:`Get-Content` 預設用 cp950 讀,UTF-8 log 一定亂碼 → **一律加 `-Encoding UTF8`**。寫檔同理:`Out-File`/`Set-Content` 加 `-Encoding utf8`。
+3. **PowerShell 輸出**:PS 5.1 的 `[Console]::OutputEncoding` 預設是 cp950,`Write-Output "中文"` 會吐 Big5 位元組給工具層 → 顯示成亂碼。指令開頭先
+   `[Console]::OutputEncoding=[Text.Encoding]::UTF8;`,或**乾脆讓 Write-Output 只輸出 ASCII**(中文留在回覆文字裡)。
+4. **.cmd / .bat**:cmd.exe 逐位元組解析批次檔,中文 `REM` 註解存成 UTF-8 會被從中間切斷、後半段當命令執行(2026-08-09 幽靈 `ckfill.py` 彈窗即此因)。
+   → 批次檔**只用 ASCII 註解**。
