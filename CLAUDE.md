@@ -42,7 +42,13 @@
 - 單位鐵則見 config/schema.md:一律存「股」,永不存「張」。
 
 ## Windows 本機(編碼鐵則,ACP=950)
-本機 ANSI codepage 是 950(Big5),UTF-8 檔在預設路徑會被讀成亂碼。四條:
+本機 ANSI codepage 是 950(Big5),UTF-8 檔在預設路徑會被讀成亂碼。
+
+> **`$PROFILE` 救不了你**:`Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1` 已設 UTF-8 強制(2026-08-09 建),
+> 但 **Claude Code 的 PowerShell 工具是 `-NoProfile`**,完全不吃。實測:同一個檔,一般 shell 讀出「台北」,`-NoProfile` 讀出「?啣?」。
+> profile 只保護你手動開的 PowerShell 與排程。**在這裡,下面四條要每次手動遵守。**
+
+四條:
 1. **Python**:跑腳本前先 `set PYTHONUTF8=1`;pipe 到別處時再加 `sys.stdout.reconfigure(encoding='utf-8')`,否則 print 中文會被編成 Big5 或 UnicodeEncodeError。
 2. **PowerShell 讀檔**:`Get-Content` 預設用 cp950 讀,UTF-8 log 一定亂碼 → **一律加 `-Encoding UTF8`**。寫檔同理:`Out-File`/`Set-Content` 加 `-Encoding utf8`。
 3. **PowerShell 輸出**:PS 5.1 的 `[Console]::OutputEncoding` 預設是 cp950,`Write-Output "中文"` 會吐 Big5 位元組給工具層 → 顯示成亂碼。指令開頭先
