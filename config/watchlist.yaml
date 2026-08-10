@@ -367,3 +367,43 @@ tickers:
   - id: "6968"
     market: tpex
     note: farm 萬達寵物
+
+  - id: "7740"
+    market: twse
+    note: farm 熙特爾-創
+
+  - id: "5351"
+    market: tpex
+    note: farm 鈺創
+
+  - id: "2465"
+    market: twse
+    note: farm 麗臺
+
+  - id: "3006"
+    market: twse
+    note: farm 晶豪科
+
+  - id: "6574"
+    market: tpex
+    note: farm 霈方
+
+  - id: "5388"
+    market: twse
+    note: farm 中磊
+
+  - id: "6213"
+    market: twse
+    note: farm 聯茂
+
+  - id: "3704"
+    market: twse
+    note: farm 合勤控
+
+  - id: "2617"
+    market: twse
+    note: farm 台航
+
+  - id: "9962"
+    market: tpex
+    note: farm 有益

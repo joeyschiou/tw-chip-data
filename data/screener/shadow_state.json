@@ -1,7 +1,58 @@
 {
   "positions": [],
-  "pending": [],
-  "last_run_date": "2026-08-07",
-  "signals_seen": 23,
-  "days_run": 5
+  "pending": [
+    {
+      "id": "5351",
+      "name": "鈺創",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "2465",
+      "name": "麗臺",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "3006",
+      "name": "晶豪科",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "5388",
+      "name": "中磊",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "6213",
+      "name": "聯茂",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "3704",
+      "name": "合勤控",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "2359",
+      "name": "所羅門",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "4771",
+      "name": "望隼",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "3605",
+      "name": "宏致",
+      "signal_date": "2026-08-10"
+    },
+    {
+      "id": "9921",
+      "name": "巨大",
+      "signal_date": "2026-08-10"
+    }
+  ],
+  "last_run_date": "2026-08-10",
+  "signals_seen": 33,
+  "days_run": 6
 }
