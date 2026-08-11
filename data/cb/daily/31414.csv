@@ -1,2 +1,3 @@
 ﻿date,cb_id,cb_name,transaction_type,close,change,open,max,min,no_of_transactions,unit,trading_value,avg_price,next_ref_price,next_max_limit,next_min_limit
 2026-08-07,31414,晶宏四,等價,0.0,0.0,0.0,0.0,0.0,0,0,0,101.0,111.1,122.2,100.0
+2026-08-10,31414,晶宏四,等價,122.2,11.1,122.2,122.2,122.2,43,50,6110000,122.2,122.2,134.4,110.0

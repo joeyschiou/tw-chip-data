@@ -1,2 +1,3 @@
 ﻿date,cb_id,cb_name,transaction_type,close,change,open,max,min,no_of_transactions,unit,trading_value,avg_price,next_ref_price,next_max_limit,next_min_limit
 2026-08-07,69032,巨漢二,等價,119.0,2.9,119.5,120.0,116.2,126,539,64068200,118.86,119.0,130.9,107.1
+2026-08-10,69032,巨漢二,等價,117.4,-1.6,119.0,119.0,116.9,14,266,31553900,118.62,117.4,129.1,105.7
