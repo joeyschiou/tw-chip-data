@@ -407,3 +407,15 @@ tickers:
   - id: "9962"
     market: tpex
     note: farm 有益
+
+  - id: "3266"
+    market: twse
+    note: farm 昇陽
+
+  - id: "6152"
+    market: twse
+    note: farm 百一
+
+  - id: "6225"
+    market: twse
+    note: farm 天瀚

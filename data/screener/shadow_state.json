@@ -1,58 +1,169 @@
 {
-  "positions": [],
-  "pending": [
+  "positions": [
     {
       "id": "5351",
       "name": "鈺創",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 124.5,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2465",
       "name": "麗臺",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 87.5,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 1000,
+      "lots": 1,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "3006",
       "name": "晶豪科",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 275.5,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "5388",
       "name": "中磊",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 88.7,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 1000,
+      "lots": 1,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "6213",
       "name": "聯茂",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 459.0,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "3704",
       "name": "合勤控",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 44.55,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 2000,
+      "lots": 2,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2359",
       "name": "所羅門",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 140.0,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "4771",
       "name": "望隼",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 199.5,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "3605",
       "name": "宏致",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 111.0,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "9921",
       "name": "巨大",
-      "signal_date": "2026-08-10"
+      "entry_date": "2026-08-12",
+      "entry_price": 111.5,
+      "exit_due": null,
+      "signal_date": "2026-08-10",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     }
   ],
-  "last_run_date": "2026-08-10",
-  "signals_seen": 33,
-  "days_run": 6
+  "pending": [
+    {
+      "id": "6538",
+      "name": "倉和",
+      "signal_date": "2026-08-12"
+    },
+    {
+      "id": "1608",
+      "name": "華榮",
+      "signal_date": "2026-08-12"
+    }
+  ],
+  "last_run_date": "2026-08-12",
+  "signals_seen": 35,
+  "days_run": 7
 }
