@@ -149,21 +149,71 @@
       "model_slip_bps": null,
       "envelope_hi_bps": null,
       "ops_ok": null
-    }
-  ],
-  "pending": [
-    {
-      "id": "6538",
-      "name": "倉和",
-      "signal_date": "2026-08-12"
     },
     {
       "id": "1608",
       "name": "華榮",
-      "signal_date": "2026-08-12"
+      "entry_date": "2026-08-13",
+      "entry_price": 37.95,
+      "exit_due": null,
+      "signal_date": "2026-08-12",
+      "shares": 2000,
+      "lots": 2,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     }
   ],
-  "last_run_date": "2026-08-12",
-  "signals_seen": 35,
-  "days_run": 7
+  "pending": [
+    {
+      "id": "3443",
+      "name": "創意",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "5274",
+      "name": "信驊",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "1709",
+      "name": "和益",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "6187",
+      "name": "萬潤",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "2408",
+      "name": "南亞科",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "2542",
+      "name": "興富發",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "2885",
+      "name": "元大金",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "2376",
+      "name": "技嘉",
+      "signal_date": "2026-08-13"
+    },
+    {
+      "id": "2357",
+      "name": "華碩",
+      "signal_date": "2026-08-13"
+    }
+  ],
+  "last_run_date": "2026-08-13",
+  "signals_seen": 44,
+  "days_run": 8
 }
