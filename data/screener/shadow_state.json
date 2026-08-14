@@ -164,56 +164,145 @@
       "model_slip_bps": null,
       "envelope_hi_bps": null,
       "ops_ok": null
-    }
-  ],
-  "pending": [
+    },
     {
       "id": "3443",
       "name": "創意",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 5640.0,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "5274",
       "name": "信驊",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 17990.0,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "1709",
       "name": "和益",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 29.9,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 3000,
+      "lots": 3,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "6187",
       "name": "萬潤",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 1275.0,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2408",
       "name": "南亞科",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 532.0,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2542",
       "name": "興富發",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 46.2,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 2000,
+      "lots": 2,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2885",
       "name": "元大金",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 70.5,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 1000,
+      "lots": 1,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2376",
       "name": "技嘉",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 390.0,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2357",
       "name": "華碩",
-      "signal_date": "2026-08-13"
+      "entry_date": "2026-08-14",
+      "entry_price": 968.0,
+      "exit_due": null,
+      "signal_date": "2026-08-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     }
   ],
-  "last_run_date": "2026-08-13",
-  "signals_seen": 44,
-  "days_run": 8
+  "pending": [],
+  "last_run_date": "2026-08-14",
+  "signals_seen": 47,
+  "days_run": 9
 }
