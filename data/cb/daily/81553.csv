@@ -1,0 +1,3 @@
+﻿date,cb_id,cb_name,transaction_type,close,change,open,max,min,no_of_transactions,unit,trading_value,avg_price,next_ref_price,next_max_limit,next_min_limit
+2026-08-13,81553,博智三,等價,117.9,4.55,117.9,118.0,116.25,288,705,82931850,117.63,117.9,129.65,106.15
+2026-08-14,81553,博智三,等價,118.3,0.4,117.0,118.65,117.0,60,212,25033400,118.08,118.3,130.1,106.5

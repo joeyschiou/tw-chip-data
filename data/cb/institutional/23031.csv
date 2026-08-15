@@ -1,3 +1,7 @@
 ﻿date,Foreign_Investor_Buy,Foreign_Investor_Sell,Foreign_Investor_Overbuy,Investment_Trust_Buy,Investment_Trust_Sell,Investment_Trust_Overbuy,Dealer_self_Buy,Dealer_self_Sell,Dealer_self_Overbuy,Total_Overbuy,cb_id,cb_name
 2026-08-07,0,150,-150,0,0,0,0,50,-50,-200,23031,聯電一          
 2026-08-10,0,650,-650,0,200,-200,4623,920,3703,2853,23031,聯電一          
+2026-08-11,0,170,-170,10,20,-10,396,141,255,75,23031,聯電一          
+2026-08-12,0,40,-40,2,30,-28,754,180,574,506,23031,聯電一          
+2026-08-13,0,130,-130,13,0,13,412,507,-95,-212,23031,聯電一          
+2026-08-14,0,910,-910,0,0,0,48679,533,48146,47236,23031,聯電一          
