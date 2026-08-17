@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-08-16T15:30:36.552328+00:00",
-  "generated_at_taipei": "2026-08-16 23:30:36",
-  "last_trading_date": "2026-08-14",
+  "generated_at_utc": "2026-08-17T15:08:32.601750+00:00",
+  "generated_at_taipei": "2026-08-17 23:08:32",
+  "last_trading_date": "2026-08-17",
   "datasets": {
     "price": {
       "through": "2026-08-14",
-      "status": "ok",
+      "status": "lagging",
       "earliest": "2010-02-22",
       "coverage": 2077,
       "scope": "universe"
@@ -16,18 +16,18 @@
     },
     "margin": {
       "through": "2026-08-14",
-      "status": "ok"
+      "status": "lagging"
     },
     "branch": {
       "through": "2026-08-14",
-      "status": "ok",
-      "gap_tdays": 0,
+      "status": "lagging",
+      "gap_tdays": 1,
       "cadence": "daily",
       "scope": "watchlist"
     },
     "daytrade": {
       "through": "2026-08-14",
-      "status": "ok",
+      "status": "lagging",
       "cadence": "daily",
       "scope": "universe",
       "coverage": 1952
@@ -69,7 +69,7 @@
   "universe": {
     "count": 2137,
     "daily_files": 2077,
-    "current": 1972,
+    "current": 182,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
@@ -112,7 +112,7 @@
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-08-14",
+      "through": "2026-08-17",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
