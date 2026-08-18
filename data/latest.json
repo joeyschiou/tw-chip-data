@@ -1,7 +1,7 @@
 {
-  "generated_at_utc": "2026-08-17T15:08:32.601750+00:00",
-  "generated_at_taipei": "2026-08-17 23:08:32",
-  "last_trading_date": "2026-08-17",
+  "generated_at_utc": "2026-08-18T15:19:55.055459+00:00",
+  "generated_at_taipei": "2026-08-18 23:19:55",
+  "last_trading_date": "2026-08-18",
   "datasets": {
     "price": {
       "through": "2026-08-14",
@@ -21,7 +21,7 @@
     "branch": {
       "through": "2026-08-14",
       "status": "lagging",
-      "gap_tdays": 1,
+      "gap_tdays": 2,
       "cadence": "daily",
       "scope": "watchlist"
     },
@@ -112,7 +112,7 @@
     },
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-08-17",
+      "through": "2026-08-18",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "vix": {
