@@ -4,7 +4,7 @@
 - price: 截至 2026-08-14 (lagging)
 - inst: 截至 2025-11-24 (lagging)
 - margin: 截至 2026-08-14 (lagging)
-- branch: 截至 2026-08-14 (lagging)
+- branch: 截至 2026-08-14 (missing)
 - daytrade: 截至 2026-08-14 (lagging)
 - holders: 截至 2026-08-14 (ok)
 - float: 截至 2026-08-14 (ok)
