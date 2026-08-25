@@ -6,8 +6,8 @@
 - margin: 截至 2026-08-14 (lagging)
 - branch: 截至 2026-08-14 (missing)
 - daytrade: 截至 2026-08-14 (lagging)
-- holders: 截至 2026-08-14 (ok)
-- float: 截至 2026-08-14 (ok)
+- holders: 截至 2026-08-14 (lagging)
+- float: 截至 2026-08-14 (lagging)
 - revenue: 截至 2026-07 (ok)
 
 ## Regime:🟢 開機 — 資料日 2026-08-14
