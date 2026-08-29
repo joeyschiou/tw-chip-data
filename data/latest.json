@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-08-28T23:40:45.459608+00:00",
-  "generated_at_taipei": "2026-08-29 07:40:45",
+  "generated_at_utc": "2026-08-29T17:47:54.035135+00:00",
+  "generated_at_taipei": "2026-08-30 01:47:54",
   "last_trading_date": "2026-08-28",
   "datasets": {
     "price": {
@@ -58,7 +58,7 @@
   },
   "reference": {
     "info": {
-      "count": 2754,
+      "count": 2756,
       "status": "ok"
     },
     "disposition": {
