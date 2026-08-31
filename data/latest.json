@@ -1,7 +1,7 @@
 {
-  "generated_at_utc": "2026-08-30T18:09:28.198447+00:00",
-  "generated_at_taipei": "2026-08-31 02:09:28",
-  "last_trading_date": "2026-08-28",
+  "generated_at_utc": "2026-08-31T20:03:29.359162+00:00",
+  "generated_at_taipei": "2026-09-01 04:03:29",
+  "last_trading_date": "2026-08-31",
   "datasets": {
     "price": {
       "through": "2026-08-14",
@@ -21,7 +21,7 @@
     "branch": {
       "through": "2026-08-14",
       "status": "missing",
-      "gap_tdays": 10,
+      "gap_tdays": 11,
       "cadence": "daily",
       "scope": "watchlist"
     },
