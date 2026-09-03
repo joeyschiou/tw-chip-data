@@ -1,7 +1,7 @@
 {
-  "generated_at_utc": "2026-09-02T17:58:35.606404+00:00",
-  "generated_at_taipei": "2026-09-03 01:58:35",
-  "last_trading_date": "2026-09-02",
+  "generated_at_utc": "2026-09-03T17:52:16.191898+00:00",
+  "generated_at_taipei": "2026-09-04 01:52:16",
+  "last_trading_date": "2026-09-03",
   "datasets": {
     "price": {
       "through": "2026-08-14",
@@ -21,7 +21,7 @@
     "branch": {
       "through": "2026-08-14",
       "status": "missing",
-      "gap_tdays": 13,
+      "gap_tdays": 14,
       "cadence": "daily",
       "scope": "watchlist"
     },
@@ -67,7 +67,7 @@
     }
   },
   "universe": {
-    "count": 2137,
+    "count": 2138,
     "daily_files": 2077,
     "current": 181,
     "earliest": "2010-02-22"
