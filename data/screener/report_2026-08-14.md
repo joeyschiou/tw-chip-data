@@ -8,7 +8,7 @@
 - daytrade: 截至 2026-08-14 (lagging)
 - holders: 截至 2026-08-14 (lagging)
 - float: 截至 2026-08-14 (lagging)
-- revenue: 截至 2026-07 (ok)
+- revenue: 截至 2026-07 (lagging)
 
 ## Regime:🟢 開機 — 資料日 2026-08-14
 - 2026-08-14:等權指數 0.6397 vs 120MA 0.6314,buffer +0.83 對數百分點
