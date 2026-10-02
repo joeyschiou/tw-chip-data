@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-10-02T10:50:51.781019+00:00",
-  "generated_at_taipei": "2026-10-02 18:50:51",
+  "generated_at_utc": "2026-10-02T12:02:28.766702+00:00",
+  "generated_at_taipei": "2026-10-02 20:02:28",
   "last_trading_date": "2026-10-02",
   "datasets": {
     "price": {
@@ -32,30 +32,19 @@
   "universe": {
     "count": 2142,
     "daily_files": 2077,
-    "current": 184,
+    "current": 259,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-09-01",
+      "through": "2026-10-02",
       "note": "期貨三大法人 TX/MTX 2018+"
-    },
-    "vix": {
-      "cadence": "daily",
-      "through": "2026-08-14",
-      "status": "shallow",
-      "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"
     },
     "delisting": {
       "cadence": "daily",
-      "through": "2026-07-28",
+      "through": "2026-10-01",
       "note": "下市櫃 2001+;實測 TaiwanStockPrice 仍可抓下市股歷史→倖存者偏誤可修"
-    },
-    "industry_chain": {
-      "cadence": "daily",
-      "coverage": 6867,
-      "note": "產業鏈快照"
     }
   },
   "tickers": [
