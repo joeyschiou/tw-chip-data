@@ -1,52 +1,19 @@
 ﻿{
-  "last_run_date": "2026-08-14",
-  "positions": [
+  "last_run_date": "2026-10-02",
+  "positions": [],
+  "pending": [
     {
-      "id": "4939",
-      "name": "亞電",
-      "entry_date": "2026-07-22",
-      "entry_price": 76.9,
-      "exit_due": null,
-      "rank_score": 2,
-      "signal_date": "2026-07-21"
-    },
-    {
-      "id": "2615",
-      "name": "萬海",
-      "entry_date": "2026-07-22",
-      "entry_price": 85.2,
-      "exit_due": null,
+      "id": "2347",
+      "name": "聯強",
       "rank_score": 0,
-      "signal_date": "2026-07-21"
+      "signal_date": "2026-10-02"
     },
     {
-      "id": "2425",
-      "name": "承啟",
-      "entry_date": "2026-07-23",
-      "entry_price": 44.8,
-      "exit_due": null,
-      "rank_score": 2,
-      "signal_date": "2026-07-22"
-    },
-    {
-      "id": "3374",
-      "name": "精材",
-      "entry_date": "2026-07-23",
-      "entry_price": 411.0,
-      "exit_due": null,
-      "rank_score": 2,
-      "signal_date": "2026-07-22"
-    },
-    {
-      "id": "3088",
-      "name": "艾訊",
-      "entry_date": "2026-07-23",
-      "entry_price": 146.0,
-      "exit_due": null,
+      "id": "2031",
+      "name": "新光鋼",
       "rank_score": 0,
-      "signal_date": "2026-07-22"
+      "signal_date": "2026-10-02"
     }
   ],
-  "pending": [],
   "farm_queue": []
 }
