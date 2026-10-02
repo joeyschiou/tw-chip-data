@@ -20,7 +20,7 @@
 - **已停抓**(實測付費,或 per-id 全 universe 遠超免費額度):分點 branch、當沖、集保、流通(依賴集保)、月營收、
   還原價/借券/質押/停券、CB、news、景氣對策信號、大盤維持率、VIX、處置、產業鏈。data/ 下舊檔保留為歷史(約截至 2026-08-14),
   screener 仍讀得到但**不會再更新**。相關腳本(fetch_branch/daytrade/holders/float/revenue/stockseries/cb/news、
-  backtest_branch、runner_backfill)已從管線摘除;升回付費再接回。
+  backtest_branch、runner_backfill)與 weekly-update.yml 已刪除;升回付費時從 git 歷史(commit ee8ce89b 之前)找回。
 
 ## 資料流
 - 日線:fetch_daily.py,對 universe ∪ watchlist,append+dedup(nightly)。
@@ -29,7 +29,6 @@
 - 基本資料:fetch_info.py;總經:fetch_macro.py(期貨法人);名冊:fetch_regulatory.py(下市);
   借券法規快照:fetch_sbl_snapshot.py(TWSE,非 FinMind)。
 - 主控:**daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充 → screener。
-  - weekly-update.yml 已停用排程(裡面每一步在免費帳號都抓不到)。
 - 回填:`backfill.py --stock <id> --days N`(只剩 daily)。
 - 判讀先讀 data/latest.json。
 
