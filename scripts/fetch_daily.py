@@ -1,6 +1,7 @@
 """
 fetch_daily.py — 追蹤股的日K + 三大法人 + 融資融券
-免費層可用。讀 config/watchlist.yaml,逐檔抓三個 dataset,合併成 data/daily/{id}.csv。
+免費層可用。對 watchlist ∪ universe 逐檔抓三個 dataset,合併成 data/daily/{id}.csv。
+免費額度一晚只夠 ~180 檔:watchlist 優先,其餘依最後日期由舊到新輪轉(約 2 週輪完一圈)。
 
 用法:python scripts/fetch_daily.py
 需要:FINMIND_TOKEN 環境變數;config/watchlist.yaml
@@ -19,6 +20,7 @@ from datetime import date, timedelta
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 USERINFO_URL = "https://api.web.finmindtrade.com/v2/user_info"
 START_DATE = "2024-01-01"   # 第一次抓近兩年;歷史回填是步驟 7 的事
+DEAD_DAYS = 120             # 最後日期早於此天數 → 視為下市/停牌,輪轉排最後、不做缺口回補
 
 
 def get_token() -> str:
@@ -51,9 +53,9 @@ def load_universe_ids() -> list:
     return uni["id"].astype(str).tolist()
 
 
-def fetch_dataset(token: str, dataset: str, stock_id: str) -> pd.DataFrame:
+def fetch_dataset(token: str, dataset: str, stock_id: str, start: str = None) -> pd.DataFrame:
     """打一個 FinMind dataset,回 DataFrame(空的話回空 df,不中斷)。"""
-    params = {"dataset": dataset, "data_id": stock_id, "start_date": START_DATE}
+    params = {"dataset": dataset, "data_id": stock_id, "start_date": start or START_DATE}
     r = requests.get(FINMIND_URL, headers={"Authorization": f"Bearer {token}"},
                      params=params, timeout=60)
     if r.status_code != 200:
@@ -63,9 +65,9 @@ def fetch_dataset(token: str, dataset: str, stock_id: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def build_daily(token: str, stock_id: str) -> pd.DataFrame:
+def build_daily(token: str, stock_id: str, start: str = None) -> pd.DataFrame:
     # --- 1. 日K(骨架)---
-    price = fetch_dataset(token, "TaiwanStockPrice", stock_id)
+    price = fetch_dataset(token, "TaiwanStockPrice", stock_id, start)
     if price.empty:
         print(f"   ⚠ {stock_id} 無日K資料,跳過")
         return pd.DataFrame()
@@ -85,7 +87,7 @@ def build_daily(token: str, stock_id: str) -> pd.DataFrame:
     df["limit_down"] = ""
 
     # --- 2. 三大法人(寬表)---
-    inst = fetch_dataset(token, "TaiwanStockInstitutionalInvestorsBuySellWide", stock_id)
+    inst = fetch_dataset(token, "TaiwanStockInstitutionalInvestorsBuySellWide", stock_id, start)
     if not inst.empty:
         inst_out = pd.DataFrame({"date": inst["date"]})
         inst_out["foreign_net_shares"] = inst["Foreign_Investor_buy"] - inst["Foreign_Investor_sell"]
@@ -101,7 +103,7 @@ def build_daily(token: str, stock_id: str) -> pd.DataFrame:
         df["dealer_net_shares"] = ""
 
     # --- 3. 融資融券(取今日餘額,存量)---
-    margin = fetch_dataset(token, "TaiwanStockMarginPurchaseShortSale", stock_id)
+    margin = fetch_dataset(token, "TaiwanStockMarginPurchaseShortSale", stock_id, start)
     if not margin.empty:
         # FinMind 這兩欄單位是「張」;schema 鐵則存「股」→ ×1000。Int64 避免 .0。
         m_out = pd.DataFrame({
@@ -122,6 +124,18 @@ def build_daily(token: str, stock_id: str) -> pd.DataFrame:
 
     df = df.sort_values("date").reset_index(drop=True)
     return df
+
+
+def _last_date(path: str) -> str:
+    """daily 檔最後一列的 date(第一欄);沒檔/空檔回 ""。只讀檔尾,不載整檔。"""
+    if not os.path.exists(path):
+        return ""
+    with open(path, "rb") as f:
+        f.seek(0, os.SEEK_END)
+        f.seek(max(0, f.tell() - 4096))
+        lines = f.read().decode("utf-8-sig", errors="ignore").strip().splitlines()
+    last = lines[-1].split(",")[0] if lines else ""
+    return last if last[:2] == "20" else ""
 
 
 def _usage(token: str) -> tuple:
@@ -154,8 +168,16 @@ def main() -> None:
 
     wl_ids = [str(t["id"]) for t in load_watchlist()]
     uni_ids = load_universe_ids()
-    # 聯集去重(保留順序):universe 先,watchlist 補上不在 universe 的(如上櫃 6831/7795)
-    target_ids = list(dict.fromkeys(uni_ids + wl_ids))
+    # 聯集去重:watchlist 可含不在 universe 的(如上櫃 6831/7795)
+    # 免費帳號 600 call/hr、一檔 3 call → 一晚只抓得完 ~180 檔,不夠覆蓋全 universe。
+    # 排序:watchlist 先(深度層一定要新)→ universe 依「最後日期」由舊到新輪轉
+    # → 無 daily 檔、或最後日期早於 DEAD_DAYS 前(多半已下市/長期停牌)放最後,不每晚浪費額度。
+    last = {s: _last_date(f"data/daily/{s}.csv") for s in dict.fromkeys(uni_ids + wl_ids)}
+    dead_cut = (date.today() - timedelta(days=DEAD_DAYS)).isoformat()
+    wl_set = set(wl_ids)
+    rest = [s for s in uni_ids if s not in wl_set]
+    rest.sort(key=lambda s: (last[s] < dead_cut, last[s]))
+    target_ids = list(dict.fromkeys(wl_ids + rest))
     if args.new_only:
         before = len(target_ids)
         target_ids = [s for s in target_ids if not os.path.exists(f"data/daily/{s}.csv")]
@@ -190,7 +212,9 @@ def main() -> None:
                       f"(重跑同一道指令即可從 checkpoint 接續)")
                 break
         print(f"→ [{i}/{len(target_ids)}] {sid}")
-        df = build_daily(token, sid)
+        # 起點取 START_DATE 與既有最後日期較早者:落後超過 --days 的檔也能補齊缺口
+        start = min(START_DATE, last[sid]) if last.get(sid, "") >= dead_cut else START_DATE
+        df = build_daily(token, sid, start)
         if df.empty:
             _mark_done(sid)
             time.sleep(0.15)

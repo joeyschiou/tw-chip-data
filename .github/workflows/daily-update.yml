@@ -1,7 +1,7 @@
 name: daily-update
 
 # 每天台北 22:00 = UTC 14:00 自動跑
-# 分點 21:00 出,留 1 小時緩衝
+# FinMind 免費帳號:600 call/hr,fetch_daily 用到 ~90% 自動停(watchlist 優先,universe 輪轉)
 on:
   schedule:
     - cron: "0 14 * * *"
@@ -31,14 +31,6 @@ jobs:
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/update.py
-
-      # 分點落後 >= 2 個交易日 → GitHub Actions ::warning(gap-fill 未追上,值得注意)
-      - name: Warn if branch lagging
-        run: |
-          gap=$(python -c "import json; print(json.load(open('data/latest.json',encoding='utf-8'))['datasets']['branch'].get('gap_tdays',0))")
-          if [ "$gap" -ge 2 ]; then
-            echo "::warning title=branch lagging::分點落後 $gap 個交易日(gap-fill 未追上)"
-          fi
 
       # 資料步驟之後跑篩選機:產出報告/模型組合狀態/農場擴充。
       # 農場會改 config/watchlist.yaml → 先 git add 進暫存,讓下方既有的條件式 commit 一併帶走。

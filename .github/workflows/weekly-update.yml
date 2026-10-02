@@ -5,11 +5,12 @@ name: weekly-update
 # 主排:UTC 週五 23:00 = 台北週六 07:00;保險排:UTC 週一 23:00 = 台北週二 07:00
 # (台北週二那班通常才真的抓到上週五快照)。全 idempotent,重複跑無害。
 # 月營收由 fetch_revenue.py 內建「當月 >=11 日才有上月」月守衛,週跑也安全。
+# ⛔ 已停用排程:FinMind 降回免費帳號後,這裡每一步都抓不到
+#   (集保/月營收全市場單 call、還原價 TaiwanStockPriceAdj、CB 都回 400 "Your level is register";
+#    借券/質押/停券 per-id 全 universe 也遠超 600 call/hr 免費額度),連打 400 還會被封 IP。
+#   對應腳本已從 nightly 移除;升回付費帳號再恢復 schedule。
 on:
-  schedule:
-    - cron: "0 23 * * 5"
-    - cron: "0 23 * * 1"
-  workflow_dispatch:        # 允許網頁手動觸發
+  workflow_dispatch:        # 僅保留手動觸發
 
 permissions:
   contents: write

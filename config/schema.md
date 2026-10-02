@@ -3,6 +3,13 @@
 這是本 repo 所有資料檔的權威定義。腳本產出、下游判讀都以此為準。
 **單位鐵則:一律存「股」,永不存「張」。欄名帶單位是唯一防呆。**(1 張 = 1,000 股;張是呈現層的事)
 
+> **⚠ 2026-10 起 FinMind 為免費帳號(register,600 call/hr)**:下列資料集已**停止更新**,檔案保留為歷史快照
+> (約截至 2026-08-14),規格僅供讀舊檔參考:
+> `branch`、`daytrade`、`holders`、`float`、`revenue`、`daily_adj`、`short`、`pledge`、`short_suspension`、
+> `cb/*`、`news`、`macro/business_indicator`、`macro/margin_maintenance`、`regulatory/disposition`。
+> 仍在更新:`daily`(watchlist 優先、universe 輪轉)、`calendar`、`info`、`config/universe.csv`、
+> `macro/futures_institutional`、`macro/vix`、`delisting`、`industry_chain`、`sbl_snapshot`。
+
 ---
 
 ## 檔案地圖
