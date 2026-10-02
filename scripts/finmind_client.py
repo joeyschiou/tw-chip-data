@@ -96,6 +96,7 @@ def api_data(token: str, dataset: str, throttle: float = 0.3,
     打 FinMind /data,回 DataFrame。
     - 402 + msg 含 'limit' / 'upper' → rate limit,指數退避後重試(最多 max_retries)。
     - 402 其他 / 403 → 權限不足,直接 sys.exit(分點/財報等 sponsor 資料)。
+    - 400 + msg 含 'level'(免費帳號打付費 dataset)→ 直接 sys.exit,避免連打被封 IP。
     - 5xx / 429 → 退避重試。
     - 其他非 200 → 印警告回空 df(不中斷整條管線)。
     每次成功呼叫後 sleep(throttle) 節流。
@@ -121,6 +122,10 @@ def api_data(token: str, dataset: str, throttle: float = 0.3,
             continue
         if code in (402, 403):
             sys.exit(f"❌ 權限不足(HTTP {code}:{msg})。dataset={dataset} 需 sponsor。")
+        # 免費帳號打付費 dataset 回 400 "Your level is register..."。
+        # 立即停,不要逐檔狂打(連打幾百個 400 會被 FinMind 封 IP → 後續全部 403)。
+        if code == 400 and "level" in low:
+            sys.exit(f"❌ 免費帳號無權限(HTTP 400:{msg[:60]})。dataset={dataset} 需付費等級。")
         if code == 429 or code >= 500:
             wait = min(120, 5 * (2 ** attempt))
             print(f"   ⏳ HTTP {code},{wait}s 後重試 ({attempt + 1}/{max_retries})")

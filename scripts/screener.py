@@ -280,12 +280,10 @@ ORIG_WATCHLIST = {"6831", "7795", "2330", "2059", "6278", "2327", "6510", "7769"
 
 
 def farm_expand(cands, pending, state):
-    import subprocess, sys
     wl_path = "config/watchlist.yaml"
     cfg = yaml.safe_load(open(wl_path, encoding="utf-8"))
     have = {str(t["id"]) for t in cfg.get("tickers", [])}
     cap = yaml.safe_load(open("config/screener.yaml", encoding="utf-8"))["watchlist_farm"]["cap"]
-    lookback = yaml.safe_load(open("config/screener.yaml", encoding="utf-8"))["watchlist_farm"]["backfill_lookback_days"]
     # 排序候選前 10 + 本晚新進(pending)
     top10 = [c["id"] for c in cands[:10]]
     entries = [p["id"] for p in pending]
@@ -299,16 +297,9 @@ def farm_expand(cands, pending, state):
                 nm = info.get(sid, ("farm", ""))[0]
                 f.write(f'\n  - id: "{sid}"\n    market: {info.get(sid,("",""))[1] or "twse"}\n    note: farm {nm}\n')
         print(f"   farm:watchlist +{len(add)} 檔(cap {cap};原 8 檔保留)")
-    # 新增者 + 既有佇列 → 60 日 branch 回補;沒抓到的留佇列
-    queue = list(dict.fromkeys(state.get("farm_queue", []) + add))
-    todo = [s for s in queue if not os.path.exists(f"data/branch/{s}.csv")]
-    if todo:
-        try:
-            subprocess.run([sys.executable, "scripts/backfill.py", "--tickers", ",".join(todo),
-                            "--datasets", "branch", "--lookback-days", str(lookback)], timeout=3600)
-        except Exception as e:
-            print(f"   farm backfill 異常:{e}")
-    state["farm_queue"] = [s for s in queue if not os.path.exists(f"data/branch/{s}.csv")]
+    # 原本:新增者 → 60 日 branch 回補(backfill.py --datasets branch)。
+    # FinMind 免費帳號抓不到分點,已移除;新增者只靠 fetch_daily(watchlist 優先)補日線。
+    state["farm_queue"] = []
 
 
 # ---------- 報告 ----------

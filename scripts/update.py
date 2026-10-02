@@ -14,21 +14,20 @@ import argparse
 import subprocess
 import pandas as pd
 
-# 核心資料(價量/法人/融資/分點)—— 失敗就紅燈中止,不要靜默半套。
-SCRIPTS = ["fetch_calendar.py", "fetch_universe.py", "fetch_daily.py", "fetch_branch.py"]
+# 核心資料(價量/法人/融資)—— 失敗就紅燈中止,不要靜默半套。
+SCRIPTS = ["fetch_calendar.py", "fetch_universe.py", "fetch_daily.py"]
 
-# 補充資料(基本資料/當沖/集保/流通/月營收)—— 各自 idempotent,依 cadence 內部 no-op。
-# holders/float/revenue 走全市場 universe、週更/月更(nightly 大多 no-op);weekly-update.yml 另有主排。
-# 失敗「不」中止核心管線(避免補充打嗝拖垮整晚),改用 latest.json 的 status 誠實反映落後。
-# 順序:info→daytrade(需 daily 算比率)→holders→float(需 holders)→revenue。
-EXTRA_SCRIPTS = ["fetch_info.py", "fetch_daytrade.py", "fetch_holders.py",
-                 "fetch_float.py", "fetch_revenue.py",
-                 # 策略資料層(便宜/增量的進 nightly;重 per-id 的 adj/short/pledge/shortsusp +
-                 # CB daily/institutional 走 weekly-update.yml,不進這裡):
-                 "fetch_macro.py",        # vix/維持率/期貨法人(日);景氣(月 no-op)
-                 "fetch_regulatory.py",   # 處置/下市/產業鏈(全表 idempotent no-op)
-                 "fetch_cb.py",           # 預設 info,overview(便宜)
-                 "fetch_news.py",         # watchlist-8,自增量(從已存最新日續)
+# FinMind 免費帳號(register,600 call/hr)後已停抓(實測 400 "Your level is register"
+# 或全市場單 call 需付費;per-id 全 universe 又遠超額度):
+#   分點 branch、當沖 daytrade、集保 holders、流通 float(依賴 holders)、月營收 revenue、
+#   還原價/借券/質押/停券(fetch_stockseries)、CB(fetch_cb)、news、
+#   景氣/維持率/VIX(fetch_macro)、處置/產業鏈(fetch_regulatory)。
+# data/ 下這些目錄保留為歷史(screener 等仍可讀),但不再更新。
+
+# 補充資料 —— 各自 idempotent;失敗「不」中止核心管線,改用 latest.json 的 status 反映落後。
+EXTRA_SCRIPTS = ["fetch_info.py",
+                 "fetch_macro.py",        # 期貨法人(日)
+                 "fetch_regulatory.py",   # 下市(全表 idempotent no-op)
                  # 借券/放空法規快照:**前瞻累積**。歷史標借費率買不到
                  # (TWSE 各路徑 404、OpenAPI 僅當日股數、FinMind 無 dataset),
                  # 所以從今天開始自己長。單日 2 個 call,極便宜,idempotent。
@@ -83,30 +82,6 @@ def dataset_status(files: list, col: str, latest_day: str) -> dict:
     return {"through": through, "status": status}
 
 
-def freshness_status(files: list, latest_day: str, tol_days: int = 0) -> dict:
-    """
-    補充資料的 through/status:through = 這批 watchlist 檔的『最新』日期(取 max)。
-    daytrade 部分冷門股本就沒有每日當沖資料、集保/流通週更本就落後幾天,
-    所以用 max(有抓到多新)而非 min(木桶),並容許 tol_days 的 cadence 落後。
-    """
-    files = [f for f in files if os.path.exists(f)]
-    if not files:
-        return {"through": None, "status": "missing"}
-    dates = []
-    for f in files:
-        try:
-            d = pd.read_csv(f, usecols=["date"], dtype=str)
-        except Exception:
-            continue
-        if len(d):
-            dates.append(str(d["date"].max()))
-    if not dates:
-        return {"through": None, "status": "missing"}
-    through = max(dates)
-    cutoff = (pd.to_datetime(latest_day) - pd.Timedelta(days=tol_days)).date().isoformat()
-    return {"through": through, "status": "ok" if through >= cutoff else "lagging"}
-
-
 def universe_report(latest_day: str) -> dict:
     """
     universe 廣掃概況:
@@ -138,37 +113,6 @@ def universe_report(latest_day: str) -> dict:
             "earliest": earliest}
 
 
-def slice_coverage(subdir: str) -> int:
-    """該 universe 資料集實際覆蓋幾檔(data/{subdir}/*.csv 檔數)。"""
-    return len(glob.glob(f"data/{subdir}/*.csv"))
-
-
-def revenue_status(files: list) -> dict:
-    """月營收 through=watchlist 最新 revenue_month;status 對比「當月守衛」的期望月。"""
-    files = [f for f in files if os.path.exists(f)]
-    months, earliest = [], None
-    for f in files:
-        try:
-            d = pd.read_csv(f, usecols=["revenue_month"], dtype=str)
-        except Exception:
-            continue
-        if len(d):
-            months.append(str(d["revenue_month"].max()))
-            mn = str(d["revenue_month"].min())
-            if earliest is None or mn < earliest:
-                earliest = mn
-    if not months:
-        return {"through": None, "status": "missing"}
-    through = max(months)
-    from datetime import date as _date
-    t = _date.today()
-    cur = pd.Period(f"{t.year}-{t.month:02d}", freq="M")
-    exp_p = (cur - 1) if t.day >= 11 else (cur - 2)     # 當月 >=11 日才有上月營收
-    exp = f"{exp_p.year}-{exp_p.month:02d}"
-    return {"through": through, "earliest": earliest,
-            "status": "ok" if through >= exp else "lagging"}
-
-
 def _through(path, col="date"):
     if not os.path.exists(path):
         return None
@@ -180,70 +124,17 @@ def _through(path, col="date"):
 
 
 def strategy_layer_status() -> dict:
-    """策略資料層各 dataset 的 coverage/through/availability(0b 實測限制一併記錄)。"""
+    """策略資料層各 dataset 的 coverage/through/availability(0b 實測限制一併記錄)。
+    免費帳號後停抓的(還原價/借券/質押/停券/景氣/維持率/VIX/處置/產業鏈/CB/news)已移除,舊檔留在 data/ 當歷史。"""
     def cov(sub):
         return len(glob.glob(f"data/{sub}/*.csv"))
     return {
-        # per-id universe(還原價/借券/質押/停券)
-        "daily_adj":        {"cadence": "weekly", "scope": "universe", "coverage": cov("daily_adj"),
-                             "through": _through("data/daily_adj/2330.csv"), "note": "還原股價 2015+"},
-        "short":            {"cadence": "weekly", "scope": "universe", "coverage": cov("short"),
-                             "through": _through("data/short/2330.csv"), "note": "融券+借券餘額 2015+"},
-        "pledge":           {"cadence": "weekly", "scope": "universe", "coverage": cov("pledge"),
-                             "through": _through("data/pledge/2330.csv"), "note": "借貸擔保品 2015+"},
-        "short_suspension": {"cadence": "weekly", "scope": "universe", "coverage": cov("short_suspension"),
-                             "note": "停券/回補日 2015+"},
-        # 市場級小表
-        "business_indicator": {"cadence": "monthly", "through": _through("data/macro/business_indicator.csv"),
-                               "note": "景氣對策信號 2010+"},
-        "margin_maintenance": {"cadence": "daily", "through": _through("data/macro/margin_maintenance.csv"),
-                               "note": "大盤融資維持率 2015+"},
+        # 免費帳號仍可抓(nightly)
         "futures_institutional": {"cadence": "daily", "through": _through("data/macro/futures_institutional.csv"),
                                   "note": "期貨三大法人 TX/MTX 2018+"},
-        "vix":              {"cadence": "daily", "through": _through("data/macro/vix.csv"),
-                             "status": "shallow", "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"},
-        "disposition":      {"cadence": "daily", "through": _through("data/regulatory/disposition.csv"),
-                             "note": "處置股 2005+"},
         "delisting":        {"cadence": "daily", "through": _through("data/delisting.csv"),
                              "note": "下市櫃 2001+;實測 TaiwanStockPrice 仍可抓下市股歷史→倖存者偏誤可修"},
-        "industry_chain":   {"cadence": "daily", "coverage": len(pd.read_csv("data/industry_chain.csv", dtype=str))
-                             if os.path.exists("data/industry_chain.csv") else 0, "note": "產業鏈快照"},
-        # CB
-        "cb_info":          {"cadence": "weekly", "coverage": len(pd.read_csv("data/cb/info.csv", dtype=str))
-                             if os.path.exists("data/cb/info.csv") else 0, "note": "1800 CB;stock_id=cb_id[:4]"},
-        "cb_daily":         {"cadence": "weekly", "coverage": cov("cb/daily")},
-        "cb_institutional": {"cadence": "weekly", "coverage": cov("cb/institutional")},
-        "news":             {"cadence": "daily", "scope": "watchlist", "coverage": cov("news"),
-                             "status": "shallow", "note": "僅 watchlist-8;FinMind 深度約 2024+(2021 無)"},
     }
-
-
-def branch_status(tickers, latest_day) -> dict:
-    """
-    分點 branch through = watchlist 各檔 max(date) 取 min(木桶)。
-    status:through==最新交易日→ok;落後 1~3 個交易日→lagging;更久或無檔→missing。
-    """
-    maxes = []
-    for sid in tickers:
-        p = f"data/branch/{sid}.csv"
-        if not os.path.exists(p):
-            return {"through": None, "status": "missing", "gap_tdays": 999,
-                    "cadence": "daily", "scope": "watchlist"}
-        d = pd.read_csv(p, usecols=["date"], dtype=str)
-        if not len(d):
-            return {"through": None, "status": "missing", "gap_tdays": 999,
-                    "cadence": "daily", "scope": "watchlist"}
-        maxes.append(str(d["date"].max()))
-    through = min(maxes)
-    if through >= latest_day:
-        status, gap = "ok", 0
-    else:
-        cal = pd.read_csv("data/calendar.csv", dtype=str)
-        gap = len(cal[(cal["is_trading_day"].str.lower() == "true")
-                      & (cal["date"] > through) & (cal["date"] <= latest_day)])
-        status = "lagging" if 1 <= gap <= 3 else "missing"
-    return {"through": through, "status": status, "gap_tdays": gap,
-            "cadence": "daily", "scope": "watchlist"}
 
 
 def write_latest() -> None:
@@ -257,9 +148,6 @@ def write_latest() -> None:
 
     # canary 只掃 watchlist 的 daily 檔(避免被上千檔冷門股的落後日期拖累)
     wl_files = [f"data/daily/{sid}.csv" for sid in tickers]
-    daytrade_files = [f"data/daytrade/{sid}.csv" for sid in tickers]
-    holders_files = [f"data/holders/{sid}.csv" for sid in tickers]
-    float_files = [f"data/float/{sid}.csv" for sid in tickers]
 
     info_count = len(pd.read_csv("data/info.csv", dtype=str)) if os.path.exists("data/info.csv") else 0
     uni = universe_report(latest_day)      # 內含 daily 的 earliest / coverage
@@ -269,28 +157,14 @@ def write_latest() -> None:
         "generated_at_taipei": now_tpe.strftime("%Y-%m-%d %H:%M:%S"),
         "last_trading_date": latest_day,
         "datasets": {
-            # 核心(watchlist canary:min = 最落後的那檔)
+            # 核心(watchlist canary:min = 最落後的那檔)。
+            # 分點/當沖/集保/流通/月營收:FinMind 免費帳號抓不到,已停抓、不列入。
             # price 另附 earliest/coverage:回補深度(全 universe 最早日期)與覆蓋檔數
             "price":  {**dataset_status(wl_files, "close", latest_day),
                        "earliest": uni["earliest"], "coverage": uni["daily_files"],
                        "scope": "universe"},
             "inst":   dataset_status(wl_files, "foreign_net_shares", latest_day),
             "margin": dataset_status(wl_files, "margin_balance_shares", latest_day),
-            "branch": branch_status(tickers, latest_day),
-            # 補充(watchlist canary 定 through;coverage=universe 實際覆蓋檔數)
-            "daytrade": {**freshness_status(daytrade_files, latest_day, tol_days=0),
-                         "cadence": "daily", "scope": "universe",
-                         "coverage": slice_coverage("daytrade")},
-            "holders":  {**freshness_status(holders_files, latest_day, tol_days=10),
-                         "cadence": "weekly", "scope": "universe",
-                         "coverage": slice_coverage("holders")},
-            "float":    {**freshness_status(float_files, latest_day, tol_days=10),
-                         "cadence": "weekly", "scope": "universe",
-                         "coverage": slice_coverage("float"),
-                         "note": "locked=千張大戶 proxy(非董監)"},
-            "revenue":  {**revenue_status([f"data/revenue/{sid}.csv" for sid in tickers]),
-                         "cadence": "monthly", "scope": "universe",
-                         "coverage": slice_coverage("revenue")},
         },
         "reference": {
             "info": {"count": info_count, "status": "ok" if info_count else "missing"},
