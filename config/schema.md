@@ -6,9 +6,9 @@
 > **⚠ 2026-10 起 FinMind 為免費帳號(register,600 call/hr)**:下列資料集已**停止更新**,檔案保留為歷史快照
 > (約截至 2026-08-14),規格僅供讀舊檔參考:
 > `branch`、`daytrade`、`holders`、`float`、`revenue`、`daily_adj`、`short`、`pledge`、`short_suspension`、
-> `cb/*`、`news`、`macro/business_indicator`、`macro/margin_maintenance`、`regulatory/disposition`。
+> `cb/*`、`news`、`macro/business_indicator`、`macro/margin_maintenance`、`macro/vix`、`regulatory/disposition`、`industry_chain`。
 > 仍在更新:`daily`(watchlist 優先、universe 輪轉)、`calendar`、`info`、`config/universe.csv`、
-> `macro/futures_institutional`、`macro/vix`、`delisting`、`industry_chain`、`sbl_snapshot`。
+> `macro/futures_institutional`、`delisting`、`sbl_snapshot`。
 
 ---
 

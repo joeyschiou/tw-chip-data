@@ -18,15 +18,15 @@
   後面所有 call 一起死。`finmind_client.api_data` 遇到即 sys.exit,不要寫逐檔狂打的迴圈。
 - 「不帶 data_id 的全市場單 call」(當沖/集保/月營收/處置/CB info…)在免費帳號都不能用。
 - **已停抓**(實測付費,或 per-id 全 universe 遠超免費額度):分點 branch、當沖、集保、流通(依賴集保)、月營收、
-  還原價/借券/質押/停券、CB、news、景氣對策信號、大盤維持率、處置。data/ 下舊檔保留為歷史(約截至 2026-08-14),
+  還原價/借券/質押/停券、CB、news、景氣對策信號、大盤維持率、VIX、處置、產業鏈。data/ 下舊檔保留為歷史(約截至 2026-08-14),
   screener 仍讀得到但**不會再更新**。相關腳本(fetch_branch/daytrade/holders/float/revenue/stockseries/cb/news、
   backtest_branch、runner_backfill)已從管線摘除;升回付費再接回。
 
 ## 資料流
 - 日線:fetch_daily.py,對 universe ∪ watchlist,append+dedup(nightly)。
   - 免費額度一晚只夠 ~180 檔(一檔 3 call,用量到 90% 自動停):**watchlist 優先**,其餘 universe 依最後日期由舊到新輪轉
-    (約 2 週輪完一圈);落後超過 --days 的檔自動從最後日期補缺口。
-- 基本資料:fetch_info.py;總經:fetch_macro.py(期貨法人/VIX);名冊:fetch_regulatory.py(下市/產業鏈);
+    (約 2 週輪完一圈),並保留 60 call 給補充腳本;落後超過 --days 的檔自動從最後日期補缺口。
+- 基本資料:fetch_info.py;總經:fetch_macro.py(期貨法人);名冊:fetch_regulatory.py(下市);
   借券法規快照:fetch_sbl_snapshot.py(TWSE,非 FinMind)。
 - 主控:**daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充 → screener。
   - weekly-update.yml 已停用排程(裡面每一步在免費帳號都抓不到)。
@@ -34,7 +34,7 @@
 - 判讀先讀 data/latest.json。
 
 ## 策略資料層(見 schema.md 表)
-- 仍更新:期貨法人、VIX(僅 2026-03 起,status=shallow)、下市、產業鏈 → nightly。
+- 仍更新:期貨法人、下市 → nightly(VIX、產業鏈實測付費,已停)。
 - 倖存者偏誤:下市股用 TaiwanStockPrice 仍可補歷史(delisting 表當清單);本層未建,已記可行。
 
 ## 籌碼分母(重要)

@@ -1,9 +1,9 @@
 """
 fetch_regulatory.py — 名冊小表(全市場單表)
   data/delisting.csv                     下市櫃表(0b:2001 起)
-  data/industry_chain.csv                產業鏈(0b:目前快照 2025+)
-免費帳號不可用、已移除:處置股 disposition(TaiwanStockDispositionSecuritiesPeriod,
-  實測 400 "Your level is register")。data/regulatory/disposition.csv 保留為歷史,不再更新。
+免費帳號不可用、已移除(實測 400 "Your level is register"):
+  處置股 disposition(TaiwanStockDispositionSecuritiesPeriod)、產業鏈 industry_chain(TaiwanStockIndustryChain)。
+  data/regulatory/disposition.csv、data/industry_chain.csv 保留為歷史,不再更新。
 
 用法:python scripts/fetch_regulatory.py
 需要:FINMIND_TOKEN
@@ -19,19 +19,10 @@ def delisting(token):
                                keys=["stock_id", "date"])
 
 
-def industry_chain(token):
-    d = fc.api_data(token, "TaiwanStockIndustryChain")
-    if d.empty:
-        return "missing"
-    d["stock_id"] = d["stock_id"].astype(str)
-    return fc.write_if_changed("data/industry_chain.csv", d,
-                               keys=["stock_id", "industry", "sub_industry"])
-
-
 def main():
     token = fc.get_token()
     fc.check_token(token)
-    for name, fn in [("delisting", delisting), ("industry_chain", industry_chain)]:
+    for name, fn in [("delisting", delisting)]:
         r = fn(token)
         print(f"  {name}: {'寫入' if r is True else ('no-op' if r is False else r)}")
     u, lim = fc.token_usage(token)

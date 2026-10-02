@@ -1,11 +1,11 @@
 """
-fetch_macro.py — 市場級總經小表 → data/macro/*.csv(全部全市場單 call,便宜、日更)
-0b 實測深度:futures_institutional TX 2018-06;vix 僅 2026-03 起(intraday,resample 成日)。
+fetch_macro.py — 市場級總經小表 → data/macro/*.csv(便宜、日更)
+0b 實測深度:futures_institutional TX 2018-06。
 免費帳號(register)不可用、已移除:business_indicator(TaiwanBusinessIndicator)、
-  margin_maintenance(TaiwanTotalExchangeMarginMaintenance)——實測回 400 "Your level is register"。
-  data/macro/ 下這兩個檔保留為歷史,不再更新。
+  margin_maintenance(TaiwanTotalExchangeMarginMaintenance)、vix(TaiwanOptionVix)
+  ——實測回 400 "Your level is register"。data/macro/ 下這些檔保留為歷史,不再更新。
 
-用法:python scripts/fetch_macro.py [--only futures_institutional,vix]
+用法:python scripts/fetch_macro.py
 需要:FINMIND_TOKEN
 """
 import os
@@ -31,18 +31,7 @@ def futures_institutional(token):
                                keys=["date", "futures_id", "institutional_investors"])
 
 
-def vix(token):
-    """TaiwanOptionVix 是 intraday(date,time,vix);resample 成日 OHLC。0b:僅 2026-03 起。"""
-    d = fc.api_data(token, "TaiwanOptionVix", start_date="2015-01-01")
-    if d.empty:
-        return "missing"
-    d["vix"] = pd.to_numeric(d["vix"], errors="coerce")
-    g = d.groupby("date")["vix"].agg(vix_open="first", vix_high="max",
-                                     vix_low="min", vix_close="last").reset_index()
-    return fc.write_if_changed(f"{OUT}/vix.csv", g.sort_values("date"), keys=["date"])
-
-
-JOBS = {"futures_institutional": futures_institutional, "vix": vix}
+JOBS = {"futures_institutional": futures_institutional}
 
 
 def main():

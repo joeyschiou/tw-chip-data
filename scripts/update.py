@@ -21,13 +21,13 @@ SCRIPTS = ["fetch_calendar.py", "fetch_universe.py", "fetch_daily.py"]
 # 或全市場單 call 需付費;per-id 全 universe 又遠超額度):
 #   分點 branch、當沖 daytrade、集保 holders、流通 float(依賴 holders)、月營收 revenue、
 #   還原價/借券/質押/停券(fetch_stockseries)、CB(fetch_cb)、news、
-#   景氣/維持率(fetch_macro)、處置(fetch_regulatory)。
+#   景氣/維持率/VIX(fetch_macro)、處置/產業鏈(fetch_regulatory)。
 # data/ 下這些目錄保留為歷史(screener 等仍可讀),但不再更新。
 
 # 補充資料 —— 各自 idempotent;失敗「不」中止核心管線,改用 latest.json 的 status 反映落後。
 EXTRA_SCRIPTS = ["fetch_info.py",
-                 "fetch_macro.py",        # vix/期貨法人(日)
-                 "fetch_regulatory.py",   # 下市/產業鏈(全表 idempotent no-op)
+                 "fetch_macro.py",        # 期貨法人(日)
+                 "fetch_regulatory.py",   # 下市(全表 idempotent no-op)
                  # 借券/放空法規快照:**前瞻累積**。歷史標借費率買不到
                  # (TWSE 各路徑 404、OpenAPI 僅當日股數、FinMind 無 dataset),
                  # 所以從今天開始自己長。單日 2 個 call,極便宜,idempotent。
@@ -125,19 +125,15 @@ def _through(path, col="date"):
 
 def strategy_layer_status() -> dict:
     """策略資料層各 dataset 的 coverage/through/availability(0b 實測限制一併記錄)。
-    免費帳號後停抓的(還原價/借券/質押/停券/景氣/維持率/處置/CB/news)已移除,舊檔留在 data/ 當歷史。"""
+    免費帳號後停抓的(還原價/借券/質押/停券/景氣/維持率/VIX/處置/產業鏈/CB/news)已移除,舊檔留在 data/ 當歷史。"""
     def cov(sub):
         return len(glob.glob(f"data/{sub}/*.csv"))
     return {
         # 免費帳號仍可抓(nightly)
         "futures_institutional": {"cadence": "daily", "through": _through("data/macro/futures_institutional.csv"),
                                   "note": "期貨三大法人 TX/MTX 2018+"},
-        "vix":              {"cadence": "daily", "through": _through("data/macro/vix.csv"),
-                             "status": "shallow", "note": "台指VIX 僅 2026-03 起(FinMind 深度限制)"},
         "delisting":        {"cadence": "daily", "through": _through("data/delisting.csv"),
                              "note": "下市櫃 2001+;實測 TaiwanStockPrice 仍可抓下市股歷史→倖存者偏誤可修"},
-        "industry_chain":   {"cadence": "daily", "coverage": len(pd.read_csv("data/industry_chain.csv", dtype=str))
-                             if os.path.exists("data/industry_chain.csv") else 0, "note": "產業鏈快照"},
     }
 
 

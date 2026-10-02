@@ -20,6 +20,7 @@ from datetime import date, timedelta
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 USERINFO_URL = "https://api.web.finmindtrade.com/v2/user_info"
 START_DATE = "2024-01-01"   # 第一次抓近兩年;歷史回填是步驟 7 的事
+RESERVE_CALLS = 60          # 用量守衛:留給補充腳本的額度(免費帳號 600/hr)
 DEAD_DAYS = 120             # 最後日期早於此天數 → 視為下市/停牌,輪轉排最後、不做缺口回補
 
 
@@ -204,10 +205,11 @@ def main() -> None:
 
     for i, sid in enumerate(target_ids, 1):
         # 用量守衛:逼近上限就停(續傳靠 --checkpoint / --new-only)
-        # 每 50 檔查一次:一檔 3 個 call,兩次檢查間最多 150 call,留足餘裕不會衝破 6000。
-        if i % 50 == 1 and i > 1:
+        # 每 10 檔查一次(一檔 3 call,兩次檢查間最多 30 call);免費帳號上限只有 600,
+        # 停在 lim - RESERVE_CALLS,留額度給後面的 info/macro 等補充腳本(實測 50 檔一查會衝到 600/600)。
+        if i % 10 == 1 and i > 1:
             used, lim = _usage(token)
-            if used and lim and used > lim * 0.9:
+            if used and lim and used >= lim - RESERVE_CALLS:
                 print(f"   ⏸ 用量逼近上限({used}/{lim}),停下續傳"
                       f"(重跑同一道指令即可從 checkpoint 接續)")
                 break
