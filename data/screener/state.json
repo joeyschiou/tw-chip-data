@@ -20,6 +20,19 @@
       "signal_date": "2026-10-02"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "id": "2455",
+      "name": "全新",
+      "rank_score": 0,
+      "signal_date": "2026-10-02"
+    },
+    {
+      "id": "2436",
+      "name": "偉詮電",
+      "rank_score": 0,
+      "signal_date": "2026-10-02"
+    }
+  ],
   "farm_queue": []
 }
