@@ -18,21 +18,26 @@
       "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-10-02"
-    }
-  ],
-  "pending": [
+    },
     {
       "id": "2455",
       "name": "全新",
+      "entry_date": "2026-10-02",
+      "entry_price": 559.0,
+      "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-10-02"
     },
     {
       "id": "2436",
       "name": "偉詮電",
+      "entry_date": "2026-10-02",
+      "entry_price": 74.0,
+      "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-10-02"
     }
   ],
+  "pending": [],
   "farm_queue": []
 }
