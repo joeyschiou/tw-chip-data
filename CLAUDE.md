@@ -24,11 +24,14 @@
 
 ## 資料流
 - 日線:fetch_daily.py,對 universe ∪ watchlist,append+dedup(nightly)。
-  - 免費額度一晚只夠 ~180 檔(一檔 3 call,用量到 90% 自動停):**watchlist 優先**,其餘 universe 依最後日期由舊到新輪轉
-    (約 2 週輪完一圈),並保留 60 call 給補充腳本;落後超過 --days 的檔自動從最後日期補缺口。
+  - 免費額度一小時只夠 ~180 檔(一檔 3 call):**watchlist 優先**,其餘 universe 依最後日期由舊到新輪轉,
+    主排程保留 60 call 給補充腳本;落後超過 --days 的檔自動從最後日期補缺口。開跑前額度已滿就直接收工。
 - 基本資料:fetch_info.py;總經:fetch_macro.py(期貨法人);名冊:fetch_regulatory.py(下市);
   借券法規快照:fetch_sbl_snapshot.py(TWSE,非 FinMind)。
 - 主控:**daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充 → screener。
+- 接力:**daily-extend.yml**(台北 23:05~隔天 10:05 每小時):`fetch_daily.py --skip-current --reserve 15`
+  用當小時額度續抓 universe(已到最新的 0 call 跳過)→ 一晚可覆蓋全市場。不跑 screener。
+  - 兩條 workflow 都用 `scripts/commit_push.sh` commit:push 被拒就 rebase 重推(會互相搶推)。
 - 回填:`backfill.py --stock <id> --days N`(只剩 daily)。
 - 判讀先讀 data/latest.json。
 
