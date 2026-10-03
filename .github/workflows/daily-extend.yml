@@ -1,0 +1,49 @@
+name: daily-extend
+
+# 日線接力:FinMind 免費帳號 600 call/hr,主排程(daily-update)一晚只抓得完 ~180 檔。
+# 這裡每小時用「當小時額度」接著抓:台北 23:05 ~ 隔天 10:05(UTC 15-23、0-2 點的 :05),
+# 每輪 ~190 檔,依最後日期由舊到新輪轉,已到最新交易日的跳過(0 call)→ 一晚可覆蓋全 universe。
+# 只抓日線 + 刷 latest.json,不跑 screener(模型組合狀態只在主排程推進,避免一天多次進出場)。
+on:
+  schedule:
+    - cron: "5 15-23 * * *"
+    - cron: "5 0-2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# 同一時間只跑一輪接力(排程延遲時不會兩輪搶同一小時額度)
+concurrency:
+  group: daily-extend
+  cancel-in-progress: false
+
+jobs:
+  extend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout repo (分支最新,不是觸發當下的 sha)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install requests pandas pyyaml pyarrow
+
+      - name: Calendar + daily relay
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: |
+          python scripts/fetch_calendar.py
+          python scripts/fetch_daily.py --skip-current --reserve 15
+          python scripts/update.py --manifest-only
+
+      - name: Commit new data
+        run: |
+          bash scripts/commit_push.sh "auto: daily relay $(date -u +%Y-%m-%dT%H:%MZ)" data/
