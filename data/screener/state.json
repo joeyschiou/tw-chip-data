@@ -1,5 +1,5 @@
 ﻿{
-  "last_run_date": "2026-10-02",
+  "last_run_date": "2026-10-05",
   "positions": [
     {
       "id": "2347",
@@ -40,10 +40,10 @@
   ],
   "pending": [
     {
-      "id": "3042",
-      "name": "晶技",
+      "id": "3374",
+      "name": "精材",
       "rank_score": 0,
-      "signal_date": "2026-10-02"
+      "signal_date": "2026-10-05"
     }
   ],
   "farm_queue": []
