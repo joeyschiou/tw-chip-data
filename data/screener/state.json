@@ -38,6 +38,13 @@
       "signal_date": "2026-10-02"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "id": "3042",
+      "name": "晶技",
+      "rank_score": 0,
+      "signal_date": "2026-10-02"
+    }
+  ],
   "farm_queue": []
 }
