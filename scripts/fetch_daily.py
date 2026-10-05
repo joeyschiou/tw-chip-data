@@ -1,7 +1,8 @@
 """
 fetch_daily.py — 追蹤股的日K + 三大法人 + 融資融券
 免費層可用。對 watchlist ∪ universe 逐檔抓三個 dataset,合併成 data/daily/{id}.csv。
-免費額度一晚只夠 ~180 檔:watchlist 優先,其餘依最後日期由舊到新輪轉(約 2 週輪完一圈)。
+免費額度一小時只夠 ~180 檔:priority(config/priority.yaml)→ watchlist 優先,
+其餘依最後日期由舊到新輪轉(daily-extend.yml 每小時接力)。
 
 用法:python scripts/fetch_daily.py
 需要:FINMIND_TOKEN 環境變數;config/watchlist.yaml
@@ -20,6 +21,7 @@ from datetime import date, timedelta
 FINMIND_URL = "https://api.finmindtrade.com/api/v4/data"
 USERINFO_URL = "https://api.web.finmindtrade.com/v2/user_info"
 START_DATE = "2024-01-01"   # 第一次抓近兩年;歷史回填是步驟 7 的事
+FULL_START = "2015-01-01"   # 重點清單新股(還沒有 daily 檔)一次補到這天起的完整歷史
 RESERVE_CALLS = 60          # 用量守衛:留給補充腳本的額度(免費帳號 600/hr)
 DEAD_DAYS = 120             # 最後日期早於此天數 → 視為下市/停牌,輪轉排最後、不做缺口回補
 
@@ -43,6 +45,16 @@ def load_watchlist() -> list:
     with open("config/watchlist.yaml", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     return cfg["tickers"]
+
+
+def load_priority_ids() -> list:
+    """config/priority.yaml 的重點清單(使用者手動維護);沒檔或空清單回 []。"""
+    path = "config/priority.yaml"
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        cfg = yaml.safe_load(f) or {}
+    return [str(t["id"]).strip() for t in (cfg.get("tickers") or []) if t and t.get("id")]
 
 
 def load_universe_ids() -> list:
@@ -171,18 +183,20 @@ def main() -> None:
     token = get_token()
     check_token(token)
 
+    pri_ids = load_priority_ids()
     wl_ids = [str(t["id"]) for t in load_watchlist()]
     uni_ids = load_universe_ids()
     # 聯集去重:watchlist 可含不在 universe 的(如上櫃 6831/7795)
     # 免費帳號 600 call/hr、一檔 3 call → 一晚只抓得完 ~180 檔,不夠覆蓋全 universe。
-    # 排序:watchlist 先(深度層一定要新)→ universe 依「最後日期」由舊到新輪轉
+    # 排序:priority(重點清單)→ watchlist(深度層)→ universe 依「最後日期」由舊到新輪轉
     # → 無 daily 檔、或最後日期早於 DEAD_DAYS 前(多半已下市/長期停牌)放最後,不每晚浪費額度。
-    last = {s: _last_date(f"data/daily/{s}.csv") for s in dict.fromkeys(uni_ids + wl_ids)}
+    last = {s: _last_date(f"data/daily/{s}.csv") for s in dict.fromkeys(pri_ids + wl_ids + uni_ids)}
     dead_cut = (date.today() - timedelta(days=DEAD_DAYS)).isoformat()
-    wl_set = set(wl_ids)
-    rest = [s for s in uni_ids if s not in wl_set]
+    head = set(pri_ids) | set(wl_ids)
+    rest = [s for s in uni_ids if s not in head]
     rest.sort(key=lambda s: (last[s] < dead_cut, last[s]))
-    target_ids = list(dict.fromkeys(wl_ids + rest))
+    target_ids = list(dict.fromkeys(pri_ids + wl_ids + rest))
+    pri_set = set(pri_ids)
     if args.skip_current and os.path.exists("data/calendar.csv"):
         latest = str(pd.read_csv("data/calendar.csv", dtype=str)["date"].max())
         before = len(target_ids)
@@ -201,7 +215,8 @@ def main() -> None:
         before = len(target_ids)
         target_ids = [s for s in target_ids if s not in done]
         print(f"checkpoint({args.checkpoint}):已完成 {len(done)} 檔,{before} → 剩 {len(target_ids)} 檔待抓")
-    print(f"日線目標:universe {len(uni_ids)} + watchlist {len(wl_ids)} → 目標 {len(target_ids)} 檔")
+    print(f"日線目標:priority {len(pri_ids)} + watchlist {len(wl_ids)} + universe {len(uni_ids)}"
+          f" → 目標 {len(target_ids)} 檔")
     print(f"起始日期 START_DATE = {START_DATE}\n")
 
     os.makedirs("data/daily", exist_ok=True)
@@ -230,7 +245,12 @@ def main() -> None:
                 break
         print(f"→ [{i}/{len(target_ids)}] {sid}")
         # 起點取 START_DATE 與既有最後日期較早者:落後超過 --days 的檔也能補齊缺口
-        start = min(START_DATE, last[sid]) if last.get(sid, "") >= dead_cut else START_DATE
+        if sid in pri_set and not last.get(sid):
+            start = FULL_START       # 重點清單新股:一次補完整歷史
+        elif last.get(sid, "") >= dead_cut:
+            start = min(START_DATE, last[sid])
+        else:
+            start = START_DATE
         df = build_daily(token, sid, start)
         if df.empty:
             _mark_done(sid)
