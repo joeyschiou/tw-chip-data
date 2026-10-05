@@ -5,11 +5,14 @@
   日線覆蓋 universe(集保/流通/月營收/當沖原本也是,免費帳號後已停抓)。
   - `finmind_client.load_universe()`=info.csv 普通股 ∩ 有 daily 檔者(≈2,000);過濾規則見 schema.md。
   - `config/universe.csv`=fetch_universe.py 產的清單,欄位 id,name,**market**(twse/tpex);給日線廣掃來源。
+- **重點清單 priority**(config/priority.yaml)=使用者手動維護、最在意的股票:每晚**第一個**抓日線;
+  新加入且沒有 daily 檔的自動從 2015 起補完整歷史。
 - **深度層 watchlist**(config/watchlist.yaml,上限 100)=優先更新日線的追蹤清單,由篩選器自動增補。
   (原本是分點 branch 追蹤;免費帳號抓不到分點,已停。)
 
 ## 鐵則
-- 使用者新提到 / 要追蹤的個股 → 加進 **watchlist**(分點),**永遠不要**手動加進 universe(universe 是機器產生的廣度層)。
+- 使用者說「重視/優先」的個股 → 加進 **config/priority.yaml**;一般新提到 / 要追蹤的 → 加進 **watchlist**。
+  **永遠不要**手動加進 universe(universe 是機器產生的廣度層)。
 - 加股票前必查證 market(twse/tpex),不要用代號猜(例:6278 是6開頭卻是上市)。用 `python scripts/ensure_watchlist.py --stock <id> --market <twse|tpex>`。
 - 資料一律用 pandas 實算,不要肉眼掃 CSV。CSV 一律 utf-8-sig。分點成本計算排除 price=0 列。
 
@@ -24,11 +27,14 @@
 
 ## 資料流
 - 日線:fetch_daily.py,對 universe ∪ watchlist,append+dedup(nightly)。
-  - 免費額度一晚只夠 ~180 檔(一檔 3 call,用量到 90% 自動停):**watchlist 優先**,其餘 universe 依最後日期由舊到新輪轉
-    (約 2 週輪完一圈),並保留 60 call 給補充腳本;落後超過 --days 的檔自動從最後日期補缺口。
+  - 免費額度一小時只夠 ~180 檔(一檔 3 call):**priority → watchlist 優先**,其餘 universe 依最後日期由舊到新輪轉,
+    主排程保留 60 call 給補充腳本;落後超過 --days 的檔自動從最後日期補缺口。開跑前額度已滿就直接收工。
 - 基本資料:fetch_info.py;總經:fetch_macro.py(期貨法人);名冊:fetch_regulatory.py(下市);
   借券法規快照:fetch_sbl_snapshot.py(TWSE,非 FinMind)。
 - 主控:**daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充 → screener。
+- 接力:**daily-extend.yml**(台北 23:05~隔天 10:05 每小時):`fetch_daily.py --skip-current --reserve 15`
+  用當小時額度續抓 universe(已到最新的 0 call 跳過)→ 一晚可覆蓋全市場。不跑 screener。
+  - 兩條 workflow 都用 `scripts/commit_push.sh` commit:push 被拒就 rebase 重推(會互相搶推)。
 - 回填:`backfill.py --stock <id> --days N`(只剩 daily)。
 - 判讀先讀 data/latest.json。
 
