@@ -32,8 +32,9 @@
 - 基本資料:fetch_info.py;總經:fetch_macro.py(期貨法人);名冊:fetch_regulatory.py(下市);
   借券法規快照:fetch_sbl_snapshot.py(TWSE,非 FinMind)。
 - 主控:**daily-update.yml**(每晚 22:00 台北):update.py 跑核心+補充 → screener。
-- 接力:**daily-extend.yml**(台北 23:05~隔天 10:05 每小時):`fetch_daily.py --skip-current --reserve 15`
-  用當小時額度續抓 universe(已到最新的 0 call 跳過)→ 一晚可覆蓋全市場。不跑 screener。
+- 接力:**daily-extend.yml**(台北 23:05~隔天 10:05 每小時叫醒):`fetch_daily.py --skip-current --reserve 30`
+  用當小時額度續抓 universe(已到最新的 0 call 跳過);單次 run 內自己等下一小時再抓,最多 6 輪
+  (GitHub 排程常跳過,不能靠它每小時準時)。不跑 screener。
   - 兩條 workflow 都用 `scripts/commit_push.sh` commit:push 被拒就 rebase 重推(會互相搶推)。
 - 回填:`backfill.py --stock <id> --days N`(只剩 daily)。
 - 判讀先讀 data/latest.json。

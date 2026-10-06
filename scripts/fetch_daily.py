@@ -173,6 +173,8 @@ def main() -> None:
                     help="續傳 checkpoint 檔:記錄已完成代號,重跑自動跳過(大回補用)")
     ap.add_argument("--skip-current", action="store_true",
                     help="跳過已到最新交易日(calendar 最後一天)的代號,0 call(每小時接力用)")
+    ap.add_argument("--remaining-file", default=None,
+                    help="結束時把『額度不夠沒輪到的檔數』寫進這個檔(接力迴圈判斷要不要再等下一小時)")
     ap.add_argument("--reserve", type=int, default=RESERVE_CALLS,
                     help=f"用量守衛:停在 上限 - N(預設 {RESERVE_CALLS},留給後面的補充腳本)")
     args = ap.parse_args()
@@ -225,6 +227,7 @@ def main() -> None:
     used, lim = _usage(token)
     if used is not None and lim and used >= lim - args.reserve:
         print(f"⏸ 本小時額度已用 {used}/{lim},等下一小時再接力。")
+        _write_remaining(args.remaining_file, len(target_ids))
         return
 
     def _mark_done(sid: str) -> None:
@@ -233,6 +236,7 @@ def main() -> None:
             with open(args.checkpoint, "a", encoding="utf-8") as f:
                 f.write(sid + "\n")
 
+    remaining = 0
     for i, sid in enumerate(target_ids, 1):
         # 用量守衛:逼近上限就停(續傳靠 --checkpoint / --new-only)
         # 每 10 檔查一次(一檔 3 call,兩次檢查間最多 30 call);免費帳號上限只有 600,
@@ -242,6 +246,7 @@ def main() -> None:
             if used and lim and used >= lim - args.reserve:
                 print(f"   ⏸ 用量逼近上限({used}/{lim}),停下續傳"
                       f"(重跑同一道指令即可從 checkpoint 接續)")
+                remaining = len(target_ids) - i + 1
                 break
         print(f"→ [{i}/{len(target_ids)}] {sid}")
         # 起點取 START_DATE 與既有最後日期較早者:落後超過 --days 的檔也能補齊缺口
@@ -270,6 +275,14 @@ def main() -> None:
         print(f"   ✅ {out}:{len(df)} 筆,{df.date.iloc[0]}→{df.date.iloc[-1]}")
         _mark_done(sid)
         time.sleep(0.15)
+    print(f"本輪結束:額度不夠沒輪到 {remaining} 檔")
+    _write_remaining(args.remaining_file, remaining)
+
+
+def _write_remaining(path, n: int) -> None:
+    if path:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(str(n))
 
 
 if __name__ == "__main__":
