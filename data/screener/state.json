@@ -1,5 +1,5 @@
 ﻿{
-  "last_run_date": "2026-10-05",
+  "last_run_date": "2026-10-06",
   "positions": [
     {
       "id": "2347",
@@ -36,15 +36,17 @@
       "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-10-02"
-    }
-  ],
-  "pending": [
+    },
     {
       "id": "3374",
       "name": "精材",
+      "entry_date": "2026-10-06",
+      "entry_price": 517.0,
+      "exit_due": null,
       "rank_score": 0,
       "signal_date": "2026-10-05"
     }
   ],
+  "pending": [],
   "farm_queue": []
 }
