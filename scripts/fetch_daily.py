@@ -239,9 +239,9 @@ def main() -> None:
     remaining = 0
     for i, sid in enumerate(target_ids, 1):
         # 用量守衛:逼近上限就停(續傳靠 --checkpoint / --new-only)
-        # 每 10 檔查一次(一檔 3 call,兩次檢查間最多 30 call);免費帳號上限只有 600,
-        # 停在 lim - RESERVE_CALLS,留額度給後面的 info/macro 等補充腳本(實測 50 檔一查會衝到 600/600)。
-        if i % 10 == 1 and i > 1:
+        # 每 5 檔查一次(一檔 3 call,兩次檢查間最多 15 call);免費帳號上限只有 600,
+        # 停在 lim - reserve,留額度給後面的補充腳本(實測 50 檔一查衝到 600/600、10 檔一查仍衝到 626)。
+        if i % 5 == 1 and i > 1:
             used, lim = _usage(token)
             if used and lim and used >= lim - args.reserve:
                 print(f"   ⏸ 用量逼近上限({used}/{lim}),停下續傳"
