@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-10-07T04:55:09.653921+00:00",
-  "generated_at_taipei": "2026-10-07 12:55:09",
-  "last_trading_date": "2026-10-06",
+  "generated_at_utc": "2026-10-07T19:56:08.913688+00:00",
+  "generated_at_taipei": "2026-10-08 03:56:08",
+  "last_trading_date": "2026-10-07",
   "datasets": {
     "price": {
-      "through": "2026-10-06",
+      "through": "2026-10-07",
       "status": "ok",
       "earliest": "2010-02-22",
       "coverage": 2077,
@@ -15,7 +15,7 @@
       "status": "lagging"
     },
     "margin": {
-      "through": "2026-10-06",
+      "through": "2026-10-07",
       "status": "ok"
     }
   },
@@ -30,15 +30,15 @@
     }
   },
   "universe": {
-    "count": 2131,
+    "count": 2143,
     "daily_files": 2077,
-    "current": 532,
+    "current": 166,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
     "futures_institutional": {
       "cadence": "daily",
-      "through": "2026-10-06",
+      "through": "2026-10-07",
       "note": "期貨三大法人 TX/MTX 2018+"
     },
     "delisting": {
