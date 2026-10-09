@@ -1,8 +1,9 @@
 name: daily-extend
 
 # 日線接力:FinMind 免費帳號 600 call/hr,主排程(daily-update)一晚只抓得完 ~180 檔。
-# 這裡每小時用「當小時額度」接著抓:台北 23:05 ~ 隔天 10:05(UTC 15-23、0-2 點的 :05),
+# 這裡用額度接著抓(額度是滾動 60 分鐘):台北 23:05 ~ 隔天 10:05(UTC 15-23、0-2 點的 :05),
 # 每輪 ~190 檔,依最後日期由舊到新輪轉,已到最新交易日的跳過(0 call)→ 一晚可覆蓋全 universe。
+# 單次 run 內最多接力 6 小時(見下方 loop);排程只是「叫醒」,被 GitHub 跳過幾個也沒關係。
 # 只抓日線 + 刷 latest.json,不跑 screener(模型組合狀態只在主排程推進,避免一天多次進出場)。
 on:
   schedule:
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   extend:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 350
     steps:
       - name: Checkout repo (分支最新,不是觸發當下的 sha)
         uses: actions/checkout@v4
@@ -36,14 +37,25 @@ jobs:
       - name: Install dependencies
         run: pip install requests pandas pyyaml pyarrow
 
-      - name: Calendar + daily relay
+      # GitHub 排程常延遲/跳過(實測一晚 12 個只跑 3 個),所以單次 run 自己接力:
+      # 抓到額度用完 → commit/push → 等用量降下來 → 再抓,直到全部到最新或用完約 4.5 小時。
+      # FinMind 額度是「滾動 60 分鐘」,不是整點歸零 → 用 wait_quota.py 輪詢用量,不要睡到整點。
+      - name: Relay loop (calendar + daily)
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: |
-          python scripts/fetch_calendar.py
-          python scripts/fetch_daily.py --skip-current --reserve 15
-          python scripts/update.py --manifest-only
-
-      - name: Commit new data
-        run: |
-          bash scripts/commit_push.sh "auto: daily relay $(date -u +%Y-%m-%dT%H:%MZ)" data/
+          t0=$(date +%s)
+          for round in 1 2 3 4 5 6 7 8; do
+            # job 上限 350 分;留一輪(等額度 ≤75 + 抓 ~10 分)的餘裕
+            if [ $(( $(date +%s) - t0 )) -gt $(( 260 * 60 )) ]; then echo "time budget used, stop"; break; fi
+            echo "=== round $round $(date -u +%H:%MZ) ==="
+            python scripts/wait_quota.py --below 150 --max-minutes 75 || { echo "quota still high, stop"; break; }
+            python scripts/fetch_calendar.py || echo "calendar failed, keep previous calendar.csv"
+            python scripts/fetch_daily.py --skip-current --reserve 30 --remaining-file "$RUNNER_TEMP/remaining"
+            python scripts/update.py --manifest-only
+            bash scripts/commit_push.sh "auto: daily relay $(date -u +%Y-%m-%dT%H:%MZ)" data/
+            rem=$(cat "$RUNNER_TEMP/remaining" 2>/dev/null || echo 0)
+            if [ "$rem" = "0" ]; then echo "all current, done"; break; fi
+            echo "$rem left; wait for quota to free up"
+            sleep 1800    # 剛用滿,至少要等半小時以上才會降到門檻下,先睡一段再開始輪詢
+          done
