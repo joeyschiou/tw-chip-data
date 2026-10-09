@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-10-09T19:30:38.986545+00:00",
-  "generated_at_taipei": "2026-10-10 03:30:38",
+  "generated_at_utc": "2026-10-09T20:31:17.680319+00:00",
+  "generated_at_taipei": "2026-10-10 04:31:17",
   "last_trading_date": "2026-10-08",
   "datasets": {
     "price": {
@@ -30,7 +30,7 @@
     }
   },
   "universe": {
-    "count": 2143,
+    "count": 2131,
     "daily_files": 2077,
     "current": 1962,
     "earliest": "2010-02-22"
