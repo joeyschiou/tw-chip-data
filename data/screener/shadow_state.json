@@ -1,96 +1,6 @@
 {
   "positions": [
     {
-      "id": "5351",
-      "name": "鈺創",
-      "entry_date": "2026-08-12",
-      "entry_price": 124.5,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "2465",
-      "name": "麗臺",
-      "entry_date": "2026-08-12",
-      "entry_price": 87.5,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 1000,
-      "lots": 1,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "3006",
-      "name": "晶豪科",
-      "entry_date": "2026-08-12",
-      "entry_price": 275.5,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "5388",
-      "name": "中磊",
-      "entry_date": "2026-08-12",
-      "entry_price": 88.7,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 1000,
-      "lots": 1,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "6213",
-      "name": "聯茂",
-      "entry_date": "2026-08-12",
-      "entry_price": 459.0,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "3704",
-      "name": "合勤控",
-      "entry_date": "2026-08-12",
-      "entry_price": 44.55,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 2000,
-      "lots": 2,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "2359",
       "name": "所羅門",
       "entry_date": "2026-08-12",
@@ -302,7 +212,7 @@
     }
   ],
   "pending": [],
-  "last_run_date": "2026-10-08",
+  "last_run_date": "2026-10-12",
   "signals_seen": 52,
-  "days_run": 14
+  "days_run": 15
 }

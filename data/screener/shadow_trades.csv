@@ -1,0 +1,7 @@
+﻿id,name,entry_date,entry_price,exit_date,exit_price,reason,gross_return,net_return,lots,shares,affordable,est_part,model_slip_bps,envelope_hi_bps,ops_ok,actual_slip_bps,fill_source
+5351,鈺創,2026-08-12,124.5000,2026-10-12,114.0000,hold_40,-0.084337,-0.088762,0,0,False,,,,,0.0,paper_open
+2465,麗臺,2026-08-12,87.5000,2026-10-12,83.9000,hold_40,-0.041143,-0.045568,1,1000,True,,,,,0.0,paper_open
+3006,晶豪科,2026-08-12,275.5000,2026-10-12,260.5000,hold_40,-0.054446,-0.058871,0,0,False,,,,,0.0,paper_open
+5388,中磊,2026-08-12,88.7000,2026-10-12,74.1000,hold_40,-0.164600,-0.169025,1,1000,True,,,,,0.0,paper_open
+6213,聯茂,2026-08-12,459.0000,2026-10-12,812.0000,hold_40,0.769063,0.764638,0,0,False,,,,,0.0,paper_open
+3704,合勤控,2026-08-12,44.5500,2026-10-12,39.0000,hold_40,-0.124579,-0.129004,2,2000,True,,,,,0.0,paper_open
