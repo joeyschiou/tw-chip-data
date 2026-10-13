@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-10-13T06:58:12.361175+00:00",
-  "generated_at_taipei": "2026-10-13 14:58:12",
+  "generated_at_utc": "2026-10-13T08:04:40.614650+00:00",
+  "generated_at_taipei": "2026-10-13 16:04:40",
   "last_trading_date": "2026-10-13",
   "datasets": {
     "price": {
-      "through": "2026-10-12",
-      "status": "lagging",
+      "through": "2026-10-13",
+      "status": "ok",
       "earliest": "2010-02-22",
       "coverage": 2077,
       "scope": "universe"
@@ -32,7 +32,7 @@
   "universe": {
     "count": 2131,
     "daily_files": 2077,
-    "current": 121,
+    "current": 290,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
