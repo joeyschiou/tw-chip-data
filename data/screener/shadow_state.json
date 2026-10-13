@@ -46,36 +46,6 @@
       "ops_ok": null
     },
     {
-      "id": "9921",
-      "name": "巨大",
-      "entry_date": "2026-08-12",
-      "entry_price": 111.5,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "1608",
-      "name": "華榮",
-      "entry_date": "2026-08-13",
-      "entry_price": 37.95,
-      "exit_due": null,
-      "signal_date": "2026-08-12",
-      "shares": 2000,
-      "lots": 2,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "3443",
       "name": "創意",
       "entry_date": "2026-08-14",
@@ -211,8 +181,34 @@
       "ops_ok": null
     }
   ],
-  "pending": [],
-  "last_run_date": "2026-10-12",
-  "signals_seen": 52,
-  "days_run": 15
+  "pending": [
+    {
+      "id": "6416",
+      "name": "瑞祺電通",
+      "signal_date": "2026-10-13"
+    },
+    {
+      "id": "8042",
+      "name": "金山電",
+      "signal_date": "2026-10-13"
+    },
+    {
+      "id": "2880",
+      "name": "華南金",
+      "signal_date": "2026-10-13"
+    },
+    {
+      "id": "6191",
+      "name": "精成科",
+      "signal_date": "2026-10-13"
+    },
+    {
+      "id": "2727",
+      "name": "王品",
+      "signal_date": "2026-10-13"
+    }
+  ],
+  "last_run_date": "2026-10-13",
+  "signals_seen": 57,
+  "days_run": 16
 }
