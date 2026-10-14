@@ -179,36 +179,51 @@
       "model_slip_bps": null,
       "envelope_hi_bps": null,
       "ops_ok": null
-    }
-  ],
-  "pending": [
-    {
-      "id": "6416",
-      "name": "瑞祺電通",
-      "signal_date": "2026-10-13"
-    },
-    {
-      "id": "8042",
-      "name": "金山電",
-      "signal_date": "2026-10-13"
     },
     {
       "id": "2880",
       "name": "華南金",
-      "signal_date": "2026-10-13"
-    },
-    {
-      "id": "6191",
-      "name": "精成科",
-      "signal_date": "2026-10-13"
+      "entry_date": "2026-10-14",
+      "entry_price": 49.6,
+      "exit_due": null,
+      "signal_date": "2026-10-13",
+      "shares": 2000,
+      "lots": 2,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "2727",
       "name": "王品",
-      "signal_date": "2026-10-13"
+      "entry_date": "2026-10-14",
+      "entry_price": 243.0,
+      "exit_due": null,
+      "signal_date": "2026-10-13",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     }
   ],
-  "last_run_date": "2026-10-13",
-  "signals_seen": 57,
-  "days_run": 16
+  "pending": [
+    {
+      "id": "1409",
+      "name": "新纖",
+      "signal_date": "2026-10-14"
+    },
+    {
+      "id": "6214",
+      "name": "精誠",
+      "signal_date": "2026-10-14"
+    }
+  ],
+  "last_run_date": "2026-10-14",
+  "signals_seen": 59,
+  "days_run": 17
 }
