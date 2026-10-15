@@ -1,21 +1,6 @@
 {
   "positions": [
     {
-      "id": "2359",
-      "name": "所羅門",
-      "entry_date": "2026-08-12",
-      "entry_price": 140.0,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "4771",
       "name": "望隼",
       "entry_date": "2026-08-12",
@@ -76,40 +61,10 @@
       "ops_ok": null
     },
     {
-      "id": "1709",
-      "name": "和益",
-      "entry_date": "2026-08-14",
-      "entry_price": 29.9,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 3000,
-      "lots": 3,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "6187",
       "name": "萬潤",
       "entry_date": "2026-08-14",
       "entry_price": 1275.0,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "2408",
-      "name": "南亞科",
-      "entry_date": "2026-08-14",
-      "entry_price": 532.0,
       "exit_due": null,
       "signal_date": "2026-08-13",
       "shares": 0,
@@ -151,36 +106,6 @@
       "ops_ok": null
     },
     {
-      "id": "2376",
-      "name": "技嘉",
-      "entry_date": "2026-08-14",
-      "entry_price": 390.0,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "2357",
-      "name": "華碩",
-      "entry_date": "2026-08-14",
-      "entry_price": 968.0,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "2880",
       "name": "華南金",
       "entry_date": "2026-10-14",
@@ -209,21 +134,40 @@
       "model_slip_bps": null,
       "envelope_hi_bps": null,
       "ops_ok": null
-    }
-  ],
-  "pending": [
+    },
     {
       "id": "1409",
       "name": "新纖",
-      "signal_date": "2026-10-14"
+      "entry_date": "2026-10-15",
+      "entry_price": 26.5,
+      "exit_due": null,
+      "signal_date": "2026-10-14",
+      "shares": 3000,
+      "lots": 3,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "6214",
       "name": "精誠",
-      "signal_date": "2026-10-14"
+      "entry_date": "2026-10-15",
+      "entry_price": 196.5,
+      "exit_due": null,
+      "signal_date": "2026-10-14",
+      "shares": 0,
+      "lots": 0,
+      "affordable": false,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     }
   ],
-  "last_run_date": "2026-10-14",
+  "pending": [],
+  "last_run_date": "2026-10-15",
   "signals_seen": 59,
-  "days_run": 17
+  "days_run": 18
 }
