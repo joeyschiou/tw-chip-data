@@ -166,8 +166,19 @@
       "ops_ok": null
     }
   ],
-  "pending": [],
-  "last_run_date": "2026-10-16",
-  "signals_seen": 59,
-  "days_run": 19
+  "pending": [
+    {
+      "id": "2027",
+      "name": "大成鋼",
+      "signal_date": "2026-10-19"
+    },
+    {
+      "id": "6277",
+      "name": "宏正",
+      "signal_date": "2026-10-19"
+    }
+  ],
+  "last_run_date": "2026-10-19",
+  "signals_seen": 61,
+  "days_run": 20
 }
