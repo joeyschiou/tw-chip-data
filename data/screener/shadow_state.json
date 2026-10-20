@@ -164,21 +164,40 @@
       "model_slip_bps": null,
       "envelope_hi_bps": null,
       "ops_ok": null
-    }
-  ],
-  "pending": [
+    },
     {
       "id": "2027",
       "name": "大成鋼",
-      "signal_date": "2026-10-19"
+      "entry_date": "2026-10-20",
+      "entry_price": 50.6,
+      "exit_due": null,
+      "signal_date": "2026-10-19",
+      "shares": 1000,
+      "lots": 1,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     },
     {
       "id": "6277",
       "name": "宏正",
-      "signal_date": "2026-10-19"
+      "entry_date": "2026-10-20",
+      "entry_price": 88.8,
+      "exit_due": null,
+      "signal_date": "2026-10-19",
+      "shares": 1000,
+      "lots": 1,
+      "affordable": true,
+      "est_part": null,
+      "model_slip_bps": null,
+      "envelope_hi_bps": null,
+      "ops_ok": null
     }
   ],
-  "last_run_date": "2026-10-19",
+  "pending": [],
+  "last_run_date": "2026-10-20",
   "signals_seen": 61,
-  "days_run": 20
+  "days_run": 21
 }
