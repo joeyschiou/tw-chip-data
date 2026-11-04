@@ -1,15 +1,6 @@
 ﻿{
-  "last_run_date": "2026-11-03",
+  "last_run_date": "2026-11-04",
   "positions": [
-    {
-      "id": "2347",
-      "name": "聯強",
-      "entry_date": "2026-10-02",
-      "entry_price": 96.4,
-      "exit_due": null,
-      "rank_score": 0,
-      "signal_date": "2026-10-02"
-    },
     {
       "id": "2031",
       "name": "新光鋼",
