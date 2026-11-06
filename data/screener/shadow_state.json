@@ -76,36 +76,6 @@
       "ops_ok": null
     },
     {
-      "id": "2542",
-      "name": "興富發",
-      "entry_date": "2026-08-14",
-      "entry_price": 46.2,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 2000,
-      "lots": 2,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "2885",
-      "name": "元大金",
-      "entry_date": "2026-08-14",
-      "entry_price": 70.5,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 1000,
-      "lots": 1,
-      "affordable": true,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "2880",
       "name": "華南金",
       "entry_date": "2026-10-14",
@@ -197,7 +167,7 @@
     }
   ],
   "pending": [],
-  "last_run_date": "2026-11-05",
+  "last_run_date": "2026-11-06",
   "signals_seen": 67,
-  "days_run": 31
+  "days_run": 32
 }

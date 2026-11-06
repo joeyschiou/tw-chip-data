@@ -1,43 +1,6 @@
 ﻿{
-  "last_run_date": "2026-11-05",
-  "positions": [
-    {
-      "id": "2031",
-      "name": "新光鋼",
-      "entry_date": "2026-10-02",
-      "entry_price": 46.1,
-      "exit_due": null,
-      "rank_score": 0,
-      "signal_date": "2026-10-02"
-    },
-    {
-      "id": "2455",
-      "name": "全新",
-      "entry_date": "2026-10-02",
-      "entry_price": 559.0,
-      "exit_due": null,
-      "rank_score": 0,
-      "signal_date": "2026-10-02"
-    },
-    {
-      "id": "2436",
-      "name": "偉詮電",
-      "entry_date": "2026-10-02",
-      "entry_price": 74.0,
-      "exit_due": null,
-      "rank_score": 0,
-      "signal_date": "2026-10-02"
-    },
-    {
-      "id": "3374",
-      "name": "精材",
-      "entry_date": "2026-10-06",
-      "entry_price": 517.0,
-      "exit_due": null,
-      "rank_score": 0,
-      "signal_date": "2026-10-05"
-    }
-  ],
+  "last_run_date": "2026-11-06",
+  "positions": [],
   "pending": [],
   "farm_queue": []
 }
