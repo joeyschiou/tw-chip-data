@@ -1,21 +1,6 @@
 {
   "positions": [
     {
-      "id": "4771",
-      "name": "望隼",
-      "entry_date": "2026-08-12",
-      "entry_price": 199.5,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "3605",
       "name": "宏致",
       "entry_date": "2026-08-12",
@@ -35,36 +20,6 @@
       "name": "創意",
       "entry_date": "2026-08-14",
       "entry_price": 5640.0,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "5274",
-      "name": "信驊",
-      "entry_date": "2026-08-14",
-      "entry_price": 17990.0,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "6187",
-      "name": "萬潤",
-      "entry_date": "2026-08-14",
-      "entry_price": 1275.0,
       "exit_due": null,
       "signal_date": "2026-08-13",
       "shares": 0,
@@ -167,7 +122,7 @@
     }
   ],
   "pending": [],
-  "last_run_date": "2026-11-09",
-  "signals_seen": 67,
-  "days_run": 33
+  "last_run_date": "2026-11-10",
+  "signals_seen": 68,
+  "days_run": 34
 }
