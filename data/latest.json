@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-11-17T09:16:09.554700+00:00",
-  "generated_at_taipei": "2026-11-17 17:16:09",
+  "generated_at_utc": "2026-11-17T10:21:53.252019+00:00",
+  "generated_at_taipei": "2026-11-17 18:21:53",
   "last_trading_date": "2026-11-17",
   "datasets": {
     "price": {
@@ -32,7 +32,7 @@
   "universe": {
     "count": 2131,
     "daily_files": 2077,
-    "current": 551,
+    "current": 754,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
