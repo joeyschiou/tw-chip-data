@@ -1,36 +1,6 @@
 {
   "positions": [
     {
-      "id": "3605",
-      "name": "宏致",
-      "entry_date": "2026-08-12",
-      "entry_price": 111.0,
-      "exit_due": null,
-      "signal_date": "2026-08-10",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
-      "id": "3443",
-      "name": "創意",
-      "entry_date": "2026-08-14",
-      "entry_price": 5640.0,
-      "exit_due": null,
-      "signal_date": "2026-08-13",
-      "shares": 0,
-      "lots": 0,
-      "affordable": false,
-      "est_part": null,
-      "model_slip_bps": null,
-      "envelope_hi_bps": null,
-      "ops_ok": null
-    },
-    {
       "id": "2880",
       "name": "華南金",
       "entry_date": "2026-10-14",
@@ -122,7 +92,7 @@
     }
   ],
   "pending": [],
-  "last_run_date": "2026-11-17",
+  "last_run_date": "2026-11-18",
   "signals_seen": 70,
-  "days_run": 39
+  "days_run": 40
 }
