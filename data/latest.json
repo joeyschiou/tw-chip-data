@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-11-27T03:23:39.145320+00:00",
-  "generated_at_taipei": "2026-11-27 11:23:39",
-  "last_trading_date": "2026-11-26",
+  "generated_at_utc": "2026-11-27T07:17:27.821283+00:00",
+  "generated_at_taipei": "2026-11-27 15:17:27",
+  "last_trading_date": "2026-11-27",
   "datasets": {
     "price": {
       "through": "2026-11-26",
-      "status": "ok",
+      "status": "lagging",
       "earliest": "2010-02-22",
       "coverage": 2077,
       "scope": "universe"
@@ -16,7 +16,7 @@
     },
     "margin": {
       "through": "2026-11-26",
-      "status": "ok"
+      "status": "lagging"
     }
   },
   "reference": {
@@ -32,7 +32,7 @@
   "universe": {
     "count": 2131,
     "daily_files": 2077,
-    "current": 1775,
+    "current": 132,
     "earliest": "2010-02-22"
   },
   "strategy_layer": {
